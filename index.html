@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warehouse Operations Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F4F0;--surface:#fff;--border:rgba(0,0,0,.09);--border-md:rgba(0,0,0,.15);
+  --text:#1A1A18;--text-2:#5A5A56;--text-3:#9A9A94;
+  --pick:#378ADD;--pick-lt:#B5D4F4;--pick-nc:#185FA5;
+  --pack:#1D9E75;--pack-lt:#9FE1CB;--pack-nc:#0F6E56;
+  --box:#854F0B; --box-lt:#FAC775; --box-nc:#412402;
+  --lbl:#7F77DD;--lbl-lt:#CECBF6;--lbl-nc:#3C3489;
+  --radius:8px;--radius-lg:14px;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+.nav{display:flex;align-items:center;background:var(--surface);border-bottom:.5px solid var(--border-md);padding:0 2rem;height:52px}
+.nav-title{font-size:14px;font-weight:500;margin-right:auto;letter-spacing:-.01em}
+.nav-tab{height:52px;padding:0 16px;font-size:13px;font-family:var(--sans);border:none;background:transparent;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.nav-tab.active{color:var(--text);border-bottom-color:var(--text)}
+.nav-ist{font-family:var(--mono);font-size:12px;color:var(--text-3);margin-left:1.5rem;display:flex;align-items:center;gap:5px}
+.ist-dot{width:6px;height:6px;border-radius:50%;background:#1D9E75}
+
+/* SCREENS */
+.screen{display:none;padding:2rem}
+.screen.active{display:block}
+
+/* FORM */
+.sec-label{font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1rem}
+.iblock{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem}
+.iblock label{display:block;font-size:10px;color:var(--text-3);margin-bottom:5px}
+.iblock input{width:100%;font-size:15px;font-family:var(--mono);border:none;background:transparent;color:var(--text);outline:none}
+.ratio-row{display:flex;align-items:center;gap:6px}
+.ratio-row input{width:50px;font-size:15px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:3px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none}
+
+.proc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.proc-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:1rem}
+.proc-block .ptitle{font-size:12px;font-weight:500;margin-bottom:10px}
+.proc-block .prow{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.proc-block .prow label{font-size:11px;color:var(--text-2)}
+.proc-block .prow input{width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:3px 6px;text-align:right;background:var(--bg);color:var(--text);outline:none}
+
+.btn-primary{width:100%;padding:10px;font-size:13px;font-family:var(--sans);font-weight:500;border:none;border-radius:var(--radius);background:var(--text);color:#fff;cursor:pointer;margin-bottom:8px;transition:opacity .15s}
+.btn-primary:hover{opacity:.82}
+.btn-ghost{flex:1;padding:9px;font-size:13px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);background:transparent;color:var(--text-2);cursor:pointer;transition:background .15s;text-align:center}
+.btn-ghost:hover{background:var(--bg)}
+
+.actual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.actual-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:1rem}
+.actual-block .aname{font-size:12px;font-weight:500;margin-bottom:8px}
+.actual-block .arow{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.actual-block .arow label{font-size:11px;color:var(--text-2)}
+.actual-block .arow input{width:72px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:3px 6px;text-align:right;background:var(--bg);color:var(--text);outline:none}
+.actual-block .atgt{font-size:10px;color:var(--text-3);margin-top:6px;font-family:var(--mono)}
+
+/* break info box */
+.break-info{display:flex;gap:10px;margin-bottom:1rem}
+.break-pill{font-size:11px;font-family:var(--mono);background:var(--surface);border:.5px solid var(--border-md);border-radius:20px;padding:4px 12px;color:var(--text-2)}
+
+/* DASHBOARD */
+#screen-dash{background:#0D0D0C;min-height:calc(100vh - 52px);padding:1.5rem 2rem}
+.dash-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem}
+.dash-eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#444;font-family:var(--mono);margin-bottom:6px}
+.dash-shift-label{font-size:13px;color:#666;font-family:var(--mono)}
+.dash-clock{font-size:38px;font-weight:300;font-family:var(--mono);color:#fff;letter-spacing:.04em;line-height:1}
+.dash-clock-sub{font-size:11px;color:#444;font-family:var(--mono);margin-top:4px;text-align:right}
+
+/* shift timeline */
+.shift-timeline{margin-bottom:1.25rem}
+.stl-bar{display:flex;height:20px;border-radius:6px;overflow:hidden;margin-bottom:6px;gap:1px}
+.stl-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:var(--mono);transition:width .5s}
+.stl-seg.work-am{background:#1E2A38;color:#378ADD}
+.stl-seg.break-seg{background:#1A1A18;color:#333}
+.stl-seg.work-pm1{background:#102218;color:#1D9E75}
+.stl-seg.work-pm2{background:#102218;color:#1D9E75}
+.stl-seg.past{opacity:.4}
+.stl-now{height:20px;width:2px;background:#fff;border-radius:1px;position:relative;flex-shrink:0}
+.stl-labels{display:flex;justify-content:space-between;font-size:9px;color:#333;font-family:var(--mono)}
+.shift-sessions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.session-pill{font-size:10px;font-family:var(--mono);padding:3px 10px;border-radius:20px;background:#1A1A18;color:#444;border:.5px solid #2A2A28}
+.session-pill.active-am{background:#0D1A2A;color:#378ADD;border-color:#378ADD}
+.session-pill.active-pm{background:#0A1A10;color:#1D9E75;border-color:#1D9E75}
+.session-pill.break-active{background:#1A1800;color:#BA7517;border-color:#BA7517}
+
+.summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.sum-card{background:#141412;border:.5px solid #222;border-radius:10px;padding:1rem 1.25rem}
+.sum-label{font-size:9px;color:#444;letter-spacing:.10em;text-transform:uppercase;font-family:var(--mono);margin-bottom:5px}
+.sum-val{font-size:28px;font-weight:300;font-family:var(--mono);color:#fff;line-height:1}
+.sum-unit{font-size:12px;color:#444}
+.sum-sub{font-size:10px;color:#444;font-family:var(--mono);margin-top:4px}
+
+.proc-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.dash-card{background:#141412;border-radius:var(--radius-lg);padding:1.25rem;border:.5px solid #222;position:relative;overflow:hidden;transition:border-color .4s}
+.dash-card.ok{border-color:#1D9E75}
+.dash-card.warn{border-color:#BA7517}
+.dash-card.behind{border-color:#E24B4A}
+.andon-strip{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.ok .andon-strip{background:#1D9E75}
+.warn .andon-strip{background:#BA7517}
+.behind .andon-strip{background:#E24B4A}
+.idle .andon-strip{background:#2A2A28}
+.dc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;margin-top:.25rem}
+.dc-name{font-size:12px;font-weight:500;color:#aaa}
+.dc-badge{font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:20px}
+.badge-ok{background:#061A0E;color:#1D9E75;border:.5px solid #1D9E75}
+.badge-warn{background:#1A1200;color:#BA7517;border:.5px solid #BA7517}
+.badge-behind{background:#1A0606;color:#E24B4A;border:.5px solid #E24B4A}
+.badge-idle{background:#1A1A18;color:#444;border:.5px solid #2A2A28}
+.dc-pct{font-size:44px;font-weight:300;font-family:var(--mono);color:#fff;line-height:1;margin-bottom:.2rem}
+.dc-pct-unit{font-size:18px;color:#333}
+.dc-nums{display:flex;gap:1rem;margin-top:.4rem;margin-bottom:.875rem}
+.dcn-label{font-size:9px;color:#444;font-family:var(--mono);margin-bottom:2px;text-transform:uppercase;letter-spacing:.05em}
+.dcn-val{font-size:13px;font-family:var(--mono);color:#777}
+.dcn-val.hi{color:#fff}
+.prog-track-d{height:4px;background:#1E1E1C;border-radius:3px;overflow:hidden;margin-bottom:4px}
+.prog-bar-d{height:100%;border-radius:3px;transition:width .6s ease}
+.prog-ends{display:flex;justify-content:space-between;font-size:9px;color:#333;font-family:var(--mono);margin-bottom:.875rem}
+.pace-box{background:#111;border-radius:6px;padding:.5rem .875rem;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pace-label{font-size:9px;color:#444;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.pace-val{font-size:10px;font-family:var(--mono);font-weight:500;text-align:right}
+.pace-ok{color:#1D9E75}.pace-warn{color:#BA7517}.pace-behind{color:#E24B4A}
+.session-bars{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sbar{background:#111;border-radius:6px;padding:.625rem}
+.sbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sbar-lbl{font-size:9px;color:#444;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em}
+.sbar-pct{font-size:10px;color:#777;font-family:var(--mono)}
+.sbar-track{height:3px;background:#1A1A18;border-radius:2px;overflow:hidden;margin-bottom:3px}
+.sbar-fill{height:100%;border-radius:2px}
+.sbar-nums{display:flex;justify-content:space-between;font-size:9px;color:#333;font-family:var(--mono)}
+.no-data-dark{display:flex;align-items:center;justify-content:center;height:40vh;color:#2A2A28;font-size:13px;font-family:var(--mono)}
+
+/* SCHEDULE */
+#screen-schedule{background:var(--bg)}
+.sched-note{font-size:12px;color:var(--text-3);margin-bottom:1.25rem}
+.sched-wrap{overflow-x:auto}
+.sched-table{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
+.sched-table th{font-size:9px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);padding:7px 10px;border-bottom:.5px solid var(--border-md);text-align:left;background:var(--bg);white-space:nowrap}
+.sched-table td{border-bottom:.5px solid var(--border);vertical-align:middle}
+.time-cell{padding:8px 10px;font-family:var(--mono);font-size:11px;color:var(--text-3);white-space:nowrap;background:var(--bg);border-right:.5px solid var(--border-md);width:120px}
+.cell-inner{min-height:44px;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.cell-tgt{font-size:12px;font-weight:500;font-family:var(--mono)}
+.cell-sub{font-size:10px;color:var(--text-3);font-family:var(--mono)}
+.cell-act{font-size:10px;font-family:var(--mono);color:#1D9E75}
+.cell-prog{height:3px;border-radius:2px;margin-top:4px;max-width:72px}
+
+/* row types */
+.row-am td .cell-inner{background:#EEF4FC}
+.row-pm td .cell-inner{background:#EEF7F3}
+.row-break td{background:#F9F8F5}
+.row-break .time-cell{background:#F9F8F5}
+.row-now td .cell-inner{background:#FFF9EE;outline:1px solid rgba(186,117,23,.25);outline-offset:-1px}
+.row-now .time-cell{color:var(--text);font-weight:500}
+
+/* totals row */
+.row-total td{background:var(--bg);border-top:.5px solid var(--border-md)}
+.row-total .time-cell{font-weight:500;color:var(--text)}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <span class="nav-title">Warehouse Operations</span>
+  <button class="nav-tab active" onclick="switchTab('setup')">Input</button>
+  <button class="nav-tab" onclick="switchTab('dash')">Dashboard</button>
+  <button class="nav-tab" onclick="switchTab('schedule')">Schedule</button>
+  <div class="nav-ist"><div class="ist-dot"></div><span id="navIST">IST --:--</span></div>
+</div>
+
+<!-- INPUT -->
+<div class="screen active" id="screen-setup">
+  <div class="sec-label" style="margin-bottom:8px">Today's Setup</div>
+  <div class="input-grid">
+    <div class="iblock"><label>Total Orders (units)</label><input type="number" id="total" placeholder="500" min="0"></div>
+    <div class="iblock">
+      <label>AM : PM Ratio</label>
+      <div class="ratio-row">
+        <input type="number" id="amr" placeholder="60" min="0" max="100" oninput="document.getElementById('pmr').value=Math.max(0,100-+this.value)">
+        <span style="color:var(--text-3);font-size:12px">:</span>
+        <input type="number" id="pmr" placeholder="40" min="0" max="100" oninput="document.getElementById('amr').value=Math.max(0,100-+this.value)">
+      </div>
+    </div>
+    <div class="iblock"><label>Start Time (IST)</label><input type="text" id="startTime" value="09:00"></div>
+    <div class="iblock"><label>End Time (IST)</label><input type="text" id="endTime" value="18:00"></div>
+  </div>
+
+  <div class="break-info">
+    <div class="break-pill">Lunch 13:00 – 13:45 (fixed)</div>
+    <div class="break-pill">Tea Break 16:00 – 16:15 (fixed)</div>
+  </div>
+
+  <div class="sec-label">Process Settings</div>
+  <div class="proc-grid">
+    <div class="proc-block">
+      <div class="ptitle" style="color:var(--pick-nc)">Picking</div>
+      <div class="prow"><label>Headcount</label><input type="number" id="pp" placeholder="5" min="1"></div>
+      <div class="prow"><label>UPH / person</label><input type="number" id="pu" placeholder="80" min="1"></div>
+    </div>
+    <div class="proc-block">
+      <div class="ptitle" style="color:var(--pack-nc)">Packing</div>
+      <div class="prow"><label>Headcount</label><input type="number" id="kp" placeholder="4" min="1"></div>
+      <div class="prow"><label>UPH / person</label><input type="number" id="ku" placeholder="60" min="1"></div>
+    </div>
+    <div class="proc-block">
+      <div class="ptitle" style="color:var(--box-nc)">Box Making</div>
+      <div class="prow"><label>Headcount</label><input type="number" id="bp" placeholder="3" min="1"></div>
+      <div class="prow"><label>UPH / person</label><input type="number" id="bu" placeholder="50" min="1"></div>
+    </div>
+    <div class="proc-block">
+      <div class="ptitle" style="color:var(--lbl-nc)">Labeling</div>
+      <div class="prow"><label>Headcount</label><input type="number" id="lp" placeholder="2" min="1"></div>
+      <div class="prow"><label>UPH / person</label><input type="number" id="lu" placeholder="120" min="1"></div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="applySetup()">Apply Settings</button>
+
+  <div id="actualSection" style="display:none">
+    <div class="sec-label" style="margin-top:1.5rem">Update Actual Output</div>
+    <div class="actual-grid">
+      <div class="actual-block">
+        <div class="aname" style="color:var(--pick-nc)">Picking</div>
+        <div class="arow"><label>AM actual</label><input type="number" id="pick-am-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="arow"><label>PM actual</label><input type="number" id="pick-pm-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="atgt" id="pick-tgt-txt"></div>
+      </div>
+      <div class="actual-block">
+        <div class="aname" style="color:var(--pack-nc)">Packing</div>
+        <div class="arow"><label>AM actual</label><input type="number" id="pack-am-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="arow"><label>PM actual</label><input type="number" id="pack-pm-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="atgt" id="pack-tgt-txt"></div>
+      </div>
+      <div class="actual-block">
+        <div class="aname" style="color:var(--box-nc)">Box Making</div>
+        <div class="arow"><label>AM actual</label><input type="number" id="box-am-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="arow"><label>PM actual</label><input type="number" id="box-pm-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="atgt" id="box-tgt-txt"></div>
+      </div>
+      <div class="actual-block">
+        <div class="aname" style="color:var(--lbl-nc)">Labeling</div>
+        <div class="arow"><label>AM actual</label><input type="number" id="lbl-am-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="arow"><label>PM actual</label><input type="number" id="lbl-pm-act" placeholder="0" min="0" oninput="refresh()"></div>
+        <div class="atgt" id="lbl-tgt-txt"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ghost" onclick="switchTab('dash')">View Dashboard →</button>
+      <button class="btn-ghost" onclick="switchTab('schedule')">View Schedule →</button>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="screen" id="screen-dash" style="background:#0D0D0C;min-height:calc(100vh - 52px);padding:1.5rem 2rem">
+  <div class="dash-top">
+    <div>
+      <div class="dash-eyebrow">Warehouse Operations Dashboard</div>
+      <div class="dash-shift-label" id="shiftLabel">—</div>
+    </div>
+    <div style="text-align:right">
+      <div class="dash-clock" id="dashClock">--:--</div>
+      <div class="dash-clock-sub" id="dashClockSub"></div>
+    </div>
+  </div>
+  <div class="shift-timeline">
+    <div class="stl-bar" id="stlBar"></div>
+    <div class="stl-labels" id="stlLabels"></div>
+    <div class="shift-sessions" id="shiftSessions"></div>
+  </div>
+  <div id="dashMain"><div class="no-data-dark">Go to Input tab and apply today's settings first.</div></div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="screen" id="screen-schedule">
+  <div class="sec-label" style="margin-bottom:4px">Daily Schedule</div>
+  <div class="sched-note" id="schedNote">Apply settings in the Input tab first.</div>
+  <div id="schedBody"></div>
+</div>
+
+<script>
+/* ── IST ── */
+function getIST(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+5.5*3600000)}
+function fmtIST(d){return pad(d.getHours())+':'+pad(d.getMinutes())}
+function getISTMin(){const d=getIST();return d.getHours()*60+d.getMinutes()}
+function pad(n){return String(n).padStart(2,'0')}
+function fmtM(m){return pad(Math.floor(m/60))+':'+pad(m%60)}
+
+/* ── BREAKS (fixed) ── */
+const BREAKS=[{s:13*60,e:13*60+45,label:'Lunch'},{s:16*60,e:16*60+15,label:'Tea Break'}];
+
+/* ── PROCS ── */
+const PROCS=[
+  {key:'pick',name:'Picking',   pId:'pp',uId:'pu',amId:'pick-am-act',pmId:'pick-pm-act',tgtId:'pick-tgt-txt',color:'#378ADD',lt:'#B5D4F4',nc:'#185FA5'},
+  {key:'pack',name:'Packing',   pId:'kp',uId:'ku',amId:'pack-am-act',pmId:'pack-pm-act',tgtId:'pack-tgt-txt',color:'#1D9E75',lt:'#9FE1CB',nc:'#0F6E56'},
+  {key:'box', name:'Box Making',pId:'bp',uId:'bu',amId:'box-am-act', pmId:'box-pm-act', tgtId:'box-tgt-txt', color:'#BA7517',lt:'#FAC775',nc:'#854F0B'},
+  {key:'lbl', name:'Labeling',  pId:'lp',uId:'lu',amId:'lbl-am-act', pmId:'lbl-pm-act', tgtId:'lbl-tgt-txt', color:'#7F77DD',lt:'#CECBF6',nc:'#3C3489'},
+];
+
+let STATE=null;
+
+function isBreak(m){return BREAKS.some(b=>m>=b.s&&m<b.e)}
+function breakAt(m){return BREAKS.find(b=>m>=b.s&&m<b.e)||null}
+function workMins(from,to){
+  let w=0;
+  for(let m=from;m<to;m++){if(!isBreak(m))w++;}
+  return w;
+}
+
+function switchTab(t){
+  ['setup','dash','schedule'].forEach((s,i)=>{
+    document.getElementById('screen-'+s).classList.toggle('active',s===t);
+    document.querySelectorAll('.nav-tab')[i].classList.toggle('active',s===t);
+  });
+}
+
+function vn(id){return parseFloat(document.getElementById(id).value)||0}
+function vs(id){return document.getElementById(id).value||''}
+function parseTime(s){const p=(s||'09:00').split(':');return parseInt(p[0])*60+parseInt(p[1]||0)}
+
+function applySetup(){
+  const total=vn('total');
+  if(!total){alert('Please enter total order quantity.');return}
+  const amr=vn('amr')||60;
+  const startMin=parseTime(vs('startTime')||'09:00');
+  const endMin=parseTime(vs('endTime')||'18:00');
+  const totalWork=workMins(startMin,endMin);
+  const amQty=Math.round(total*amr/100);
+  const pmQty=total-amQty;
+
+  STATE={total,amQty,pmQty,startMin,endMin,totalWork,amr};
+
+  PROCS.forEach(p=>{
+    document.getElementById(p.tgtId).textContent=
+      `Target — AM: ${amQty.toLocaleString()} / PM: ${pmQty.toLocaleString()}`;
+  });
+  document.getElementById('actualSection').style.display='block';
+  refresh();
+}
+
+function refresh(){updateDash();buildSchedule()}
+
+/* ── DASHBOARD ── */
+function updateDash(){
+  if(!STATE)return;
+  const {total,amQty,pmQty,startMin,endMin,totalWork}=STATE;
+  const nowMin=getISTMin();
+  const ist=getIST();
+
+  document.getElementById('dashClock').textContent=fmtIST(ist);
+  document.getElementById('dashClockSub').textContent=
+    ist.toLocaleDateString('en-IN',{weekday:'short',year:'numeric',month:'short',day:'numeric'})+' · IST';
+
+  // elapsed work minutes
+  let elapsedWork=0;
+  for(let m=startMin;m<Math.min(nowMin,endMin);m++){if(!isBreak(m))elapsedWork++}
+  const elapsedPct=totalWork>0?Math.min(Math.round(elapsedWork/totalWork*100),100):0;
+  const elapsedHrs=(elapsedWork/60).toFixed(1);
+  const totalWorkHrs=(totalWork/60).toFixed(1);
+
+  // current session label
+  const brk=breakAt(nowMin);
+  let sessionLabel='Shift not started';
+  if(nowMin>=endMin) sessionLabel='Shift ended';
+  else if(brk) sessionLabel=`${brk.label} in progress`;
+  else if(nowMin>=startMin&&nowMin<13*60) sessionLabel='AM Session in progress';
+  else if(nowMin>=13*60+45&&nowMin<16*60) sessionLabel='PM Session in progress (pre-tea)';
+  else if(nowMin>=16*60+15) sessionLabel='PM Session in progress (post-tea)';
+  document.getElementById('shiftLabel').textContent=sessionLabel;
+
+  // shift timeline bar
+  const span=endMin-startMin;
+  let segs=[];
+  let cur=startMin;
+  while(cur<endMin){
+    const brk=BREAKS.find(b=>b.s===cur);
+    if(brk){segs.push({from:cur,to:brk.e,type:'break',label:brk.label});cur=brk.e;}
+    else{
+      const nextBreak=BREAKS.find(b=>b.s>cur&&b.s<endMin);
+      const segEnd=nextBreak?nextBreak.s:endMin;
+      const session=cur<13*60?'am':'pm';
+      segs.push({from:cur,to:segEnd,type:'work',session});
+      cur=segEnd;
+    }
+  }
+  const barHTML=segs.map(seg=>{
+    const w=((seg.to-seg.from)/span*100).toFixed(2)+'%';
+    const past=nowMin>=seg.to;
+    if(seg.type==='break')
+      return`<div class="stl-seg break-seg${past?' past':''}" style="width:${w};flex-shrink:0">${seg.label}</div>`;
+    return`<div class="stl-seg work-${seg.session}${past?' past':''}" style="width:${w};flex-shrink:0">${seg.session.toUpperCase()}</div>`;
+  }).join('');
+  document.getElementById('stlBar').innerHTML=barHTML;
+  document.getElementById('stlLabels').innerHTML=`<span>${fmtM(startMin)} IST</span><span style="color:#555">${Math.max(endMin-nowMin,0)>0?Math.floor(Math.max(endMin-nowMin,0)/60)+'h '+Math.max(endMin-nowMin,0)%60+'m left':'Shift ended'}</span><span>${fmtM(endMin)} IST</span>`;
+
+  // session pills
+  const pills=[
+    {label:'AM 09:00–13:00',active:nowMin>=startMin&&nowMin<13*60,cls:'active-am'},
+    {label:'Lunch 13:00–13:45',active:nowMin>=13*60&&nowMin<13*60+45,cls:'break-active'},
+    {label:'PM 13:45–16:00',active:nowMin>=13*60+45&&nowMin<16*60,cls:'active-pm'},
+    {label:'Tea 16:00–16:15',active:nowMin>=16*60&&nowMin<16*60+15,cls:'break-active'},
+    {label:'PM 16:15–18:00',active:nowMin>=16*60+15&&nowMin<=endMin,cls:'active-pm'},
+  ];
+  document.getElementById('shiftSessions').innerHTML=pills.map(p=>
+    `<div class="session-pill${p.active?' '+p.cls:''}">${p.label}</div>`).join('');
+
+  // proc data
+  let totalAct=0;
+  const procData=PROCS.map(p=>{
+    const amAct=vn(p.amId),pmAct=vn(p.pmId),act=amAct+pmAct;
+    totalAct+=act;
+    const pct=total>0?Math.min(Math.round(act/total*100),100):0;
+    const amPct=amQty>0?Math.min(Math.round(amAct/amQty*100),100):0;
+    const pmPct=pmQty>0?Math.min(Math.round(pmAct/pmQty*100),100):0;
+    const rate=elapsedWork>0?act/(elapsedWork/60):0;
+    let paceText='No output yet',paceClass='pace-warn';
+    if(rate>0){
+      const proj=Math.round(rate*(totalWork/60));
+      const diff=proj-total;
+      paceText=diff>=0?`On track (+${diff.toLocaleString()})`:`Short ~${Math.abs(diff).toLocaleString()}`;
+      paceClass=diff>=0?'pace-ok':'pace-behind';
+    }
+    let status='idle';
+    if(act>=total)status='ok';
+    else if(act>0&&pct>=70)status='warn';
+    else if(act>0)status='behind';
+    const LABELS={ok:'Completed',warn:'On Track',behind:'Behind',idle:'Not Started'};
+    const BADGES={ok:'badge-ok',warn:'badge-warn',behind:'badge-behind',idle:'badge-idle'};
+    return{...p,act,amAct,pmAct,pct,amPct,pmPct,status,paceText,paceClass,label:LABELS[status],badge:BADGES[status]};
+  });
+
+  const totalPct=total>0?Math.min(Math.round(totalAct/total*100),100):0;
+
+  document.getElementById('dashMain').innerHTML=`
+    <div class="summary-row">
+      <div class="sum-card"><div class="sum-label">Total Target</div><div class="sum-val">${total.toLocaleString()}<span class="sum-unit"> u</span></div><div class="sum-sub">AM ${amQty.toLocaleString()} / PM ${pmQty.toLocaleString()}</div></div>
+      <div class="sum-card"><div class="sum-label">Overall Progress</div><div class="sum-val">${totalPct}<span class="sum-unit">%</span></div><div style="margin-top:8px"><div class="prog-track-d" style="height:4px"><div class="prog-bar-d" style="width:${totalPct}%;background:#fff"></div></div></div></div>
+      <div class="sum-card"><div class="sum-label">Completed</div><div class="sum-val">${totalAct.toLocaleString()}<span class="sum-unit"> u</span></div><div class="sum-sub">Remaining: ${Math.max(total-totalAct,0).toLocaleString()}</div></div>
+      <div class="sum-card"><div class="sum-label">Shift Elapsed</div><div class="sum-val">${elapsedPct}<span class="sum-unit">%</span></div><div class="sum-sub">${elapsedHrs}h of ${totalWorkHrs}h worked</div></div>
+    </div>
+    <div class="proc-cards">
+      ${procData.map(p=>`
+        <div class="dash-card ${p.status}">
+          <div class="andon-strip"></div>
+          <div class="dc-header"><div class="dc-name">${p.name}</div><div class="dc-badge ${p.badge}">${p.label}</div></div>
+          <div class="dc-pct">${p.pct}<span class="dc-pct-unit">%</span></div>
+          <div class="dc-nums">
+            <div><div class="dcn-label">Actual</div><div class="dcn-val hi">${p.act.toLocaleString()}</div></div>
+            <div><div class="dcn-label">Target</div><div class="dcn-val">${total.toLocaleString()}</div></div>
+            <div><div class="dcn-label">Left</div><div class="dcn-val">${Math.max(total-p.act,0).toLocaleString()}</div></div>
+          </div>
+          <div class="prog-track-d"><div class="prog-bar-d" style="width:${p.pct}%;background:${p.color}"></div></div>
+          <div class="prog-ends"><span>0</span><span>${total.toLocaleString()}</span></div>
+          <div class="pace-box"><div class="pace-label">Pace</div><div class="pace-val ${p.paceClass}">${p.paceText}</div></div>
+          <div class="session-bars">
+            <div class="sbar"><div class="sbar-top"><div class="sbar-lbl">AM</div><div class="sbar-pct">${p.amPct}%</div></div><div class="sbar-track"><div class="sbar-fill" style="width:${p.amPct}%;background:${p.lt}"></div></div><div class="sbar-nums"><span>${p.amAct.toLocaleString()}</span><span>${amQty.toLocaleString()}</span></div></div>
+            <div class="sbar"><div class="sbar-top"><div class="sbar-lbl">PM</div><div class="sbar-pct">${p.pmPct}%</div></div><div class="sbar-track"><div class="sbar-fill" style="width:${p.pmPct}%;background:${p.color}"></div></div><div class="sbar-nums"><span>${p.pmAct.toLocaleString()}</span><span>${pmQty.toLocaleString()}</span></div></div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ── SCHEDULE ── */
+function buildSchedule(){
+  if(!STATE)return;
+  const {total,amQty,pmQty,startMin,endMin,totalWork}=STATE;
+  const nowMin=getISTMin();
+  const ist=getIST();
+
+  document.getElementById('schedNote').textContent=
+    ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+
+    '  ·  IST '+fmtIST(ist);
+
+  // build hour slots, splitting around breaks
+  const slots=[];
+  let cur=startMin;
+  while(cur<endMin){
+    const brk=BREAKS.find(b=>b.s===cur);
+    if(brk){
+      slots.push({from:cur,to:brk.e,isBreak:true,breakLabel:brk.label});
+      cur=brk.e;
+    } else {
+      const nextEvent=[...BREAKS.map(b=>b.s),endMin].filter(x=>x>cur).sort((a,b)=>a-b)[0];
+      const slotEnd=Math.min(cur+60,nextEvent);
+      slots.push({from:cur,to:slotEnd,isBreak:false,isAM:cur<13*60,isCurrent:nowMin>=cur&&nowMin<slotEnd});
+      cur=slotEnd;
+    }
+  }
+
+  const amWorkMins=workMins(startMin,13*60);
+  const pmWorkMins=workMins(13*60+45,endMin);
+
+  let html=`<div class="sched-wrap"><table class="sched-table"><thead><tr>
+    <th>Time (IST)</th><th>Session</th>
+    ${PROCS.map(p=>`<th style="color:${p.nc}">${p.name}</th>`).join('')}
+  </tr></thead><tbody>`;
+
+  slots.forEach(s=>{
+    const timeLabel=fmtM(s.from)+' – '+fmtM(s.to);
+    if(s.isBreak){
+      html+=`<tr class="row-break">
+        <td class="time-cell">${timeLabel}</td>
+        <td colspan="${PROCS.length+1}"><div class="cell-inner" style="flex-direction:row;align-items:center;gap:8px">
+          <span style="font-size:11px;color:var(--text-3);font-family:var(--mono)">${s.breakLabel}</span>
+          <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">${s.to-s.from} min</span>
+        </div></td></tr>`;
+      return;
+    }
+
+    const slotMins=workMins(s.from,s.to);
+    const rowClass='row-'+(s.isAM?'am':'pm')+(s.isCurrent?' row-now':'');
+
+    html+=`<tr class="${rowClass}">
+      <td class="time-cell">${timeLabel}${s.isCurrent?'<br><span style="font-size:9px;font-weight:500;color:var(--text)">▶ NOW</span>':''}</td>
+      <td><div class="cell-inner"><span style="font-size:10px;font-family:var(--mono);color:${s.isAM?'#185FA5':'#0F6E56'};font-weight:500">${s.isAM?'AM':'PM'}</span></div></td>`;
+
+    PROCS.forEach(p=>{
+      const pax=vn(p.pId),uph=vn(p.uId);
+      const hrly=Math.round(pax*uph*(slotMins/60));
+      const amAct=vn(p.amId),pmAct=vn(p.pmId);
+      const isLastAM=s.isAM&&s.to>=13*60;
+      const isLastPM=!s.isAM&&s.to>=endMin;
+      let actNote='';
+      if(isLastAM&&amAct>0) actNote=`<span class="cell-act">✓ ${amAct.toLocaleString()} done</span>`;
+      if(isLastPM&&pmAct>0) actNote=`<span class="cell-act">✓ ${pmAct.toLocaleString()} done</span>`;
+      const sessionAct=s.isAM?amAct:pmAct;
+      const sessionTgt=s.isAM?amQty:pmQty;
+      const prog=s.isCurrent&&sessionTgt>0?Math.min(Math.round(sessionAct/sessionTgt*100),100):0;
+
+      html+=`<td><div class="cell-inner">
+        <span class="cell-tgt" style="color:${p.nc}">${hrly.toLocaleString()}<span style="font-size:9px;color:var(--text-3);font-weight:400"> /slot</span></span>
+        <span class="cell-sub">${pax} pax · ${uph} UPH</span>
+        ${actNote}
+        ${s.isCurrent&&hrly>0?`<div class="cell-prog" style="background:${p.lt}"><div style="height:100%;width:${prog}%;background:${p.color};border-radius:2px"></div></div>`:''}
+      </div></td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  // totals
+  html+=`<tr class="row-total">
+    <td class="time-cell">Total</td>
+    <td><div class="cell-inner"><span style="font-size:10px;font-family:var(--mono);color:var(--text-2)">Full Day</span></div></td>
+    ${PROCS.map(p=>{
+      const pax=vn(p.pId),uph=vn(p.uId);
+      const cap=Math.round(pax*uph*(totalWork/60));
+      const act=vn(p.amId)+vn(p.pmId);
+      const pct=cap>0?Math.min(Math.round(act/cap*100),100):0;
+      return`<td><div class="cell-inner">
+        <span class="cell-tgt" style="color:${p.nc}">${cap.toLocaleString()}<span style="font-size:9px;color:var(--text-3);font-weight:400"> cap</span></span>
+        ${act>0?`<span class="cell-act">${act.toLocaleString()} actual (${pct}%)</span>`:'<span class="cell-sub">—</span>'}
+      </div></td>`;
+    }).join('')}
+  </tr>`;
+
+  html+=`</tbody></table></div>`;
+  document.getElementById('schedBody').innerHTML=html;
+}
+
+/* ── TICK ── */
+function tick(){
+  const ist=getIST();
+  const t=fmtIST(ist);
+  document.getElementById('navIST').textContent='IST '+t;
+  if(STATE)refresh();
+}
+tick();
+setInterval(tick,30000);
+</script>
+</body>
+</html>
