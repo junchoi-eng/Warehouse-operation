@@ -10,1130 +10,1359 @@
   --bg:#F5F4F0;--surface:#fff;--border:rgba(0,0,0,.09);--border-md:rgba(0,0,0,.15);
   --text:#1A1A18;--text-2:#5A5A56;--text-3:#9A9A94;
   --nei:#2563EB;--nei-lt:#DBEAFE;--nei-dk:#1E3A8A;
+  --amu:#0891B2;--amu-lt:#CFFAFE;--amu-dk:#164E63;
   --vmm:#7C3AED;--vmm-lt:#EDE9FE;--vmm-dk:#4C1D95;
-  --ok-lt:#0A2A1A;--ok-text:#6EE7B7;
-  --warn-lt:#1A1200;--warn-text:#FCD34D;
-  --behind-lt:#1A0606;--behind-text:#FCA5A5;
-  --idle-lt:#141412;--idle-text:#555;
+  --ok:#1D9E75;--warn:#BA7517;--behind:#E24B4A;
   --radius:8px;--radius-lg:14px;
   --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
 
-.nav{display:flex;align-items:center;background:var(--surface);border-bottom:.5px solid var(--border-md);padding:0 1.5rem;height:52px;position:sticky;top:0;z-index:100}
-.nav-title{font-size:14px;font-weight:500;margin-right:1.5rem;letter-spacing:-.01em;white-space:nowrap}
-.nav-tab{height:52px;padding:0 14px;font-size:12px;font-family:var(--sans);border:none;background:transparent;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+/* NAV */
+.nav{display:flex;align-items:center;background:var(--surface);border-bottom:.5px solid var(--border-md);padding:0 1.25rem;height:52px;position:sticky;top:0;z-index:100;gap:2px;overflow-x:auto}
+.nav-title{font-size:13px;font-weight:500;margin-right:1rem;letter-spacing:-.01em;white-space:nowrap;flex-shrink:0}
+.nav-tab{height:52px;padding:0 12px;font-size:12px;font-family:var(--sans);border:none;background:transparent;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap;flex-shrink:0}
 .nav-tab.active{color:var(--text);border-bottom-color:var(--text)}
 .nav-tab.nei.active{color:var(--nei);border-bottom-color:var(--nei)}
+.nav-tab.amu.active{color:var(--amu);border-bottom-color:var(--amu)}
 .nav-tab.vmm.active{color:var(--vmm);border-bottom-color:var(--vmm)}
-.nav-sep{width:.5px;height:20px;background:var(--border-md);margin:0 8px}
-.nav-ist{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-left:auto;display:flex;align-items:center;gap:5px}
-.ist-dot{width:6px;height:6px;border-radius:50%;background:var(--ok-text)}
-.nav-settings-btn{font-size:11px;font-family:var(--mono);color:var(--text-3);border:none;background:transparent;cursor:pointer;padding:4px 8px;border-radius:4px;margin-left:8px}
-.nav-settings-btn:hover{background:var(--bg);color:var(--text-2)}
+.nav-sep{width:.5px;height:20px;background:var(--border-md);margin:0 4px;flex-shrink:0}
+.nav-ist{font-family:var(--mono);font-size:11px;color:var(--text-3);margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0;padding-left:8px}
+.ist-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.nav-settings-btn{font-size:11px;font-family:var(--mono);color:var(--text-3);border:none;background:transparent;cursor:pointer;padding:4px 8px;border-radius:4px;flex-shrink:0}
+.nav-settings-btn:hover{background:var(--bg)}
 
 .screen{display:none;padding:1.5rem 2rem}
 .screen.active{display:block}
 
-/* ── DAILY INPUT ── */
-.daily-wrap{max-width:680px;margin:0 auto}
-.daily-header{margin-bottom:1.5rem}
-.daily-title{font-size:22px;font-weight:500;letter-spacing:-.02em;margin-bottom:4px}
-.daily-sub{font-size:13px;color:var(--text-3)}
-.daily-date{font-size:12px;font-family:var(--mono);color:var(--text-3);margin-top:2px}
+/* COMMON */
+.sec-label{font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.btn-primary{width:100%;padding:13px;font-size:13px;font-family:var(--sans);font-weight:500;border:none;border-radius:var(--radius-lg);background:var(--text);color:#fff;cursor:pointer;transition:opacity .15s}
+.btn-primary:hover{opacity:.85}
+.btn-ghost{padding:9px 16px;font-size:12px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);background:transparent;color:var(--text-2);cursor:pointer}
+.btn-ghost:hover{background:var(--bg)}
 
-.order-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
-.order-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem}
-.oc-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.nei-lbl{color:var(--nei)}.vmm-lbl{color:var(--vmm)}
-.co-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
-.nei .co-badge{background:var(--nei-lt);color:var(--nei-dk)}
-.vmm .co-badge{background:var(--vmm-lt);color:var(--vmm-dk)}
-.oc-input{width:100%;font-size:32px;font-family:var(--mono);font-weight:300;border:none;background:transparent;color:var(--text);outline:none;margin-bottom:4px}
-.oc-unit{font-size:11px;color:var(--text-3)}
+/* TODAY */
+.today-wrap{max-width:1100px}
+.today-header{margin-bottom:1.25rem}
+.today-title{font-size:22px;font-weight:500;letter-spacing:-.02em}
+.today-date{font-size:12px;font-family:var(--mono);color:var(--text-3);margin-top:3px}
 
-.hc-section{margin-bottom:1.5rem}
-.hc-title{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
-.hc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hc-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;min-height:120px}
-.hc-block-title{font-size:11px;font-weight:500;margin-bottom:10px}
-.hc-rows{display:flex;flex-direction:column;gap:8px}
-.hc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.hc-row:last-child{margin-bottom:0}
-.hc-row-label{font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:5px}
-.hc-unit-badge{font-size:9px;padding:1px 5px;border-radius:8px;font-weight:500}
-.uph-b{background:#DBEAFE;color:#1E3A8A}
-.pph-b{background:#D1FAE5;color:#065F46}
-.hc-row-input{width:64px;font-size:15px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none}
-.hc-row-input:focus{border-color:var(--border-md);background:var(--surface)}
+/* Seller block */
+.seller-section{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.seller-header{display:flex;align-items:center;gap:8px;margin-bottom:1rem}
+.seller-name{font-size:13px;font-weight:500}
+.seller-table{width:100%;border-collapse:collapse}
+.seller-table th{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);padding:6px 10px;border-bottom:1px solid var(--border-md);text-align:center}
+.seller-table th:first-child{text-align:left}
+.seller-table td{padding:6px 8px;border-bottom:.5px solid var(--border);vertical-align:middle}
+.seller-table td:first-child{font-size:12px;color:var(--text-2);padding-left:10px;width:140px}
+.t-inp{width:100%;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:5px 8px;text-align:right;background:var(--bg);color:var(--text);outline:none}
+.t-inp:focus{border-color:var(--border-md);background:var(--surface)}
+.t-total{font-size:13px;font-family:var(--mono);font-weight:500;color:var(--text);text-align:right;padding:0 8px}
+.hc-inp{width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:5px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none}
 
-.ratio-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.5rem}
-.ratio-label{font-size:12px;color:var(--text-2);flex-shrink:0}
-.ratio-inputs{display:flex;align-items:center;gap:8px}
-.ratio-input{width:52px;font-size:15px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none}
-.ratio-sep{font-size:12px;color:var(--text-3)}
-.ratio-desc{font-size:11px;color:var(--text-3);margin-left:.5rem}
+/* VMM today */
+.vmm-today-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vmm-proc-block{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem}
+.vmm-proc-title{font-size:11px;font-weight:500;color:var(--vmm);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.vmm-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.vmm-row label{font-size:11px;color:var(--text-2)}
+.vmm-row input{width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:6px;padding:4px 8px;text-align:right;background:var(--bg);color:var(--text);outline:none}
 
-.apply-btn{width:100%;padding:14px;font-size:14px;font-family:var(--sans);font-weight:500;border:none;border-radius:var(--radius-lg);background:var(--text);color:#fff;cursor:pointer;transition:opacity .15s;margin-bottom:.75rem}
-.apply-btn:hover{opacity:.85}
-.apply-btn:disabled{opacity:.4;cursor:not-allowed}
-.settings-hint{font-size:11px;color:var(--text-3);text-align:center}
-.settings-hint a{color:var(--nei);cursor:pointer;text-decoration:none}
-.settings-hint a:hover{text-decoration:underline}
-
-.saved-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:var(--mono);color:#1D9E75;background:#E1F5EE;border-radius:20px;padding:2px 8px;margin-left:8px}
-.no-settings-warn{background:#FEF9C3;border:.5px solid #FCD34D;border-radius:var(--radius);padding:.75rem 1rem;font-size:12px;color:#713F12;margin-bottom:1rem}
-
-/* ── SETTINGS ── */
-.settings-wrap{max-width:900px}
-.settings-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
-.settings-title{font-size:18px;font-weight:500;letter-spacing:-.02em}
-.settings-sub{font-size:12px;color:var(--text-3);margin-top:3px}
-.settings-saved{font-size:11px;font-family:var(--mono);color:#1D9E75;margin-left:auto}
-
-.settings-section{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
-.settings-section-title{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
-.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
-.sib{border:.5px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;background:var(--bg)}
-.sib label{display:block;font-size:10px;color:var(--text-3);margin-bottom:4px}
-.sib input{width:100%;font-size:14px;font-family:var(--mono);border:none;background:transparent;color:var(--text);outline:none}
-
-.proc-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.proc-co-block{border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
-.proc-co-title{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.nei-co{color:var(--nei)}.vmm-co{color:var(--vmm)}
-.proc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:.5px solid var(--border)}
-.proc-row:last-child{border-bottom:none}
-.proc-row-name{font-size:12px;color:var(--text);display:flex;align-items:center;gap:5px}
-.proc-row-input{width:60px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:3px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none}
-
-.save-settings-btn{width:100%;padding:11px;font-size:13px;font-family:var(--sans);font-weight:500;border:none;border-radius:var(--radius-lg);background:var(--text);color:#fff;cursor:pointer;transition:opacity .15s;margin-top:1rem}
-.save-settings-btn:hover{opacity:.85}
-.save-confirm{font-size:12px;color:#1D9E75;text-align:center;margin-top:8px;display:none}
-
-/* ── DASHBOARD (light) ── */
+/* DASHBOARD */
 .dash-screen{background:var(--bg);min-height:calc(100vh - 52px);padding:1.5rem 2rem}
 .dash-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
-.dash-eyebrow{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-family:var(--mono);margin-bottom:5px}
-.nei-dash .dash-eyebrow{color:var(--nei)}.vmm-dash .dash-eyebrow{color:var(--vmm)}
-.dash-shift-label{font-size:12px;color:var(--text-2);font-family:var(--mono)}
-.dash-clock{font-size:36px;font-weight:300;font-family:var(--mono);color:var(--text);letter-spacing:.04em;line-height:1}
-.dash-clock-sub{font-size:10px;color:var(--text-3);font-family:var(--mono);margin-top:3px;text-align:right}
-.last-updated{font-size:9px;color:var(--text-3);font-family:var(--mono);text-align:right;margin-top:2px}
-.stl-bar{display:flex;height:16px;border-radius:5px;overflow:hidden;margin-bottom:4px;gap:1px}
+.dash-eyebrow{font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-family:var(--mono);margin-bottom:4px}
+.nei-dash .dash-eyebrow{color:var(--nei)}
+.amu-dash .dash-eyebrow{color:var(--amu)}
+.vmm-dash .dash-eyebrow{color:var(--vmm)}
+.dash-clock{font-size:32px;font-weight:300;font-family:var(--mono);color:var(--text);line-height:1}
+.dash-sub{font-size:10px;color:var(--text-3);font-family:var(--mono);text-align:right;margin-top:2px}
+
+/* Timeline */
+.stl-bar{display:flex;height:14px;border-radius:4px;overflow:hidden;margin-bottom:4px;gap:1px}
 .stl-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:var(--mono)}
 .stl-seg.wk-am-nei{background:#DBEAFE;color:#1E3A8A}
 .stl-seg.wk-pm-nei{background:#EDE9FE;color:#4C1D95}
+.stl-seg.wk-am-amu{background:#CFFAFE;color:#164E63}
+.stl-seg.wk-pm-amu{background:#E0F2FE;color:#0C4A6E}
 .stl-seg.wk-am-vmm{background:#EDE9FE;color:#4C1D95}
-.stl-seg.wk-pm-vmm{background:#DDD6FE;color:#4C1D95}
-.stl-seg.brk{background:#F5F4F0;color:var(--text-3)}
-.stl-seg.past{opacity:.4}
-.stl-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-3);font-family:var(--mono);margin-bottom:.875rem}
-.top-banner{border-radius:var(--radius-lg);padding:1rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.nei-dash .top-banner{background:#EFF6FF;border:.5px solid #BFDBFE}
-.vmm-dash .top-banner{background:#F5F3FF;border:.5px solid #DDD6FE}
-.banner-mid{flex:1;padding:0 1.5rem}
-.banner-label{font-size:9px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:4px}
-.banner-val{font-size:18px;font-weight:500;font-family:var(--mono);color:var(--text)}
-.banner-sub{font-size:10px;color:var(--text-2);font-family:var(--mono);margin-top:2px}
-.eta-big{text-align:right}
-.eta-big-label{font-size:9px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:6px}
-.eta-big-val{font-size:28px;font-weight:300;font-family:var(--mono)}
-.eta-ok{color:#1D9E75}.eta-warn{color:#BA7517}.eta-behind{color:#E24B4A}
-/* ── QUICK INPUT (card style) ── */
-.qi-panel{border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem;border:.5px solid var(--border);background:var(--surface)}
-.nei-dash .qi-panel{border-color:#BFDBFE}.vmm-dash .qi-panel{border-color:#DDD6FE}
-.qi-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem}
-.qi-title-txt{font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em}
-.qi-toggle-btn{font-size:10px;color:var(--text-3);font-family:var(--mono);cursor:pointer;border:.5px solid var(--border-md);background:transparent;padding:2px 8px;border-radius:4px}
-.qi-toggle-btn:hover{background:var(--bg);color:var(--text-2)}
-.qi-cards{display:grid;gap:8px}
-.qi-card{border-radius:10px;padding:.875rem 1rem;border:.5px solid var(--border);background:var(--bg);display:flex;align-items:center;gap:12px;transition:border-color .3s}
-.qi-card.has-data{border-color:var(--border-md)}
-.qi-card-left{flex:1;min-width:0}
-.qi-card-name{font-size:11px;font-weight:500;color:var(--text-2);margin-bottom:2px;display:flex;align-items:center;gap:5px}
-.qi-card-unit{font-size:9px;padding:1px 6px;border-radius:8px;font-weight:500}
-.qi-card-pct{font-size:10px;font-family:var(--mono);color:var(--text-3);margin-top:4px}
-.qi-prog-track{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:5px}
-.qi-prog-bar{height:100%;border-radius:2px;transition:width .4s ease}
-.qi-card-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
-.qi-inp{width:96px;font-size:18px;font-family:var(--mono);font-weight:300;border:.5px solid var(--border-md);border-radius:8px;padding:6px 10px;text-align:right;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}
-.qi-inp:focus{border-color:var(--nei)}
-.qi-inp-unit{font-size:9px;color:var(--text-3);font-family:var(--mono)}
-.qi-hint{font-size:9px;color:var(--text-3);font-family:var(--mono);margin-top:8px;text-align:right}
-.pace-wrap{border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem;border:.5px solid var(--border);background:var(--surface)}
+.stl-seg.wk-pm-vmm{background:#F5F3FF;color:#6D28D9}
+.stl-seg.brk{background:#F3F4F6;color:#9CA3AF}
+.stl-seg.past{opacity:.35}
+.stl-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-3);font-family:var(--mono);margin-bottom:.75rem}
+
+/* Seller cards grid */
+.seller-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem}
+.seller-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.sc-header{padding:.75rem 1rem;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sc-name{font-size:12px;font-weight:600}
+.sc-hc{font-size:10px;font-family:var(--mono);color:var(--text-3)}
+
+/* Actuals input table */
+.act-panel{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.act-panel-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem}
+.act-panel-title{font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em}
+.act-toggle{font-size:10px;color:var(--text-3);font-family:var(--mono);cursor:pointer;border:.5px solid var(--border-md);background:transparent;padding:2px 8px;border-radius:4px}
+.act-table{width:100%;border-collapse:collapse}
+.act-table th{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);padding:5px 10px;border-bottom:1.5px solid var(--border-md);text-align:center}
+.act-table th:first-child{text-align:left;width:150px}
+.act-table td{padding:5px 6px;border-bottom:.5px solid var(--border);vertical-align:middle}
+.act-table td:first-child{font-size:11px;color:var(--text-2);padding-left:10px}
+.act-inp{width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none}
+.act-total{font-size:13px;font-family:var(--mono);font-weight:600;text-align:right;padding:0 8px}
+.act-pct{font-size:11px;font-family:var(--mono);font-weight:600;padding:0 8px;text-align:right}
+.act-bar-cell{width:100px;padding:0 8px}
+.act-bar-wrap{height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.act-bar-fill{height:100%;border-radius:3px}
+.green-t{color:var(--ok)}.warn-t{color:var(--warn)}.behind-t{color:var(--behind)}
+
+/* KPI banner */
+.kpi-banner{border-radius:var(--radius-lg);padding:1rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:.5px solid}
+.nei-dash .kpi-banner{background:#EFF6FF;border-color:#BFDBFE}
+.amu-dash .kpi-banner{background:#ECFEFF;border-color:#A5F3FC}
+.vmm-dash .kpi-banner{background:#F5F3FF;border-color:#DDD6FE}
+.kpi-pct{font-size:48px;font-weight:300;font-family:var(--mono);line-height:1}
+.kpi-mid{flex:1;padding:0 1.5rem}
+.kpi-label{font-size:9px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:3px}
+.kpi-val{font-size:16px;font-weight:500;font-family:var(--mono);color:var(--text)}
+.kpi-sub{font-size:10px;color:var(--text-2);font-family:var(--mono);margin-top:2px}
+.eta-label{font-size:9px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:4px;text-align:right}
+.eta-val{font-size:26px;font-weight:300;font-family:var(--mono)}
+.eta-ok{color:var(--ok)}.eta-warn{color:var(--warn)}.eta-behind{color:var(--behind)}
+
+/* Proc cards */
+.proc-row-cards{display:grid;gap:10px;margin-bottom:1rem}
+.proc-row-cards.cols2{grid-template-columns:repeat(2,1fr)}
+.proc-row-cards.cols3{grid-template-columns:repeat(3,1fr)}
+.proc-row-cards.cols4{grid-template-columns:repeat(4,1fr)}
+.p-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;position:relative;overflow:hidden;transition:border-color .4s}
+.p-card.ok{border-color:var(--ok);background:#F0FDF4}
+.p-card.warn{border-color:var(--warn);background:#FFFBEB}
+.p-card.behind{border-color:var(--behind);background:#FEF2F2}
+.p-card-andon{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.ok .p-card-andon{background:var(--ok)}.warn .p-card-andon{background:var(--warn)}.behind .p-card-andon{background:var(--behind)}
+.p-card-name{font-size:11px;font-weight:500;color:var(--text-2);margin-bottom:.625rem;margin-top:.25rem}
+.ok .p-card-name{color:#166534}.warn .p-card-name{color:#92400E}.behind .p-card-name{color:#991B1B}
+.p-card-pct{font-size:36px;font-weight:300;font-family:var(--mono);line-height:1;margin-bottom:.25rem}
+.ok .p-card-pct{color:var(--ok)}.warn .p-card-pct{color:var(--warn)}.behind .p-card-pct{color:var(--behind)}
+.p-card-nums{display:flex;gap:.75rem;margin-bottom:.625rem}
+.pcn-label{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px}
+.pcn-val{font-size:12px;font-family:var(--mono);color:var(--text-2)}
+.pcn-val.hi{color:var(--text);font-weight:500}
+.p-prog-track{height:3px;background:var(--bg);border-radius:2px;overflow:hidden}
+.p-prog-bar{height:100%;border-radius:2px;transition:width .5s}
+.ok .p-prog-bar{background:var(--ok)}.warn .p-prog-bar{background:var(--warn)}.behind .p-prog-bar{background:var(--behind)}
+
+/* Pace chart */
+.pace-wrap{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
 .pace-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.625rem}
-.pace-title-txt{font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em}
-.pace-legend{display:flex;gap:12px}
+.pace-title{font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em}
+.pace-leg{display:flex;gap:12px}
 .pl-item{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text-3);font-family:var(--mono)}
-.pl-line{width:18px;height:2px;border-radius:1px}
+.pl-line{width:18px;height:2px;border-radius:1px;background:var(--text-3)}
 .pl-line.dashed{background:repeating-linear-gradient(90deg,var(--text-3) 0,var(--text-3) 4px,transparent 4px,transparent 8px)}
-canvas.pc{width:100%;height:130px;display:block}
-.proc-cards-dash{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.proc-cards-dash.three{grid-template-columns:repeat(3,1fr)}
-.dash-card{border-radius:var(--radius-lg);padding:1.25rem;border:.5px solid var(--border);background:var(--surface);position:relative;overflow:hidden;transition:background .5s,border-color .5s}
-.dash-card.rag-green{background:#F0FDF4;border-color:#1D9E75}
-.dash-card.rag-amber{background:#FFFBEB;border-color:#BA7517}
-.dash-card.rag-red{background:#FEF2F2;border-color:#E24B4A}
-.dash-card.rag-idle{background:var(--bg);border-color:var(--border)}
-.andon{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
-.rag-green .andon{background:#1D9E75}.rag-amber .andon{background:#BA7517}
-.rag-red .andon{background:#E24B4A}.rag-idle .andon{background:var(--border-md)}
-.dc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;margin-top:.25rem}
-.dc-name{font-size:12px;font-weight:500}
-.rag-green .dc-name{color:#166534}.rag-amber .dc-name{color:#92400E}
-.rag-red .dc-name{color:#991B1B}.rag-idle .dc-name{color:var(--text-2)}
-.dc-unit{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:500;font-family:var(--mono)}
-.rag-green .dc-unit{background:#DCFCE7;color:#166534}
-.rag-amber .dc-unit{background:#FEF3C7;color:#92400E}
-.rag-red .dc-unit{background:#FEE2E2;color:#991B1B}
-.rag-idle .dc-unit{background:var(--bg);color:var(--text-3)}
-.dc-pct{font-size:40px;font-weight:300;font-family:var(--mono);line-height:1;margin-bottom:.15rem}
-.rag-green .dc-pct{color:#1D9E75}.rag-amber .dc-pct{color:#BA7517}
-.rag-red .dc-pct{color:#E24B4A}.rag-idle .dc-pct{color:var(--text-3)}
-.dc-pct-unit{font-size:16px;opacity:.5}
-.dc-nums{display:flex;gap:.875rem;margin-top:.35rem;margin-bottom:.75rem}
-.dcn-label{font-size:9px;font-family:var(--mono);margin-bottom:1px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-3)}
-.dcn-val{font-size:13px;font-family:var(--mono);color:var(--text-2)}
-.dcn-val.hi{color:var(--text);font-weight:500}
-.prog-track-d{height:3px;border-radius:2px;overflow:hidden;margin-bottom:.625rem;background:var(--bg)}
-.prog-bar-d{height:100%;border-radius:2px;transition:width .6s ease}
-.rag-green .prog-bar-d{background:#1D9E75}.rag-amber .prog-bar-d{background:#BA7517}
-.rag-red .prog-bar-d{background:#E24B4A}.rag-idle .prog-bar-d{background:var(--border-md)}
-.pace-mini{border-radius:6px;padding:.5rem .75rem;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg)}
-.pace-mini-label{font-size:9px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;color:var(--text-3)}
-.pace-mini-val{font-size:10px;font-family:var(--mono);font-weight:500;text-align:right;color:var(--text-2)}
-.no-data-dark{display:flex;align-items:center;justify-content:center;height:40vh;color:var(--text-3);font-size:12px;font-family:var(--mono)}
+canvas.pc{width:100%;height:120px;display:block}
 
-/* SCHEDULE */
-.sched-note{font-size:11px;color:var(--text-3);margin-bottom:1rem}
-.sched-two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.sched-wrap{overflow-x:auto}
-.sched-table{width:100%;border-collapse:collapse;font-size:12px;min-width:360px}
-.sched-table thead th{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);padding:8px 12px;border-bottom:1.5px solid var(--border-md);text-align:left;background:var(--bg);white-space:nowrap}
-.sched-table td{border-bottom:.5px solid var(--border);vertical-align:middle}
-.time-cell{padding:0 10px;font-family:var(--mono);font-size:10px;color:var(--text-3);white-space:nowrap;background:var(--bg);border-right:1px solid var(--border-md);width:108px;height:56px}
-.time-cell-inner{display:flex;flex-direction:column;justify-content:center;height:100%;gap:2px}
-.time-now-badge{font-size:8px;font-weight:600;color:#BA7517;background:#FEF3C7;border-radius:3px;padding:1px 4px;display:inline-block;margin-top:2px}
+/* VMM Dashboard */
+.vmm-sections{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vmm-sec{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem}
+.vmm-sec-title{font-size:11px;font-weight:500;color:var(--vmm);margin-bottom:.875rem;display:flex;align-items:center;gap:6px}
+.vmm-metric-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:.5px solid var(--border)}
+.vmm-metric-row:last-child{border-bottom:none}
+.vmm-metric-label{font-size:11px;color:var(--text-2)}
+.vmm-metric-val{font-size:13px;font-family:var(--mono);font-weight:500;color:var(--text)}
 
-/* cell default */
-.cell-inner{height:56px;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:1px}
-.cell-cap{font-size:13px;font-weight:500;font-family:var(--mono);color:var(--text-2)}
-.cell-cap-unit{font-size:9px;font-weight:400;color:var(--text-3)}
-.cell-setup{font-size:9px;color:var(--text-3);font-family:var(--mono);margin-top:1px}
-.cell-actual-row{display:flex;align-items:center;gap:4px;margin-top:3px}
-.cell-actual-val{font-size:11px;font-weight:500;font-family:var(--mono)}
-.cell-actual-pct{font-size:9px;font-family:var(--mono);padding:1px 5px;border-radius:4px}
-.cell-mini-bar{height:2px;border-radius:1px;margin-top:3px;max-width:80px}
+/* REPORT */
+.report-co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.report-amu-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px}
+.rep-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.rep-card-hdr{padding:.75rem 1.25rem;border-bottom:.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.rep-kpi{padding:1rem 1.25rem;border-bottom:.5px solid var(--border)}
+.rep-procs{padding:1rem 1.25rem}
+.rep-proc-row{padding:7px 0;border-bottom:.5px solid var(--border)}
+.rep-proc-row:last-child{border-bottom:none}
 
-/* row coloring by session */
-.row-am-nei td .cell-inner{background:#F0F6FF}
-.row-pm-nei td .cell-inner{background:#F5F2FF}
-.row-am-vmm td .cell-inner{background:#F5F2FF}
-.row-pm-vmm td .cell-inner{background:#F0F6FF}
-.row-break td{background:#FAFAF8}.row-break .time-cell{background:#FAFAF8}
+/* SETTINGS */
+.settings-wrap{max-width:900px}
+.settings-section{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem}
+.settings-section-title{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
+.proc-row-s{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:.5px solid var(--border)}
+.proc-row-s:last-child{border-bottom:none}
+.proc-row-s-name{font-size:12px;color:var(--text);display:flex;align-items:center;gap:5px}
+.proc-row-s-inputs{display:flex;gap:8px;align-items:center}
+.s-inp{width:60px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:3px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none}
+.s-inp-label{font-size:9px;color:var(--text-3)}
+.save-btn{width:100%;padding:11px;font-size:13px;font-family:var(--sans);font-weight:500;border:none;border-radius:var(--radius-lg);background:var(--text);color:#fff;cursor:pointer;margin-top:1rem}
+.save-confirm{font-size:12px;color:var(--ok);text-align:center;margin-top:8px;display:none}
 
-/* NOW row — warm highlight */
-.row-now td .cell-inner{background:#FFFBEB!important;border-top:.5px solid #FCD34D;border-bottom:.5px solid #FCD34D}
-.row-now .time-cell{background:#FFFBEB;border-top:.5px solid #FCD34D;border-bottom:.5px solid #FCD34D}
-
-/* RAG cell backgrounds */
-.cell-green .cell-inner{background:#F0FDF4!important}
-.cell-amber .cell-inner{background:#FFFBEB!important}
-.cell-red   .cell-inner{background:#FEF2F2!important}
-.cell-green .cell-actual-val{color:#166534}
-.cell-amber .cell-actual-val{color:#92400E}
-.cell-red   .cell-actual-val{color:#991B1B}
-.cell-green .cell-actual-pct{background:#DCFCE7;color:#166534}
-.cell-amber .cell-actual-pct{background:#FEF3C7;color:#92400E}
-.cell-red   .cell-actual-pct{background:#FEE2E2;color:#991B1B}
-
-/* total row */
-.row-total td{background:var(--bg);border-top:1.5px solid var(--border-md)}
-.row-total .cell-inner{height:48px;background:var(--bg)!important}
-.cell-total-cap{font-size:13px;font-weight:500;font-family:var(--mono);color:var(--text)}
-.cell-total-act{font-size:11px;font-family:var(--mono);color:#1D9E75;margin-top:2px}
-
-.sched-col-title{font-size:11px;font-weight:500;margin-bottom:8px;padding:4px 10px;border-radius:6px;display:inline-flex;align-items:center;gap:6px}
-.sched-col-title.nei{background:var(--nei-lt);color:var(--nei-dk)}
-.sched-col-title.vmm{background:var(--vmm-lt);color:var(--vmm-dk)}
-.sched-legend{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
-.sleg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-3)}
-.sleg-sq{width:10px;height:10px;border-radius:2px}
+.no-data{display:flex;align-items:center;justify-content:center;height:30vh;color:var(--text-3);font-size:12px;font-family:var(--mono)}
 </style>
 </head>
 <body>
 
 <div class="nav">
   <span class="nav-title">Warehouse Ops</span>
-  <button class="nav-tab active" onclick="switchTab('daily')">Today</button>
+  <button class="nav-tab active" onclick="switchTab('today')">Today</button>
   <div class="nav-sep"></div>
-  <button class="nav-tab nei" onclick="switchTab('dash-nei')">NEI Dashboard</button>
-  <button class="nav-tab vmm" onclick="switchTab('dash-vmm')">VMM Dashboard</button>
+  <button class="nav-tab nei" onclick="switchTab('dash-nei')">NEI</button>
+  <button class="nav-tab amu" onclick="switchTab('dash-amu')">AMU</button>
+  <button class="nav-tab vmm" onclick="switchTab('dash-vmm')">VMM</button>
   <div class="nav-sep"></div>
+  <button class="nav-tab" onclick="switchTab('report')">📋 Report</button>
   <button class="nav-tab" onclick="switchTab('schedule')">Schedule</button>
-  <button class="nav-settings-btn" onclick="switchTab('settings')" title="Settings">⚙ Settings</button>
+  <button class="nav-settings-btn" onclick="switchTab('settings')">⚙ Settings</button>
   <div class="nav-ist"><div class="ist-dot"></div><span id="navIST">IST --:--</span></div>
 </div>
 
-<!-- ══ DAILY INPUT ══ -->
-<div class="screen active" id="screen-daily">
-  <div class="daily-wrap">
-    <div class="daily-header">
-      <div class="daily-title">Good morning 👋</div>
-      <div class="daily-date" id="dailyDate"></div>
-      <div class="daily-sub" style="margin-top:6px">Enter today's targets and headcount to start.</div>
+<!-- TODAY -->
+<div class="screen active" id="screen-today">
+  <div class="today-wrap">
+    <div class="today-header">
+      <div class="today-title">Good morning 👋</div>
+      <div class="today-date" id="todayDate"></div>
     </div>
 
-    <div id="noSettingsWarn" class="no-settings-warn" style="display:none">
-      ⚠ UPH/PPH baseline not set. <a onclick="switchTab('settings')">Go to Settings</a> to configure process baselines first.
-    </div>
+    <!-- NEI Sellers -->
+    <div class="sec-label">NEI — B2C (by Seller)</div>
+    <div id="nei-sellers-today"></div>
 
-    <div class="sec-label" style="margin-bottom:10px">Today's Target</div>
-    <div class="two-col" style="margin-bottom:1.25rem">
-
-      <!-- NEI targets -->
-      <div class="order-card" style="padding:1.25rem 1.5rem">
-        <div class="oc-label nei-lbl" style="margin-bottom:12px"><span class="co-badge" style="background:var(--nei-lt);color:var(--nei-dk)">NEI</span> B2C</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-          <div style="background:var(--bg);border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid var(--border)">
-            <div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Pick Items</div>
-            <input class="oc-input" type="number" id="d-nei-pick-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit">items</div>
-          </div>
-          <div style="background:var(--bg);border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid var(--border)">
-            <div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Pack Target</div>
-            <input class="oc-input" type="number" id="d-nei-pack-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit">orders</div>
-          </div>
-          <div style="background:#EFF6FF;border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid #BFDBFE">
-            <div style="font-size:10px;color:var(--nei);margin-bottom:4px;font-weight:500">Dispatch Target ★</div>
-            <input class="oc-input" type="number" id="d-nei-dispatch-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit" style="color:var(--nei)">dispatched</div>
-          </div>
+    <!-- AMU -->
+    <div class="sec-label" style="margin-top:1.25rem">AMU — Amazon Multichannel</div>
+    <div class="seller-section">
+      <div class="seller-header">
+        <span class="badge" style="background:var(--amu-lt);color:var(--amu-dk)">AMU</span>
+        <span class="seller-name" style="color:var(--amu)">Amazon Multichannel</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <label style="font-size:11px;color:var(--text-2)">H/C</label>
+          <input class="hc-inp" type="number" id="amu-hc" placeholder="0" min="0">
         </div>
       </div>
+      <table class="seller-table">
+        <thead><tr>
+          <th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>Pick Items</td><td><input class="t-inp" id="amu-pick-am" type="number" placeholder="0" oninput="calcTotal('amu-pick')"></td><td><input class="t-inp" id="amu-pick-pm" type="number" placeholder="0" oninput="calcTotal('amu-pick')"></td><td><span class="t-total" id="amu-pick-total">—</span></td></tr>
+          <tr><td>Pack S/O</td><td><input class="t-inp" id="amu-so-am" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><input class="t-inp" id="amu-so-pm" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><span class="t-total" id="amu-so-total">—</span></td></tr>
+          <tr><td>Pack M/O</td><td><input class="t-inp" id="amu-mo-am" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><input class="t-inp" id="amu-mo-pm" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><span class="t-total" id="amu-mo-total">—</span></td></tr>
+          <tr><td>Dispatch ★</td><td><input class="t-inp" id="amu-disp-am" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><input class="t-inp" id="amu-disp-pm" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><span class="t-total" id="amu-disp-total">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
 
-      <!-- VMM targets -->
-      <div class="order-card" style="padding:1.25rem 1.5rem">
-        <div class="oc-label vmm-lbl" style="margin-bottom:12px"><span class="co-badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">VMM</span> Multichannel</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-          <div style="background:var(--bg);border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid var(--border)">
-            <div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Pick Items</div>
-            <input class="oc-input" type="number" id="d-vmm-pick-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit">items</div>
-          </div>
-          <div style="background:var(--bg);border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid var(--border)">
-            <div style="font-size:10px;color:var(--text-3);margin-bottom:4px">Pack Target</div>
-            <input class="oc-input" type="number" id="d-vmm-pack-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit">orders</div>
-          </div>
-          <div style="background:#F5F3FF;border-radius:var(--radius);padding:.75rem 1rem;border:.5px solid #DDD6FE">
-            <div style="font-size:10px;color:var(--vmm);margin-bottom:4px;font-weight:500">Dispatch Target ★</div>
-            <input class="oc-input" type="number" id="d-vmm-dispatch-tgt" placeholder="0" min="0" style="font-size:20px">
-            <div class="oc-unit" style="color:var(--vmm)">dispatched</div>
-          </div>
-        </div>
+    <!-- VMM -->
+    <div class="sec-label" style="margin-top:1.25rem">VMM — Multichannel Operations</div>
+    <div class="vmm-today-grid">
+      <div class="vmm-proc-block">
+        <div class="vmm-proc-title"><span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">Label</span> Label Machine</div>
+        <div class="vmm-row"><label>H/C</label><input class="hc-inp" id="vmm-lbl-hc" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>UPH/person</label><input class="hc-inp" id="vmm-lbl-uph" type="number" placeholder="30"></div>
+        <div class="vmm-row"><label>AM Target</label><input class="hc-inp" id="vmm-lbl-am" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>PM Target</label><input class="hc-inp" id="vmm-lbl-pm" type="number" placeholder="0"></div>
+      </div>
+      <div class="vmm-proc-block">
+        <div class="vmm-proc-title"><span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">Box</span> Box Machine</div>
+        <div class="vmm-row"><label>H/C</label><input class="hc-inp" id="vmm-box-hc" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>UPH/person</label><input class="hc-inp" id="vmm-box-uph" type="number" placeholder="30"></div>
+        <div class="vmm-row"><label>AM Target</label><input class="hc-inp" id="vmm-box-am" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>PM Target</label><input class="hc-inp" id="vmm-box-pm" type="number" placeholder="0"></div>
+      </div>
+      <div class="vmm-proc-block">
+        <div class="vmm-proc-title"><span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">Inbound</span></div>
+        <div class="vmm-row"><label>EA Target</label><input class="hc-inp" id="vmm-in-ea" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>Carton Target</label><input class="hc-inp" id="vmm-in-ctn" type="number" placeholder="0"></div>
+      </div>
+      <div class="vmm-proc-block">
+        <div class="vmm-proc-title"><span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">Outbound</span></div>
+        <div class="vmm-row"><label>EA Target</label><input class="hc-inp" id="vmm-out-ea" type="number" placeholder="0"></div>
+        <div class="vmm-row"><label>Carton Target</label><input class="hc-inp" id="vmm-out-ctn" type="number" placeholder="0"></div>
+      </div>
+      <div class="vmm-proc-block">
+        <div class="vmm-proc-title"><span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">Materials</span></div>
+        <div class="vmm-row"><label>Headcount</label><input class="hc-inp" id="vmm-mat-hc" type="number" placeholder="0"></div>
       </div>
     </div>
 
-    <div class="hc-section">
-      <div class="hc-title">Today's Headcount</div>
-      <div class="hc-grid">
-        <div class="hc-block">
-          <div class="hc-block-title" style="color:var(--nei)">NEI — B2C</div>
-          <div class="hc-rows" id="nei-hc-rows"></div>
-        </div>
-        <div class="hc-block">
-          <div class="hc-block-title" style="color:var(--vmm)">VMM — Multichannel</div>
-          <div class="hc-rows" id="vmm-hc-rows"></div>
-        </div>
-      </div>
+    <div style="margin-top:1.25rem">
+      <button class="btn-primary" onclick="applyToday()">Start Today's Operations →</button>
+      <div style="font-size:11px;color:var(--text-3);text-align:center;margin-top:6px">UPH/PPH baselines loaded from <a onclick="switchTab('settings')" style="color:var(--nei);cursor:pointer">Settings</a></div>
     </div>
-
-    <div class="ratio-block">
-      <div class="ratio-label">AM : PM split</div>
-      <div class="ratio-inputs">
-        <input class="ratio-input" type="number" id="d-amr" value="60" min="0" max="100" oninput="document.getElementById('d-pmr').value=Math.max(0,100-+this.value)">
-        <span class="ratio-sep">:</span>
-        <input class="ratio-input" type="number" id="d-pmr" value="40" min="0" max="100" oninput="document.getElementById('d-amr').value=Math.max(0,100-+this.value)">
-      </div>
-      <div class="ratio-desc">of daily target</div>
-    </div>
-
-    <button class="apply-btn" onclick="applyDaily()">Start Today's Operations →</button>
-    <div class="settings-hint">UPH/PPH baselines are loaded from <a onclick="switchTab('settings')">Settings</a></div>
-  </div>
-</div>
-
-<!-- ══ SETTINGS ══ -->
-<div class="screen" id="screen-settings">
-  <div class="settings-wrap">
-    <div class="settings-header">
-      <div>
-        <div class="settings-title">Settings</div>
-        <div class="settings-sub">UPH/PPH baselines and shift times — set once, saved automatically.</div>
-      </div>
-      <div class="settings-saved" id="settingsSavedTxt"></div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">Shift Times</div>
-      <div class="sg">
-        <div class="sib"><label>Start Time (IST)</label><input type="text" id="s-start" value="09:00"></div>
-        <div class="sib"><label>End Time (IST)</label><input type="text" id="s-end" value="18:00"></div>
-        <div class="sib"><label>Lunch Break</label><input type="text" id="s-lunch" value="13:00–13:45" readonly style="color:var(--text-3)"></div>
-        <div class="sib"><label>Tea Break</label><input type="text" id="s-tea" value="16:00–16:15" readonly style="color:var(--text-3)"></div>
-      </div>
-    </div>
-
-    <div class="settings-section">
-      <div class="settings-section-title">Process Baselines (UPH / PPH per person)</div>
-      <div class="proc-settings-grid">
-        <div class="proc-co-block">
-          <div class="proc-co-title nei-co"><span style="background:var(--nei-lt);color:var(--nei-dk);padding:2px 8px;border-radius:20px;font-size:10px">NEI</span> B2C</div>
-          <div id="nei-proc-settings"></div>
-        </div>
-        <div class="proc-co-block">
-          <div class="proc-co-title vmm-co"><span style="background:var(--vmm-lt);color:var(--vmm-dk);padding:2px 8px;border-radius:20px;font-size:10px">VMM</span> Multichannel</div>
-          <div id="vmm-proc-settings"></div>
-        </div>
-      </div>
-    </div>
-
-    <button class="save-settings-btn" onclick="saveSettings()">Save Settings</button>
-    <div class="save-confirm" id="saveConfirm">✓ Settings saved</div>
   </div>
 </div>
 
 <!-- NEI DASHBOARD -->
 <div class="screen dash-screen nei-dash" id="screen-dash-nei">
   <div class="dash-top">
-    <div><div class="dash-eyebrow">NEI · B2C Operations</div><div class="dash-shift-label" id="nei-shiftLabel">—</div></div>
-    <div style="text-align:right">
-      <div class="dash-clock" id="nei-dashClock">--:--</div>
-      <div class="dash-clock-sub" id="nei-dashClockSub"></div>
-      <div class="last-updated" id="nei-lastUpdated">—</div>
-    </div>
+    <div><div class="dash-eyebrow">NEI · B2C Operations</div><div style="font-size:12px;color:var(--text-2);font-family:var(--mono)" id="nei-session">—</div></div>
+    <div style="text-align:right"><div class="dash-clock" id="nei-clock">--:--</div><div class="dash-sub" id="nei-sub"></div><div style="font-size:9px;color:var(--text-3);font-family:var(--mono);text-align:right;margin-top:2px" id="nei-updated">—</div></div>
   </div>
-  <div id="nei-timeline"></div>
-  <div id="nei-dashMain"><div class="no-data-dark">Enter today's targets in the Today tab first.</div></div>
+  <div id="nei-timeline-bar"></div>
+  <div id="nei-dashMain"><div class="no-data">Enter today's targets first.</div></div>
+</div>
+
+<!-- AMU DASHBOARD -->
+<div class="screen dash-screen amu-dash" id="screen-dash-amu">
+  <div class="dash-top">
+    <div><div class="dash-eyebrow">AMU · Amazon Multichannel</div><div style="font-size:12px;color:var(--text-2);font-family:var(--mono)" id="amu-session">—</div></div>
+    <div style="text-align:right"><div class="dash-clock" id="amu-clock">--:--</div><div class="dash-sub" id="amu-sub"></div><div style="font-size:9px;color:var(--text-3);font-family:var(--mono);text-align:right;margin-top:2px" id="amu-updated">—</div></div>
+  </div>
+  <div id="amu-timeline-bar"></div>
+  <div id="amu-dashMain"><div class="no-data">Enter today's targets first.</div></div>
 </div>
 
 <!-- VMM DASHBOARD -->
 <div class="screen dash-screen vmm-dash" id="screen-dash-vmm">
   <div class="dash-top">
-    <div><div class="dash-eyebrow">VMM · Multichannel Operations</div><div class="dash-shift-label" id="vmm-shiftLabel">—</div></div>
-    <div style="text-align:right">
-      <div class="dash-clock" id="vmm-dashClock">--:--</div>
-      <div class="dash-clock-sub" id="vmm-dashClockSub"></div>
-      <div class="last-updated" id="vmm-lastUpdated">—</div>
+    <div><div class="dash-eyebrow">VMM · Multichannel Operations</div><div style="font-size:12px;color:var(--text-2);font-family:var(--mono)" id="vmm-session">—</div></div>
+    <div style="text-align:right"><div class="dash-clock" id="vmm-clock">--:--</div><div class="dash-sub" id="vmm-sub"></div><div style="font-size:9px;color:var(--text-3);font-family:var(--mono);text-align:right;margin-top:2px" id="vmm-updated">—</div></div>
+  </div>
+  <div id="vmm-timeline-bar"></div>
+  <div id="vmm-dashMain"><div class="no-data">Enter today's targets first.</div></div>
+</div>
+
+<!-- REPORT -->
+<div class="screen" id="screen-report">
+  <div style="max-width:1100px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <div><div style="font-size:18px;font-weight:500;letter-spacing:-.02em">📋 Shift End Report</div><div style="font-size:12px;color:var(--text-3);margin-top:3px" id="report-date"></div></div>
+      <div style="display:flex;gap:8px">
+        <button onclick="generateReport()" class="btn-primary" style="width:auto;padding:8px 18px">Generate</button>
+        <button onclick="copyReportText()" id="copy-btn" class="btn-ghost" style="display:none">Copy Text</button>
+      </div>
+    </div>
+    <div id="report-empty" style="color:var(--text-3);font-size:13px">Enter today's targets and actuals, then click Generate.</div>
+    <div id="report-body" style="display:none">
+      <div id="report-reason-section" style="margin-bottom:16px;display:none">
+        <div class="sec-label" style="margin-bottom:8px">Shortfall Reasons</div>
+        <div id="report-reasons"></div>
+      </div>
+      <div id="report-cards"></div>
+      <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:12px">
+        <div class="sec-label" style="margin-bottom:8px">Text Preview (Slack)</div>
+        <pre id="report-text" style="font-family:var(--mono);font-size:11px;line-height:1.7;white-space:pre-wrap;color:var(--text)"></pre>
+      </div>
     </div>
   </div>
-  <div id="vmm-timeline"></div>
-  <div id="vmm-dashMain"><div class="no-data-dark">Enter today's targets in the Today tab first.</div></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="screen" id="screen-settings">
+  <div class="settings-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+      <div><div style="font-size:18px;font-weight:500">Settings</div><div style="font-size:12px;color:var(--text-3);margin-top:3px">UPH/PPH baselines — saved automatically</div></div>
+      <span style="font-size:11px;font-family:var(--mono);color:var(--ok)" id="settings-saved-txt"></span>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">Shift Times</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        <div><div class="s-inp-label">Start</div><input class="s-inp" style="width:100%" id="s-start" value="09:00"></div>
+        <div><div class="s-inp-label">End</div><input class="s-inp" style="width:100%" id="s-end" value="18:00"></div>
+        <div><div class="s-inp-label">Lunch</div><input class="s-inp" style="width:100%;color:var(--text-3)" value="13:00–13:45" readonly></div>
+        <div><div class="s-inp-label">Tea</div><input class="s-inp" style="width:100%;color:var(--text-3)" value="16:00–16:15" readonly></div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">NEI / AMU — Process Baselines</div>
+      <div id="nei-amu-settings"></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">VMM — Process Baselines</div>
+      <div id="vmm-settings"></div>
+    </div>
+
+    <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+    <div class="save-confirm" id="save-confirm">✓ Saved</div>
+  </div>
 </div>
 
 <!-- SCHEDULE -->
 <div class="screen" id="screen-schedule">
-  <div class="sec-label" style="margin-bottom:4px">Daily Schedule</div>
-  <div class="sched-note" id="schedNote">Enter today's targets in the Today tab first.</div>
-  <div class="sched-two" id="schedBody"><div></div><div></div></div>
+  <div style="max-width:1400px">
+    <div style="font-size:18px;font-weight:500;letter-spacing:-.02em;margin-bottom:4px">Daily Schedule</div>
+    <div style="font-size:12px;color:var(--text-3);font-family:var(--mono);margin-bottom:1.25rem" id="sched-note">Enter today's targets first.</div>
+    <div id="sched-body"></div>
+  </div>
 </div>
 
 <script>
-/* IST */
-function getIST(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+5.5*3600000)}
-function fmtIST(d){return pad(d.getHours())+':'+pad(d.getMinutes())}
-function getISTMin(){const d=getIST();return d.getHours()*60+d.getMinutes()}
-function pad(n){return String(n).padStart(2,'0')}
-function fmtM(m){return pad(Math.floor(m/60))+':'+pad(m%60)}
+/* ── IST helpers ── */
+function getIST(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+5.5*3600000);}
+function fmtIST(d){return pad(d.getHours())+':'+pad(d.getMinutes());}
+function getISTMin(){const d=getIST();return d.getHours()*60+d.getMinutes();}
+function pad(n){return String(n).padStart(2,'0');}
+function fmtM(m){return pad(Math.floor(m/60))+':'+pad(m%60);}
+function vn(id){const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;}
+function sv(id,v){const el=document.getElementById(id);if(el)el.value=v;}
+function parseTime(s){const p=(s||'09:00').split(':');return parseInt(p[0])*60+parseInt(p[1]||0);}
 
 const BREAKS=[{s:13*60,e:13*60+45,label:'Lunch'},{s:16*60,e:16*60+15,label:'Tea'}];
-function isBreak(m){return BREAKS.some(b=>m>=b.s&&m<b.e)}
-function breakAt(m){return BREAKS.find(b=>m>=b.s&&m<b.e)||null}
-function workMins(a,b){let w=0;for(let m=a;m<b;m++)if(!isBreak(m))w++;return w}
+function isBreak(m){return BREAKS.some(b=>m>=b.s&&m<b.e);}
+function workMins(a,b){let w=0;for(let m=a;m<b;m++)if(!isBreak(m))w++;return w;}
 
-/* PROC DEFINITIONS */
-const NEI_PROCS=[
-  {key:'pick',name:'Picking',   unit:'IPH',cumId:'nei-pick-cum',color:'#2563EB',nc:'#1E40AF',defUph:32},
-  {key:'pack',name:'Packing',   unit:'PPH',cumId:'nei-pack-cum',color:'#1D9E75',nc:'#0F6E56',defUph:39},
-  {key:'lbl', name:'Labeling',  unit:'UPH',cumId:'nei-lbl-cum', color:'#60A5FA',nc:'#1E3A8A',defUph:30},
-  {key:'box', name:'Box Making',unit:'UPH',cumId:'nei-box-cum', color:'#A78BFA',nc:'#4C1D95',defUph:50},
-];
-const VMM_PROCS=[
-  {key:'pick',name:'Picking',      unit:'IPH',cumId:'vmm-pick-cum',color:'#7C3AED',nc:'#4C1D95',defUph:13},
-  {key:'pack',name:'Packing',      unit:'PPH',cumId:'vmm-pack-cum',color:'#1D9E75',nc:'#0F6E56',defUph:13},
-  {key:'box', name:'Box/Hexa/Foam',unit:'UPH',cumId:'vmm-box-cum', color:'#A78BFA',nc:'#4C1D95',defUph:30},
+/* ── SELLERS ── */
+const NEI_SELLERS=[
+  {id:'nei',name:'NEI',color:'#1E3A8A',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'hann',name:'HANN',color:'#1D4ED8',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'kmorbi',name:'KMORBI',color:'#2563EB',bg:'#EFF6FF',border:'#BFDBFE'},
 ];
 
+/* ── SETTINGS KEY ── */
+const SKEY='wh-ops-v9-settings';
+const DKEY_PREFIX='wh-ops-v9-daily-';
+function getDailyKey(){const d=getIST();return DKEY_PREFIX+d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function loadSettings(){try{return JSON.parse(localStorage.getItem(SKEY))||{};}catch{return {};}}
+function loadDaily(){try{return JSON.parse(localStorage.getItem(getDailyKey()))||{};}catch{return {};}}
+function saveDaily(data){try{localStorage.setItem(getDailyKey(),JSON.stringify(data));}catch{}}
+
+/* ── STATE ── */
 let STATE=null;
-let LAST_UPDATE={nei:null,vmm:null};
-let QI_VIS={nei:true,vmm:true};
+let LAST_UPDATE={nei:null,amu:null,vmm:null};
+let ACT_VIS={nei:true,amu:true,vmm:true};
 
-/* SETTINGS — localStorage */
-const SKEY='wh-ops-settings';
-function loadSettings(){
-  try{return JSON.parse(localStorage.getItem(SKEY))||{};}catch{return{};}
-}
-function saveSettings(){
-  const cfg={
-    startTime:document.getElementById('s-start').value||'09:00',
-    endTime:document.getElementById('s-end').value||'18:00',
-    nei:{},vmm:{}
-  };
-  NEI_PROCS.forEach(p=>{cfg.nei[p.key]={uph:parseFloat(document.getElementById('s-nei-'+p.key).value)||p.defUph};});
-  VMM_PROCS.forEach(p=>{cfg.vmm[p.key]={uph:parseFloat(document.getElementById('s-vmm-'+p.key).value)||p.defUph};});
-  localStorage.setItem(SKEY,JSON.stringify(cfg));
-  document.getElementById('saveConfirm').style.display='block';
-  document.getElementById('settingsSavedTxt').textContent='✓ Saved';
-  setTimeout(()=>{document.getElementById('saveConfirm').style.display='none';},2000);
-  populateHCRows();
+/* ── BUILD TODAY NEI SELLERS ── */
+function buildNeiSellersToday(){
+  const container=document.getElementById('nei-sellers-today');
+  if(!container)return;
+  container.innerHTML=NEI_SELLERS.map(s=>`
+    <div class="seller-section" style="border-color:${s.border}">
+      <div class="seller-header">
+        <span class="badge" style="background:${s.bg};color:${s.color}">${s.name}</span>
+        <span class="seller-name" style="color:${s.color}">${s.name}</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <label style="font-size:11px;color:var(--text-2)">H/C</label>
+          <input class="hc-inp" type="number" id="${s.id}-hc" placeholder="0" min="0">
+        </div>
+      </div>
+      <table class="seller-table">
+        <thead><tr><th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Pick Items</td><td><input class="t-inp" id="${s.id}-pick-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-pick')"></td><td><input class="t-inp" id="${s.id}-pick-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-pick')"></td><td><span class="t-total" id="${s.id}-pick-total">—</span></td></tr>
+          <tr><td>Pack S/O</td><td><input class="t-inp" id="${s.id}-so-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-so')"></td><td><input class="t-inp" id="${s.id}-so-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-so')"></td><td><span class="t-total" id="${s.id}-so-total">—</span></td></tr>
+          <tr><td>Pack M/O</td><td><input class="t-inp" id="${s.id}-mo-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-mo')"></td><td><input class="t-inp" id="${s.id}-mo-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-mo')"></td><td><span class="t-total" id="${s.id}-mo-total">—</span></td></tr>
+          <tr><td>Dispatch ★</td><td><input class="t-inp" id="${s.id}-disp-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-disp')"></td><td><input class="t-inp" id="${s.id}-disp-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-disp')"></td><td><span class="t-total" id="${s.id}-disp-total">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>`).join('');
 }
 
-function getUph(co,key){
+function calcTotal(prefix){
+  const am=vn(prefix+'-am')||0, pm=vn(prefix+'-pm')||0;
+  const el=document.getElementById(prefix+'-total');
+  if(el) el.textContent=(am+pm)>0?(am+pm).toLocaleString():'—';
+}
+
+/* ── APPLY TODAY ── */
+function applyToday(){
   const cfg=loadSettings();
-  if(cfg[co]&&cfg[co][key]) return cfg[co][key].uph;
-  // fallback to default values without reading DOM
-  return (co==='nei'?NEI_PROCS:VMM_PROCS).find(p=>p.key===key)?.defUph||0;
-}
-function getShift(){
-  const cfg=loadSettings();
-  return{startMin:parseTime(cfg.startTime||'09:00'),endMin:parseTime(cfg.endTime||'18:00')};
-}
-function parseTime(s){const p=(s||'09:00').split(':');return parseInt(p[0])*60+parseInt(p[1]||0)}
-
-/* Build settings proc rows */
-function buildSettingsRows(){
-  const cfg=loadSettings();
-  if(cfg.startTime) document.getElementById('s-start').value=cfg.startTime;
-  if(cfg.endTime)   document.getElementById('s-end').value=cfg.endTime;
-  ['nei','vmm'].forEach(co=>{
-    const procs=co==='nei'?NEI_PROCS:VMM_PROCS;
-    const el=document.getElementById(co+'-proc-settings');
-    el.innerHTML=procs.map(p=>{
-      const saved=cfg[co]&&cfg[co][p.key]?cfg[co][p.key].uph:p.defUph;
-      const ubadge=p.unit==='PPH'?'pph-b':'uph-b';
-      return`<div class="proc-row">
-        <div class="proc-row-name">${p.name}<span class="hc-unit-badge ${ubadge}">${p.unit}</span></div>
-        <input class="proc-row-input" type="number" id="s-${co}-${p.key}" value="${saved}" min="1">
-      </div>`;
-    }).join('');
-  });
-  if(cfg.startTime||cfg.nei) document.getElementById('settingsSavedTxt').textContent='✓ Saved';
-}
-
-/* Build H/C rows on daily screen */
-function populateHCRows(){
-  ['nei','vmm'].forEach(co=>{
-    const procs=co==='nei'?NEI_PROCS:VMM_PROCS;
-    const el=document.getElementById(co+'-hc-rows');
-    if(!el)return;
-    el.innerHTML=procs.map(p=>{
-      const uph=getUph(co,p.key);
-      const ubadge=p.unit==='PPH'?'pph-b':'uph-b';
-      return`<div class="hc-row">
-        <div class="hc-row-label">${p.name} <span class="hc-unit-badge ${ubadge}">${p.unit} ${uph}/h</span></div>
-        <input class="hc-row-input" type="number" id="d-${co}-${p.key}-hc" placeholder="0" min="0" value="">
-      </div>`;
-    }).join('');
-    console.log('HC rows for',co,':', el.innerHTML.length,'chars');
-  });
-}
-
-function switchTab(t){
-  ['daily','settings','dash-nei','dash-vmm','schedule'].forEach((s,i)=>{
-    document.getElementById('screen-'+s).classList.toggle('active',s===t);
-  });
-  document.querySelectorAll('.nav-tab').forEach((btn,i)=>{
-    btn.classList.toggle('active',['daily','dash-nei','dash-vmm','schedule'][i]===t);
-  });
-}
-
-function vn(id){const el=document.getElementById(id);return el?parseFloat(el.value)||0:0}
-
-function applyDaily(){
-  const neiPickTgt=vn('d-nei-pick-tgt');
-  const neiPackTgt=vn('d-nei-pack-tgt');
-  const neiDispatchTgt=vn('d-nei-dispatch-tgt');
-  const vmmPickTgt=vn('d-vmm-pick-tgt');
-  const vmmPackTgt=vn('d-vmm-pack-tgt');
-  const vmmDispatchTgt=vn('d-vmm-dispatch-tgt');
-
-  if(!neiPickTgt&&!neiPackTgt&&!neiDispatchTgt&&!vmmPickTgt&&!vmmPackTgt&&!vmmDispatchTgt){
-    alert('Please enter at least one target.');return;
-  }
-  const amr=vn('d-amr')||60;
-  const {startMin,endMin}=getShift();
+  const startMin=parseTime(cfg.startTime||'09:00');
+  const endMin=parseTime(cfg.endTime||'18:00');
   const totalWork=workMins(startMin,endMin);
 
-  // per-process targets
-  const neiTargets={pick:neiPickTgt,pack:neiPackTgt,lbl:neiPackTgt,box:neiPackTgt,dispatch:neiDispatchTgt};
-  const vmmTargets={pick:vmmPickTgt,pack:vmmPackTgt,box:vmmPackTgt,dispatch:vmmDispatchTgt};
+  // NEI sellers
+  const neiSellers=NEI_SELLERS.map(s=>({
+    id:s.id, name:s.name, color:s.color, bg:s.bg, border:s.border,
+    hc:vn(s.id+'-hc'),
+    pickAM:vn(s.id+'-pick-am'), pickPM:vn(s.id+'-pick-pm'),
+    soAM:vn(s.id+'-so-am'), soPM:vn(s.id+'-so-pm'),
+    moAM:vn(s.id+'-mo-am'), moPM:vn(s.id+'-mo-pm'),
+    dispAM:vn(s.id+'-disp-am'), dispPM:vn(s.id+'-disp-pm'),
+    uph:cfg.nei_pick_uph||36, pph:cfg.nei_pack_pph||35,
+    amAct:{}, pmAct:{}
+  }));
 
-  // overall reference = dispatch target (fallback to pack)
-  const neiTotal=neiDispatchTgt||neiPackTgt||neiPickTgt;
-  const vmmTotal=vmmDispatchTgt||vmmPackTgt||vmmPickTgt;
-  const neiAM=Math.round(neiTotal*amr/100),neiPM=neiTotal-neiAM;
-  const vmmAM=Math.round(vmmTotal*amr/100),vmmPM=vmmTotal-vmmAM;
-
-  function buildProcs(procs,co,targets){
-    return procs.map(p=>({
-      ...p,
-      pax:vn(`d-${co}-${p.key}-hc`),
-      uph:getUph(co,p.key),
-      target:targets[p.key]||0
-    }));
-  }
-
-  STATE={amr,startMin,endMin,totalWork,
-    neiProcs:buildProcs(NEI_PROCS,'nei',neiTargets),
-    vmmProcs:buildProcs(VMM_PROCS,'vmm',vmmTargets),
-    nei:{total:neiTotal,amQty:neiAM,pmQty:neiPM,
-         pickTgt:neiPickTgt,packTgt:neiPackTgt,dispatchTgt:neiDispatchTgt},
-    vmm:{total:vmmTotal,amQty:vmmAM,pmQty:vmmPM,
-         pickTgt:vmmPickTgt,packTgt:vmmPackTgt,dispatchTgt:vmmDispatchTgt}
+  // AMU
+  const amuData={
+    hc:vn('amu-hc'),
+    pickAM:vn('amu-pick-am'), pickPM:vn('amu-pick-pm'),
+    soAM:vn('amu-so-am'), soPM:vn('amu-so-pm'),
+    moAM:vn('amu-mo-am'), moPM:vn('amu-mo-pm'),
+    dispAM:vn('amu-disp-am'), dispPM:vn('amu-disp-pm'),
+    uph:cfg.amu_pick_uph||36, pph:cfg.amu_pack_pph||35,
+    amAct:{}, pmAct:{}
   };
 
-  // dispatch cumulative hidden inputs
-  ['nei','vmm'].forEach(co=>{
-    const procs=co==='nei'?STATE.neiProcs:STATE.vmmProcs;
-    procs.forEach(p=>{
-      if(!document.getElementById(p.cumId)){
-        const inp=document.createElement('input');
-        inp.type='number';inp.id=p.cumId;inp.value='0';inp.style.display='none';
-        document.body.appendChild(inp);
-      }
-    });
-    // dispatch cumulative input
-    const dispId=co+'-dispatch-cum';
-    if(!document.getElementById(dispId)){
-      const inp=document.createElement('input');
-      inp.type='number';inp.id=dispId;inp.value='0';inp.style.display='none';
-      document.body.appendChild(inp);
-    }
-  });
+  // VMM
+  const vmmData={
+    lbl:{hc:vn('vmm-lbl-hc'),uph:vn('vmm-lbl-uph')||cfg.vmm_lbl_uph||30,amTgt:vn('vmm-lbl-am'),pmTgt:vn('vmm-lbl-pm'),amAct:0,pmAct:0},
+    box:{hc:vn('vmm-box-hc'),uph:vn('vmm-box-uph')||cfg.vmm_box_uph||30,amTgt:vn('vmm-box-am'),pmTgt:vn('vmm-box-pm'),amAct:0,pmAct:0},
+    inbound:{eaTgt:vn('vmm-in-ea'),ctnTgt:vn('vmm-in-ctn'),eaAct:0,ctnAct:0},
+    outbound:{eaTgt:vn('vmm-out-ea'),ctnTgt:vn('vmm-out-ctn'),eaAct:0,ctnAct:0},
+    material:{hc:vn('vmm-mat-hc')}
+  };
 
+  STATE={startMin,endMin,totalWork,neiSellers,amu:amuData,vmm:vmmData};
+
+  // Reset built flags so panels rebuild with new data
+  ['amu-dashMain','nei-dashMain','vmm-dashMain'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) delete el.dataset.built;
+  });
+  const neiPanel=document.getElementById('nei-input-panel');
+  if(neiPanel) delete neiPanel.dataset.built;
+  const amuWrap=document.getElementById('amu-act-wrap');
+  if(amuWrap) delete amuWrap.dataset.built;
+
+  saveDaily({state:STATE});
   switchTab('dash-nei');
   refresh();
 }
 
-let _debounceTimer={nei:null,vmm:null};
-function onActualInput(co){
-  LAST_UPDATE[co]=new Date();
-  // sync hidden input value from QI card inputs
-  clearTimeout(_debounceTimer[co]);
-  _debounceTimer[co]=setTimeout(()=>{
-    // only rebuild schedule and pace chart — NOT the QI panel itself
-    buildSchedule();
-    const procs=co==='nei'?STATE.neiProcs:STATE.vmmProcs;
-    const accent=co==='nei'?'#3B82F6':'#8B5CF6';
-    const nowMin=getISTMin();
-    const coTotal=STATE[co].total;
-    requestAnimationFrame(()=>drawChart(co+'-pc',procs,coTotal,accent,nowMin));
-    // update banner + cards only (not QI)
-    updateDashPartial(co);
-  },400);
+/* ── SETTINGS ── */
+function buildSettings(){
+  const cfg=loadSettings();
+  if(cfg.startTime) sv('s-start',cfg.startTime);
+  if(cfg.endTime) sv('s-end',cfg.endTime);
+
+  document.getElementById('nei-amu-settings').innerHTML=`
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">NEI / HANN / KMORBI — Picking <span style="font-size:9px;background:#DBEAFE;color:#1E3A8A;padding:1px 6px;border-radius:8px">UPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-nei-pick" value="${cfg.nei_pick_uph||36}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">NEI / HANN / KMORBI — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-nei-pack" value="${cfg.nei_pack_pph||35}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">AMU — Picking <span style="font-size:9px;background:#CFFAFE;color:#164E63;padding:1px 6px;border-radius:8px">UPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-amu-pick" value="${cfg.amu_pick_uph||36}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">AMU — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-amu-pack" value="${cfg.amu_pack_pph||35}"></div>
+    </div>`;
+
+  document.getElementById('vmm-settings').innerHTML=`
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">Label Label Machine <span style="font-size:9px;background:#EDE9FE;color:#4C1D95;padding:1px 6px;border-radius:8px">UPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-vmm-lbl" value="${cfg.vmm_lbl_uph||30}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">Box Box Machine <span style="font-size:9px;background:#EDE9FE;color:#4C1D95;padding:1px 6px;border-radius:8px">UPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-vmm-box" value="${cfg.vmm_box_uph||30}"></div>
+    </div>`;
 }
 
-function updateDashPartial(co){
-  // lightweight update: banner, proc cards, pace text — no QI redraw
-  if(!STATE)return;
-  const procs=co==='nei'?STATE.neiProcs:STATE.vmmProcs;
-  const {startMin,endMin,totalWork}=STATE;
-  const {total:coTotal,amQty,pmQty}=STATE[co];
-  const nowMin=getISTMin();
-  const accent=co==='nei'?'#3B82F6':'#8B5CF6';
-  let ew=0;
-  for(let m=startMin;m<Math.min(nowMin,endMin);m++)if(!isBreak(m))ew++;
-  const elapsedHrs=ew/60;
-  const packProc=procs.find(p=>p.key==='pack')||procs[0];
-  const cumAct=vn(packProc.cumId);
-  const actRate=elapsedHrs>0?cumAct/elapsedHrs:0;
-  const projTotal=actRate>0?Math.round(actRate*(totalWork/60)):0;
-  const diff=projTotal-coTotal;
-  const overallPct=coTotal>0?Math.min(Math.round(cumAct/coTotal*100),100):0;
-  const bannerRag=ragClass(overallPct,cumAct>0);
-  const bannerColor=bannerRag==='rag-green'?'#6EE7B7':bannerRag==='rag-amber'?'#FCD34D':bannerRag==='rag-red'?'#FCA5A5':'#333';
-  let etaText='—',etaClass='eta-warn';
-  if(actRate>0){const r2=coTotal-cumAct;if(r2<=0){etaText='Done ✓';etaClass='eta-ok';}else{const etaMin=nowMin+(r2/actRate)*60;etaText=etaMin<=endMin?`~${fmtM(Math.round(etaMin))} IST`:`+${Math.round(etaMin-endMin)}m OT`;etaClass=etaMin<=endMin?'eta-ok':'eta-behind';}}
-  let paceText='No data yet';
-  if(actRate>0)paceText=diff>=0?`On track (+${diff.toLocaleString()})`:`Short ~${Math.abs(diff).toLocaleString()}`;
-  // update banner elements if they exist
-  const bannerEl=document.querySelector(`#screen-dash-${co} .top-banner`);
-  if(bannerEl){
-    const pctEl=bannerEl.querySelector('.banner-pct-num');
-    if(pctEl){pctEl.textContent=overallPct;pctEl.style.color=bannerColor;}
-    const valEl=bannerEl.querySelector('.banner-act-val');
-    if(valEl)valEl.textContent=cumAct.toLocaleString()+' / '+coTotal.toLocaleString();
-    const subEl=bannerEl.querySelector('.banner-sub');
-    if(subEl)subEl.textContent=paceText;
-    const etaEl=bannerEl.querySelector('.eta-big-val');
-    if(etaEl){etaEl.textContent=etaText;etaEl.className='eta-big-val '+etaClass;}
-  }
-  // update QI card progress bars without redrawing input fields
-  procs.forEach(p=>{
-    const act=vn(p.cumId);
-    const pct=coTotal>0?Math.min(Math.round(act/coTotal*100),100):0;
-    const rc=ragClass(pct,act>0);
-    const barColor=rc==='rag-green'?'#1D9E75':rc==='rag-amber'?'#BA7517':rc==='rag-red'?'#E24B4A':'#2A2A28';
-    // find card by input id proximity
-    const inp=document.querySelector(`.qi-cards input[oninput*="${p.cumId}"]`);
-    if(inp){
-      const card=inp.closest('.qi-card');
-      if(card){
-        const bar=card.querySelector('.qi-prog-bar');
-        if(bar){bar.style.width=pct+'%';bar.style.background=barColor;}
-        const pctTxt=card.querySelector('.qi-card-pct');
-        if(pctTxt&&act>0)pctTxt.innerHTML=`<span style="color:${barColor}">${pct}% of target (${act.toLocaleString()} / ${coTotal.toLocaleString()})</span>`;
-      }
-    }
+function saveSettings(){
+  const cfg={
+    startTime:document.getElementById('s-start').value||'09:00',
+    endTime:document.getElementById('s-end').value||'18:00',
+    nei_pick_uph:vn('s-nei-pick')||36,
+    nei_pack_pph:vn('s-nei-pack')||35,
+    amu_pick_uph:vn('s-amu-pick')||36,
+    amu_pack_pph:vn('s-amu-pack')||35,
+    vmm_lbl_uph:vn('s-vmm-lbl')||30,
+    vmm_box_uph:vn('s-vmm-box')||30,
+  };
+  localStorage.setItem(SKEY,JSON.stringify(cfg));
+  document.getElementById('save-confirm').style.display='block';
+  document.getElementById('settings-saved-txt').textContent='✓ Saved';
+  setTimeout(()=>document.getElementById('save-confirm').style.display='none',2000);
+}
+
+/* ── SWITCH TAB ── */
+const TABS=['today','dash-nei','dash-amu','dash-vmm','report','schedule','settings'];
+function switchTab(t){
+  TABS.forEach(s=>document.getElementById('screen-'+s).classList.toggle('active',s===t));
+  document.querySelectorAll('.nav-tab').forEach((btn,i)=>{
+    btn.classList.toggle('active',['today','dash-nei','dash-amu','dash-vmm','report','schedule'][i]===t);
   });
-  // update last updated
-  const lu=LAST_UPDATE[co];
-  const luEl=document.getElementById(co+'-lastUpdated');
-  if(luEl&&lu){const d=Math.round((new Date()-lu)/60000);luEl.textContent=d===0?'Updated just now':`Updated ${d}m ago`;}
+  if(t==='report') initReport();
+  if(t==='schedule') buildSchedule();
 }
 
-function ragClass(pct,hasData){
-  if(!hasData) return 'rag-idle';
-  if(pct>=90) return 'rag-green';
-  if(pct>=60) return 'rag-amber';
-  return 'rag-red';
-}
-
-function updateDash(co){
-  if(!STATE)return;
-  const procs=co==='nei'?STATE.neiProcs:STATE.vmmProcs;
-  const {startMin,endMin,totalWork}=STATE;
-  const {total:coTotal,amQty,pmQty}=STATE[co];
+/* ── TIMELINE BAR ── */
+function renderTimeline(containerId,amCls,pmCls){
+  if(!STATE) return;
+  const {startMin,endMin}=STATE;
   const nowMin=getISTMin();
-  const accent=co==='nei'?'#3B82F6':'#8B5CF6';
-
-  let ew=0;
-  for(let m=startMin;m<Math.min(nowMin,endMin);m++)if(!isBreak(m))ew++;
-  const elapsedHrs=ew/60;
-  const elapsedPct=totalWork>0?Math.min(Math.round(ew/totalWork*100),100):0;
-
-  const brk=breakAt(nowMin);
-  let sl='Shift not started';
-  if(nowMin>=endMin)sl='Shift ended';
-  else if(brk)sl=`${brk.label} in progress`;
-  else if(nowMin>=startMin&&nowMin<13*60)sl='AM Session';
-  else if(nowMin>=13*60+45)sl='PM Session';
-  document.getElementById(co+'-shiftLabel').textContent=sl;
-
-  const lu=LAST_UPDATE[co];
-  const luEl=document.getElementById(co+'-lastUpdated');
-  if(lu){const d=Math.round((new Date()-lu)/60000);luEl.textContent=d===0?'Updated just now':`Updated ${d}m ago`;}
-  else luEl.textContent='No actuals entered yet';
-
-  // timeline
   const span=endMin-startMin;
-  let segs=[];let cur=startMin;
+  let segs=[],cur=startMin;
   while(cur<endMin){
     const b=BREAKS.find(x=>x.s===cur);
-    if(b){segs.push({from:cur,to:b.e,type:'brk'});cur=b.e;}
+    if(b){segs.push({from:cur,to:b.e,brk:true,label:b.label});cur=b.e;}
     else{const nb=BREAKS.find(x=>x.s>cur&&x.s<endMin);const se=nb?nb.s:endMin;
-      segs.push({from:cur,to:se,type:'work',session:cur<13*60?'am':'pm'});cur=se;}
+      segs.push({from:cur,to:se,brk:false,am:cur<13*60});cur=se;}
   }
-  const barHTML=segs.map(s=>{
+  const bar=segs.map(s=>{
     const w=((s.to-s.from)/span*100).toFixed(2)+'%';const past=nowMin>=s.to;
-    if(s.type==='brk')return`<div class="stl-seg brk${past?' past':''}" style="width:${w};flex-shrink:0"></div>`;
-    return`<div class="stl-seg wk-${s.session}-${co}${past?' past':''}" style="width:${w};flex-shrink:0">${s.session.toUpperCase()}</div>`;
+    if(s.brk) return`<div class="stl-seg brk${past?' past':''}" style="width:${w};flex-shrink:0">${s.label}</div>`;
+    return`<div class="stl-seg ${s.am?amCls:pmCls}${past?' past':''}" style="width:${w};flex-shrink:0">${s.am?'AM':'PM'}</div>`;
   }).join('');
   const rem=Math.max(endMin-nowMin,0);
-  document.getElementById(co+'-timeline').innerHTML=`
-    <div class="stl-bar">${barHTML}</div>
+  document.getElementById(containerId).innerHTML=`
+    <div class="stl-bar">${bar}</div>
     <div class="stl-labels"><span>${fmtM(startMin)} IST</span><span>${rem>0?Math.floor(rem/60)+'h '+rem%60+'m left':'Ended'}</span><span>${fmtM(endMin)} IST</span></div>`;
-
-  // dispatch as primary KPI
-  const packProc=procs.find(p=>p.key==='pack')||procs[0];
-  const cumAct=vn(packProc.cumId);
-  const actRate=elapsedHrs>0&&cumAct>0?cumAct/elapsedHrs:0;
-
-  const dispatchTgt=STATE[co].dispatchTgt||coTotal;
-  const dispatchCum=vn(co+'-dispatch-cum');
-  const dispatchPct=dispatchTgt>0?Math.min(Math.round(dispatchCum/dispatchTgt*100),100):0;
-  const dispatchRag=ragClass(dispatchPct,dispatchCum>0);
-  const bannerColor=dispatchRag==='rag-green'?'#1D9E75':dispatchRag==='rag-amber'?'#BA7517':dispatchRag==='rag-red'?'#E24B4A':'#9A9A94';
-
-  // ETA based on dispatch rate
-  const dispatchRate=elapsedHrs>0&&dispatchCum>0?dispatchCum/elapsedHrs:actRate;
-  const dispatchDiff=dispatchRate>0?Math.round(dispatchRate*(totalWork/60))-dispatchTgt:0;
-  let etaText='—',etaClass='eta-warn';
-  if(dispatchRate>0){
-    const r2=dispatchTgt-dispatchCum;
-    if(r2<=0){etaText='Done ✓';etaClass='eta-ok';}
-    else{const etaMin=nowMin+(r2/dispatchRate)*60;
-      etaText=etaMin<=endMin?`~${fmtM(Math.round(etaMin))} IST`:`+${Math.round(etaMin-endMin)}m OT`;
-      etaClass=etaMin<=endMin?'eta-ok':'eta-behind';}
-  }
-  let paceText='No data yet';
-  if(dispatchRate>0)paceText=dispatchDiff>=0?`On track (+${dispatchDiff.toLocaleString()})`:`Short ~${Math.abs(dispatchDiff).toLocaleString()}`;
-
-  // dispatch QI card
-  const dispatchCard=`<div class="qi-card${dispatchCum>0?' has-data':''}" style="grid-column:span 2;background:${co==='nei'?'#EFF6FF':'#F5F3FF'};border-color:${co==='nei'?'#BFDBFE':'#DDD6FE'}">
-    <div class="qi-card-left">
-      <div class="qi-card-name" style="color:${co==='nei'?'var(--nei)':'var(--vmm)'}">
-        Dispatched ★
-        <span class="qi-card-unit" style="background:${co==='nei'?'#DBEAFE':'#EDE9FE'};color:${co==='nei'?'#1E3A8A':'#4C1D95'}">Final KPI</span>
-      </div>
-      ${dispatchCum>0?`<div class="qi-card-pct" style="color:${co==='nei'?'var(--nei)':'var(--vmm)'};font-weight:500">${dispatchPct}% dispatched (${dispatchCum.toLocaleString()} / ${dispatchTgt.toLocaleString()})</div>`:'<div class="qi-card-pct">Enter cumulative dispatched qty</div>'}
-      <div class="qi-prog-track" style="background:${co==='nei'?'#BFDBFE':'#DDD6FE'}">
-        <div class="qi-prog-bar" style="width:${dispatchPct}%;background:${co==='nei'?'var(--nei)':'var(--vmm)'}"></div>
-      </div>
-    </div>
-    <div class="qi-card-right">
-      <input class="qi-inp" type="number" placeholder="0" min="0"
-        value="${dispatchCum||''}"
-        style="border-color:${co==='nei'?'#BFDBFE':'#DDD6FE'}"
-        oninput="document.getElementById('${co}-dispatch-cum').value=this.value;onActualInput('${co}')">
-      <div class="qi-inp-unit">dispatched</div>
-    </div>
-  </div>`;
-
-  // quick input CARDS
-  const qiCards=procs.map(p=>{
-    const act=vn(p.cumId);
-    const procTgt=p.target||coTotal;
-    const pct=procTgt>0?Math.min(Math.round(act/procTgt*100),100):0;
-    const hasData=act>0;
-    const rc=ragClass(pct,hasData);
-    const barColor=rc==='rag-green'?'#1D9E75':rc==='rag-amber'?'#BA7517':rc==='rag-red'?'#E24B4A':'#D1D5DB';
-    const ubadgeStyle=p.unit==='PPH'?'background:rgba(29,158,117,.15);color:#0F6E56':'background:rgba(37,99,235,.15);color:#1E3A8A';
-    return`<div class="qi-card${hasData?' has-data':''}" style="${rc==='rag-green'?'border-color:#1D9E7540':rc==='rag-amber'?'border-color:#BA751740':rc==='rag-red'?'border-color:#E24B4A40':''}">
-      <div class="qi-card-left">
-        <div class="qi-card-name">
-          ${p.name}
-          <span class="qi-card-unit" style="${ubadgeStyle}">${p.unit}</span>
-        </div>
-        ${hasData?`<div class="qi-card-pct" style="color:${barColor}">${pct}% of target (${act.toLocaleString()} / ${procTgt.toLocaleString()})</div>`:'<div class="qi-card-pct">Enter cumulative total</div>'}
-        <div class="qi-prog-track">
-          <div class="qi-prog-bar" style="width:${pct}%;background:${barColor}"></div>
-        </div>
-      </div>
-      <div class="qi-card-right">
-        <input class="qi-inp" type="number" placeholder="0" min="0"
-          value="${act||''}"
-          style="${hasData?'border-color:'+barColor+'40':''}"
-          oninput="document.getElementById('${p.cumId}').value=this.value;onActualInput('${co}')">
-        <div class="qi-inp-unit">${p.unit} cumulative</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  const colClass=procs.length===3?'proc-cards-dash three':'proc-cards-dash';
-  const procCards=procs.map(p=>{
-    const act=vn(p.cumId);
-    const procTgt=p.target||coTotal;
-    const pct=procTgt>0?Math.min(Math.round(act/procTgt*100),100):0;
-    const rc=ragClass(pct,act>0);
-    const rate=act>0&&elapsedHrs>0?Math.round(act/elapsedHrs):0;
-    return`<div class="dash-card ${rc}">
-      <div class="andon"></div>
-      <div class="dc-header"><div class="dc-name">${p.name}</div><div class="dc-unit">${p.unit}</div></div>
-      <div class="dc-pct">${pct}<span class="dc-pct-unit">%</span></div>
-      <div class="dc-nums">
-        <div><div class="dcn-label">Actual</div><div class="dcn-val hi">${act.toLocaleString()}</div></div>
-        <div><div class="dcn-label">Target</div><div class="dcn-val">${procTgt.toLocaleString()}</div></div>
-        <div><div class="dcn-label">Left</div><div class="dcn-val">${Math.max(procTgt-act,0).toLocaleString()}</div></div>
-      </div>
-      <div class="prog-track-d"><div class="prog-bar-d" style="width:${pct}%"></div></div>
-      <div class="pace-mini">
-        <div class="pace-mini-label">Rate</div>
-        <div class="pace-mini-val">${rate>0?rate+' '+p.unit+'/h':'—'}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  document.getElementById(co+'-dashMain').innerHTML=`
-    <div class="top-banner">
-      <div>
-        <div style="font-size:9px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:4px">Dispatched (Final KPI)</div>
-        <div><span class="banner-pct-num" style="font-size:52px;font-weight:300;font-family:var(--mono);color:${bannerColor}">${dispatchPct}</span><span style="font-size:22px;color:var(--text-3)">%</span></div>
-      </div>
-      <div class="banner-mid">
-        <div class="banner-label">Dispatched today</div>
-        <div class="banner-val banner-act-val">${dispatchCum.toLocaleString()} <span style="font-size:12px;color:var(--text-3)">/ ${dispatchTgt.toLocaleString()}</span></div>
-        <div class="banner-sub">${paceText}</div>
-      </div>
-      <div class="eta-big">
-        <div class="eta-big-label">Est. Completion</div>
-        <div class="eta-big-val ${etaClass}">${etaText}</div>
-      </div>
-    </div>
-
-    <div class="qi-panel" id="${co}-qi-panel">
-      <div class="qi-hdr">
-        <div class="qi-title-txt">Quick Input — Cumulative Actuals</div>
-        <button class="qi-toggle-btn" onclick="toggleQI('${co}')">Hide</button>
-      </div>
-      <div class="qi-cards" id="${co}-qi-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        ${dispatchCard}
-        ${qiCards}
-      </div>
-      <div class="qi-hint">Cumulative total so far · Dashboard updates automatically</div>
-    </div>
-
-    <div class="pace-wrap">
-      <div class="pace-hdr">
-        <div class="pace-title-txt">Pace — Packing throughput (${packProc.unit})</div>
-        <div class="pace-legend">
-          <div class="pl-item"><div class="pl-line dashed"></div>Target</div>
-          <div class="pl-item"><div class="pl-line" style="background:${accent}"></div>Actual</div>
-        </div>
-      </div>
-      <canvas class="pc" id="${co}-pc" style="height:130px"></canvas>
-    </div>
-    <div class="${colClass}">${procCards}</div>`;
-
-  requestAnimationFrame(()=>drawChart(co+'-pc',procs,coTotal,accent,nowMin));
 }
 
-function toggleQI(co){
-  QI_VIS[co]=!QI_VIS[co];
-  const g=document.getElementById(co+'-qi-grid');
-  const b=document.querySelector(`#${co}-qi-panel .qi-toggle-btn`);
-  if(g)g.style.display=QI_VIS[co]?'grid':'none';
-  if(b)b.textContent=QI_VIS[co]?'Hide':'Show';
+/* ── RAG ── */
+function ragClass(pct,has){if(!has)return'';if(pct>=90)return'ok';if(pct>=60)return'warn';return'behind';}
+function ragColor(pct){
+  if(pct>=90)return{bg:'#F0FDF4',border:var_ok,text:'#166534',bar:'#1D9E75'};
+  if(pct>=60)return{bg:'#FFFBEB',border:var_warn,text:'#92400E',bar:'#BA7517'};
+  return{bg:'#FEF2F2',border:var_behind,text:'#991B1B',bar:'#E24B4A'};
 }
+const var_ok='#1D9E75',var_warn='#BA7517',var_behind='#E24B4A';
 
-function drawChart(cid,procs,total,accent,nowMin){
-  const canvas=document.getElementById(cid);
-  if(!canvas||!STATE)return;
-  const {startMin,endMin}=STATE;
-  const dpr=window.devicePixelRatio||1;
-  const W=canvas.offsetWidth,H=canvas.offsetHeight||130;
-  canvas.width=W*dpr;canvas.height=H*dpr;
-  const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
-  const P={l:36,r:12,t:8,b:24};
-  const cw=W-P.l-P.r,ch=H-P.t-P.b;
-  const tx=m=>P.l+((m-startMin)/(endMin-startMin))*cw;
-  const uy=u=>P.t+ch-(Math.min(u,total)/total)*ch;
-  [.25,.5,.75,1].forEach(f=>{
-    const y=P.t+ch-f*ch;
-    ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=.5;
-    ctx.beginPath();ctx.moveTo(P.l,y);ctx.lineTo(P.l+cw,y);ctx.stroke();
-    ctx.fillStyle='#9A9A94';ctx.font='9px monospace';
-    ctx.fillText(Math.round(f*total),2,y+3);
-  });
-  ctx.fillStyle='#9A9A94';ctx.font='9px monospace';
-  for(let m=startMin;m<=endMin;m+=60)ctx.fillText(fmtM(m),tx(m)-10,H-P.b+12);
-  BREAKS.forEach(b=>{ctx.fillStyle='rgba(0,0,0,0.03)';ctx.fillRect(tx(b.s),P.t,tx(b.e)-tx(b.s),ch);});
-  const teamUPH=procs.reduce((s,p)=>s+(p.pax*p.uph),0);
-  if(teamUPH>0){
-    ctx.beginPath();ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=1.5;
-    let cum=0;
-    for(let m=startMin;m<=endMin;m++){if(!isBreak(m))cum+=teamUPH/60;m===startMin?ctx.moveTo(tx(m),uy(cum)):ctx.lineTo(tx(m),uy(cum));}
-    ctx.stroke();ctx.setLineDash([]);
-  }
-  const pp=procs.find(p=>p.key==='pack')||procs[0];
-  const ca=vn(pp.cumId);
-  if(ca>0&&nowMin>startMin){
-    const ew=workMins(startMin,Math.min(nowMin,endMin));
-    const rate=ew>0?ca/(ew/60):0;
-    ctx.beginPath();ctx.strokeStyle=accent;ctx.lineWidth=2;
-    let cum=0;
-    for(let m=startMin;m<=Math.min(nowMin,endMin);m++){if(!isBreak(m))cum+=rate/60;m===startMin?ctx.moveTo(tx(m),uy(cum)):ctx.lineTo(tx(m),uy(cum));}
-    ctx.stroke();
-    if(nowMin<endMin){
-      ctx.beginPath();ctx.setLineDash([3,3]);ctx.globalAlpha=.4;ctx.strokeStyle=accent;ctx.lineWidth=1;
-      ctx.moveTo(tx(Math.min(nowMin,endMin)),uy(ca));
-      let pc=ca;
-      for(let m=Math.min(nowMin,endMin)+1;m<=endMin;m++){if(!isBreak(m))pc+=rate/60;ctx.lineTo(tx(m),uy(pc));}
-      ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
-    }
-    ctx.beginPath();ctx.arc(tx(Math.min(nowMin,endMin)),uy(ca),4,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();
-  }
-  if(nowMin>=startMin&&nowMin<=endMin){
-    ctx.beginPath();ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=1;ctx.setLineDash([2,3]);
-    ctx.moveTo(tx(nowMin),P.t);ctx.lineTo(tx(nowMin),P.t+ch);ctx.stroke();ctx.setLineDash([]);
-  }
-}
-
-function buildSchedTable(procs,coKey,amCls,pmCls){
-  if(!STATE)return'';
-  const {startMin,endMin}=STATE;
-  const {total,amQty,pmQty}=STATE[coKey];
+/* ── NEI DASHBOARD ── */
+function updateNEI(){
+  if(!STATE)return;
+  const {startMin,endMin,totalWork,neiSellers}=STATE;
   const nowMin=getISTMin();
-  const teamUPH=procs.reduce((s,p)=>s+(p.pax*p.uph),0);
-  const pp=procs.find(p=>p.key==='pack')||procs[0];
-  const ca=vn(pp.cumId);
-  const ew=workMins(startMin,Math.min(nowMin,endMin));
-  const actRate=ew>0?ca/(ew/60):0;
+  const ist=getIST();
+  const t=fmtIST(ist);
+  document.getElementById('nei-clock').textContent=t;
+  document.getElementById('nei-sub').textContent=ist.toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})+' · IST';
 
-  const slots=[];let cur=startMin;
-  while(cur<endMin){
-    const b=BREAKS.find(x=>x.s===cur);
-    if(b){slots.push({from:cur,to:b.e,isBreak:true,bl:b.label});cur=b.e;}
-    else{const ne=[...BREAKS.map(x=>x.s),endMin].filter(x=>x>cur).sort((a,b)=>a-b)[0];
-      const se=Math.min(cur+60,ne);
-      slots.push({from:cur,to:se,isBreak:false,isAM:cur<13*60,isCurrent:nowMin>=cur&&nowMin<se,isPast:nowMin>=se});cur=se;}
+  const brk=BREAKS.find(b=>nowMin>=b.s&&nowMin<b.e);
+  let sess='Shift not started';
+  if(nowMin>=endMin)sess='Shift ended';
+  else if(brk)sess=brk.label+' in progress';
+  else if(nowMin>=startMin&&nowMin<13*60)sess='AM Session';
+  else if(nowMin>=13*60+45)sess='PM Session';
+  document.getElementById('nei-session').textContent=sess;
+  renderTimeline('nei-timeline-bar','wk-am-nei','wk-pm-nei');
+
+  // Build input panel ONCE (only on first render)
+  const inputPanelId='nei-input-panel';
+  if(!document.getElementById(inputPanelId)){
+    const panel=document.createElement('div');
+    panel.id=inputPanelId;
+    document.getElementById('nei-dashMain').appendChild(panel);
   }
-  let cumT=0;
-  const wt=slots.map(s=>{
-    if(s.isBreak)return{...s};
-    const sw=workMins(s.from,s.to);
-    const t=Math.round(teamUPH*(sw/60));
-    cumT+=t;
-    // estimate actual for this slot via rate
-    const slotActual=actRate>0?Math.round(actRate*(sw/60)):null;
-    const slotPct=t>0&&slotActual!==null?Math.min(Math.round(slotActual/t*100),999):null;
-    return{...s,st:t,ct:cumT,slotActual,slotPct};
+
+  // Always render display cards (read-only)
+  const sellersHTML=neiSellers.map(s=>{
+    const amAct=s.amAct||{}, pmAct=s.pmAct||{};
+    const dispAM=amAct.disp||0, dispPM=pmAct.disp||0;
+    const dispTotal=dispAM+dispPM;
+    const dispTgt=(s.dispAM||0)+(s.dispPM||0);
+    const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
+    const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
+    const pickTgt=(s.pickAM||0)+(s.pickPM||0);
+    const soTotal=(amAct.so||0)+(pmAct.so||0);
+    const soTgt=(s.soAM||0)+(s.soPM||0);
+    const moTotal=(amAct.mo||0)+(pmAct.mo||0);
+    const moTgt=(s.moAM||0)+(s.moPM||0);
+    const ew=workMins(startMin,Math.min(nowMin,endMin));
+    const dispRate=ew>0&&dispTotal>0?dispTotal/(ew/60):0;
+    let etaText='—',etaClass='eta-warn';
+    if(dispRate>0){
+      const r=dispTgt-dispTotal;
+      if(r<=0){etaText='Done ✓';etaClass='eta-ok';}
+      else{const em=nowMin+(r/dispRate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}
+    }
+    const dc=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';
+    const dbg=dispPct>=90?'#F0FDF4':dispPct>=60?'#FFFBEB':dispTotal>0?'#FEF2F2':'var(--bg)';
+
+    const procRows=[
+      {label:'Picking',total:pickTotal,tgt:pickTgt},
+      {label:'Pack S/O',total:soTotal,tgt:soTgt},
+      {label:'Pack M/O',total:moTotal,tgt:moTgt},
+    ].map(p=>{
+      const pp=p.tgt>0?Math.min(Math.round(p.total/p.tgt*100),100):0;
+      const c=pp>=90?var_ok:pp>=60?var_warn:p.total>0?var_behind:'#D1D5DB';
+      return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)">
+        <span style="font-size:10px;color:var(--text-2);width:70px;flex-shrink:0">${p.label}</span>
+        <div style="flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pp}%;background:${c};border-radius:2px"></div></div>
+        <span style="font-size:10px;font-family:var(--mono);color:${c};font-weight:600;width:30px;text-align:right">${p.total>0?pp+'%':'—'}</span>
+        <span style="font-size:10px;font-family:var(--mono);color:var(--text-3);width:80px;text-align:right">${p.total.toLocaleString()}/${p.tgt.toLocaleString()}</span>
+      </div>`;
+    }).join('');
+
+    return`<div class="seller-card">
+      <div class="sc-header" style="background:${s.bg};border-color:${s.border}">
+        <div class="sc-name" style="color:${s.color}">${s.name}</div>
+        <div class="sc-hc">H/C ${s.hc||'—'}</div>
+      </div>
+      <div style="padding:.875rem 1rem;border-bottom:.5px solid var(--border);background:${dbg}">
+        <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${dc};margin-bottom:4px">Dispatched ★</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
+          <span style="font-size:28px;font-weight:300;font-family:var(--mono);color:${dc};line-height:1">${dispPct}<span style="font-size:13px">%</span></span>
+          <span style="font-size:12px;font-family:var(--mono);color:var(--text-2)">${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()}</span>
+          <span style="margin-left:auto;font-size:12px;font-family:var(--mono)" class="${etaClass}">${etaText}</span>
+        </div>
+        <div style="height:5px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden;margin-bottom:5px">
+          <div style="height:100%;width:${dispPct}%;background:${dc};border-radius:3px"></div>
+        </div>
+        <div style="display:flex;gap:12px">
+          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">AM <b style="color:var(--text-2)">${dispAM>0?dispAM.toLocaleString():'—'}</b></span>
+          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">PM <b style="color:var(--text-2)">${dispPM>0?dispPM.toLocaleString():'—'}</b></span>
+        </div>
+      </div>
+      <div style="padding:.75rem 1rem">${procRows}</div>
+    </div>`;
+  }).join('');
+
+  // Update display cards
+  let cardsWrap=document.getElementById('nei-seller-cards');
+  if(!cardsWrap){
+    document.getElementById('nei-dashMain').innerHTML=`
+      <div id="nei-seller-cards" class="seller-cards"></div>
+      <div id="nei-input-panel"></div>`;
+    cardsWrap=document.getElementById('nei-seller-cards');
+  }
+  cardsWrap.innerHTML=sellersHTML;
+
+  // Build input panel only once — preserve focus
+  const panel=document.getElementById('nei-input-panel');
+  if(panel&&!panel.dataset.built){
+    panel.dataset.built='1';
+    panel.style.cssText='background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-top:12px';
+    panel.innerHTML=`
+      <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:.875rem">
+        Actuals Input — AM / PM
+      </div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1.5px solid var(--border-md)">
+            <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);width:80px">Seller</th>
+            ${['Pick Items','Pack S/O','Pack M/O','Dispatch ★'].map(h=>`
+              <th colspan="2" style="padding:6px 8px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:center;border-left:.5px solid var(--border)">${h}</th>
+            `).join('')}
+          </tr>
+          <tr style="border-bottom:.5px solid var(--border-md)">
+            <th></th>
+            ${['pick','so','mo','disp'].map(()=>`
+              <th style="padding:4px 6px;font-size:9px;color:var(--text-3);text-align:center;border-left:.5px solid var(--border)">AM</th>
+              <th style="padding:4px 6px;font-size:9px;color:var(--text-3);text-align:center">PM</th>
+            `).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${neiSellers.map(s=>`
+            <tr style="border-bottom:.5px solid var(--border)">
+              <td style="padding:8px 10px;font-size:11px;font-weight:600;color:${s.color}">${s.name}</td>
+              ${['pick','so','mo','disp'].map(k=>`
+                <td style="padding:4px 6px;border-left:.5px solid var(--border)">
+                  <input id="nei-act-${s.id}-am-${k}" type="number" placeholder="0" min="0"
+                    value="${(s.amAct&&s.amAct[k])||''}"
+                    style="width:72px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                    oninput="neiActChange('${s.id}','am','${k}',this.value)">
+                </td>
+                <td style="padding:4px 6px">
+                  <input id="nei-act-${s.id}-pm-${k}" type="number" placeholder="0" min="0"
+                    value="${(s.pmAct&&s.pmAct[k])||''}"
+                    style="width:72px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                    oninput="neiActChange('${s.id}','pm','${k}',this.value)">
+                </td>
+              `).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      </div>
+      <div style="font-size:9px;color:var(--text-3);font-family:var(--mono);margin-top:6px;text-align:right">Values saved automatically · Cards update on change</div>`;
+  }
+}
+
+let _neiDebounce=null;
+function neiActChange(sellerId,session,key,val){
+  if(!STATE)return;
+  const s=STATE.neiSellers.find(x=>x.id===sellerId);
+  if(!s)return;
+  if(session==='am'){s.amAct=s.amAct||{};s.amAct[key]=parseFloat(val)||0;}
+  else{s.pmAct=s.pmAct||{};s.pmAct[key]=parseFloat(val)||0;}
+  LAST_UPDATE.nei=new Date();
+  // debounce: only update cards + save, don't rebuild input panel
+  clearTimeout(_neiDebounce);
+  _neiDebounce=setTimeout(()=>{
+    saveDaily({state:STATE});
+    updateNEI(); // cards update, input panel preserved via dataset.built
+    updateLU('nei');
+  },300);
+}
+
+function setNeiAct(sellerId,session,key,val){
+  neiActChange(sellerId,session,key,val);
+}
+
+/* ── AMU DASHBOARD ── */
+function updateAMU(){
+  if(!STATE)return;
+  const {startMin,endMin,amu}=STATE;
+  const nowMin=getISTMin();
+  const ist=getIST();
+  document.getElementById('amu-clock').textContent=fmtIST(ist);
+  document.getElementById('amu-sub').textContent=ist.toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})+' · IST';
+  renderTimeline('amu-timeline-bar','wk-am-amu','wk-pm-amu');
+
+  const amAct=amu.amAct||{},pmAct=amu.pmAct||{};
+  const dispTotal=(amAct.disp||0)+(pmAct.disp||0);
+  const dispTgt=(amu.dispAM||0)+(amu.dispPM||0);
+  const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
+  const ew=workMins(startMin,Math.min(nowMin,endMin));
+  const rate=ew>0&&dispTotal>0?dispTotal/(ew/60):0;
+  let etaText='—',etaClass='eta-warn';
+  if(rate>0){const r=dispTgt-dispTotal;if(r<=0){etaText='Done ✓';etaClass='eta-ok';}else{const em=nowMin+(r/rate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}}
+
+  const bannerC=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';
+  const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
+  const pickTgt=(amu.pickAM||0)+(amu.pickPM||0);
+  const soTotal=(amAct.so||0)+(pmAct.so||0);
+  const soTgt=(amu.soAM||0)+(amu.soPM||0);
+  const moTotal=(amAct.mo||0)+(pmAct.mo||0);
+  const moTgt=(amu.moAM||0)+(amu.moPM||0);
+  const packTotal=soTotal+moTotal, packTgt=soTgt+moTgt;
+
+  const amuMain=document.getElementById('amu-dashMain');
+
+  // First render: build skeleton
+  if(!amuMain.dataset.built){
+    amuMain.dataset.built='1';
+    amuMain.innerHTML=`
+      <div id="amu-kpi-banner" class="kpi-banner"></div>
+      <div id="amu-act-wrap" style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem"></div>
+      <div id="amu-proc-cards" class="proc-row-cards cols3"></div>`;
+  }
+
+  // Update KPI banner
+  document.getElementById('amu-kpi-banner').innerHTML=`
+    <div><div class="kpi-label">Dispatched (Final KPI)</div>
+      <div style="font-size:48px;font-weight:300;font-family:var(--mono);color:${bannerC};line-height:1">${dispPct}<span style="font-size:18px">%</span></div>
+    </div>
+    <div class="kpi-mid">
+      <div class="kpi-label">Dispatched Today</div>
+      <div class="kpi-val">${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()}</div>
+      <div class="kpi-sub">AM: ${amAct.disp>0?amAct.disp.toLocaleString():'—'} · PM: ${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}</div>
+    </div>
+    <div><div class="eta-label">Est. Completion</div><div class="eta-val ${etaClass}">${etaText}</div></div>`;
+
+  // Build input table ONCE — never redraw
+  const actWrap=document.getElementById('amu-act-wrap');
+  if(actWrap&&!actWrap.dataset.built){
+    actWrap.dataset.built='1';
+    actWrap.innerHTML=`
+      <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:.875rem">Actuals Input — AM / PM</div>
+      <table class="act-table">
+        <thead><tr><th>Item</th><th>AM</th><th>PM</th><th>Total</th><th>Target</th><th style="width:100px">vs Target</th></tr></thead>
+        <tbody>
+          ${[
+            {key:'pick',label:'Pick Items',tgt:pickTgt},
+            {key:'so',label:'Pack S/O',tgt:soTgt},
+            {key:'mo',label:'Pack M/O',tgt:moTgt},
+            {key:'disp',label:'Dispatch ★',tgt:dispTgt},
+          ].map(r=>`<tr>
+            <td>${r.label}</td>
+            <td><input id="amu-am-${r.key}" class="act-inp" type="number" placeholder="0" value="${amAct[r.key]||''}"
+              oninput="amuActChange('am','${r.key}',this.value)"></td>
+            <td><input id="amu-pm-${r.key}" class="act-inp" type="number" placeholder="0" value="${pmAct[r.key]||''}"
+              oninput="amuActChange('pm','${r.key}',this.value)"></td>
+            <td class="act-total" id="amu-total-${r.key}">—</td>
+            <td class="act-total" style="color:var(--text-3)">${r.tgt.toLocaleString()}</td>
+            <td class="act-bar-cell"><div style="display:flex;align-items:center;gap:5px">
+              <div class="act-bar-wrap" style="flex:1"><div id="amu-bar-${r.key}" class="act-bar-fill" style="width:0%;background:#D1D5DB"></div></div>
+              <span id="amu-pct-${r.key}" style="font-size:10px;font-family:var(--mono);font-weight:600;width:30px;text-align:right;color:var(--text-3)">—</span>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // Update totals/bars without touching inputs
+  [{key:'pick',total:pickTotal,tgt:pickTgt},{key:'so',total:soTotal,tgt:soTgt},
+   {key:'mo',total:moTotal,tgt:moTgt},{key:'disp',total:dispTotal,tgt:dispTgt}].forEach(r=>{
+    const pct=r.tgt>0?Math.min(Math.round(r.total/r.tgt*100),100):0;
+    const c=pct>=90?var_ok:pct>=60?var_warn:r.total>0?var_behind:'#D1D5DB';
+    const tot=document.getElementById('amu-total-'+r.key);
+    const bar=document.getElementById('amu-bar-'+r.key);
+    const pctEl=document.getElementById('amu-pct-'+r.key);
+    if(tot)tot.textContent=r.total>0?r.total.toLocaleString():'—';
+    if(bar){bar.style.width=pct+'%';bar.style.background=c;}
+    if(pctEl){pctEl.textContent=r.total>0?pct+'%':'—';pctEl.style.color=c;}
   });
 
-  let html=`<table class="sched-table">
-    <thead>
-      <tr>
-        <th style="width:108px;min-width:108px">Time (IST)</th>
-        ${procs.map(p=>`<th style="color:${p.nc};min-width:110px">${p.name} <span style="opacity:.5;font-weight:400;font-size:8px">${p.unit}</span></th>`).join('')}
-        <th style="min-width:90px">Exp. Cum.</th>
-      </tr>
-    </thead>
-    <tbody>`;
+  // Update proc cards
+  document.getElementById('amu-proc-cards').innerHTML=[
+    {label:'Picking',total:pickTotal,tgt:pickTgt,unit:'UPH'},
+    {label:'Packing (S/O+M/O)',total:packTotal,tgt:packTgt,unit:'PPH'},
+    {label:'Dispatched ★',total:dispTotal,tgt:dispTgt,unit:'orders'},
+  ].map(p=>{
+    const pct=p.tgt>0?Math.min(Math.round(p.total/p.tgt*100),100):0;
+    const rc=ragClass(pct,p.total>0);
+    return`<div class="p-card ${rc}">
+      <div class="p-card-andon"></div>
+      <div class="p-card-name">${p.label}</div>
+      <div class="p-card-pct">${pct}<span style="font-size:14px;opacity:.5">%</span></div>
+      <div class="p-card-nums">
+        <div><div class="pcn-label">Actual</div><div class="pcn-val hi">${p.total.toLocaleString()}</div></div>
+        <div><div class="pcn-label">Target</div><div class="pcn-val">${p.tgt.toLocaleString()}</div></div>
+        <div><div class="pcn-label">Left</div><div class="pcn-val">${Math.max(p.tgt-p.total,0).toLocaleString()}</div></div>
+      </div>
+      <div class="p-prog-track"><div class="p-prog-bar" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
 
-  wt.forEach(s=>{
-    if(s.isBreak){
-      html+=`<tr class="row-break">
-        <td class="time-cell"><div class="time-cell-inner"><span>${fmtM(s.from)}</span><span style="color:var(--text-3)">– ${fmtM(s.to)}</span></div></td>
-        <td colspan="${procs.length+1}" style="background:#FAFAF8">
-          <div style="padding:0 12px;height:44px;display:flex;align-items:center;gap:10px">
-            <span style="font-size:12px;color:var(--text-3);font-weight:500">${s.bl}</span>
-            <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">${s.to-s.from} min</span>
+let _amuDebounce=null;
+function amuActChange(session,key,val){
+  if(!STATE)return;
+  if(session==='am'){STATE.amu.amAct=STATE.amu.amAct||{};STATE.amu.amAct[key]=parseFloat(val)||0;}
+  else{STATE.amu.pmAct=STATE.amu.pmAct||{};STATE.amu.pmAct[key]=parseFloat(val)||0;}
+  LAST_UPDATE.amu=new Date();
+  clearTimeout(_amuDebounce);
+  _amuDebounce=setTimeout(()=>{
+    saveDaily({state:STATE});
+    updateAMU();
+    updateLU('amu');
+  },300);
+}
+
+function setAmuAct(session,key,val){amuActChange(session,key,val);}
+
+/* ── VMM DASHBOARD ── */
+function updateVMM(){
+  if(!STATE)return;
+  const {startMin,endMin,vmm}=STATE;
+  const nowMin=getISTMin();
+  const ist=getIST();
+  document.getElementById('vmm-clock').textContent=fmtIST(ist);
+  document.getElementById('vmm-sub').textContent=ist.toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})+' · IST';
+  renderTimeline('vmm-timeline-bar','wk-am-vmm','wk-pm-vmm');
+
+  const lblTgt=(vmm.lbl.amTgt||0)+(vmm.lbl.pmTgt||0);
+  const boxTgt=(vmm.box.amTgt||0)+(vmm.box.pmTgt||0);
+  const lblTotal=(vmm.lbl.amAct||0)+(vmm.lbl.pmAct||0);
+  const boxTotal=(vmm.box.amAct||0)+(vmm.box.pmAct||0);
+  const lblPct=lblTgt>0?Math.min(Math.round(lblTotal/lblTgt*100),100):0;
+  const boxPct=boxTgt>0?Math.min(Math.round(boxTotal/boxTgt*100),100):0;
+
+  document.getElementById('vmm-dashMain').innerHTML=`
+    <div class="proc-row-cards cols2" style="margin-bottom:1rem">
+      ${[
+        {label:'Label Label Machine',total:lblTotal,tgt:lblTgt,pct:lblPct,hc:vmm.lbl.hc,uph:vmm.lbl.uph,unit:'UPH',key:'lbl'},
+        {label:'Box Box Machine',total:boxTotal,tgt:boxTgt,pct:boxPct,hc:vmm.box.hc,uph:vmm.box.uph,unit:'UPH',key:'box'},
+      ].map(p=>{
+        const rc=ragClass(p.pct,p.total>0);
+        return`<div class="p-card ${rc}">
+          <div class="p-card-andon"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:.25rem;margin-bottom:.5rem">
+            <div class="p-card-name">${p.label}</div>
+            <div style="font-size:10px;font-family:var(--mono);color:var(--text-3)">H/C ${p.hc||'—'} · ${p.uph} ${p.unit}</div>
           </div>
-        </td></tr>`;
-      return;
+          <div class="p-card-pct">${p.pct}<span style="font-size:14px;opacity:.5">%</span></div>
+          <div class="p-card-nums">
+            <div><div class="pcn-label">Actual</div><div class="pcn-val hi">${p.total.toLocaleString()}</div></div>
+            <div><div class="pcn-label">Target</div><div class="pcn-val">${p.tgt.toLocaleString()}</div></div>
+          </div>
+          <div class="p-prog-track"><div class="p-prog-bar" style="width:${p.pct}%"></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+            <div style="background:var(--bg);border-radius:6px;padding:5px 8px">
+              <div style="font-size:9px;color:var(--text-3);margin-bottom:2px">AM</div>
+              <input class="act-inp" style="width:100%;background:transparent;border:none;font-size:13px;text-align:left" type="number" placeholder="0"
+                value="${(p.key==='lbl'?vmm.lbl:vmm.box).amAct||''}"
+                oninput="setVmmAct('${p.key}','am',+this.value)">
+            </div>
+            <div style="background:var(--bg);border-radius:6px;padding:5px 8px">
+              <div style="font-size:9px;color:var(--text-3);margin-bottom:2px">PM</div>
+              <input class="act-inp" style="width:100%;background:transparent;border:none;font-size:13px;text-align:left" type="number" placeholder="0"
+                value="${(p.key==='lbl'?vmm.lbl:vmm.box).pmAct||''}"
+                oninput="setVmmAct('${p.key}','pm',+this.value)">
+            </div>
+          </div>
+        </div>`;}).join('')}
+    </div>
+
+    <div class="vmm-sections">
+      <div class="vmm-sec">
+        <div class="vmm-sec-title">📦 Inbound</div>
+        ${[['EA',vmm.inbound.eaTgt,'eaAct','ea'],['Carton',vmm.inbound.ctnTgt,'ctnAct','ctn']].map(([label,tgt,actKey,k])=>{
+          const act=vmm.inbound[actKey]||0;
+          const pct=tgt>0?Math.min(Math.round(act/tgt*100),100):0;
+          const c=pct>=90?var_ok:pct>=60?var_warn:act>0?var_behind:'#D1D5DB';
+          return`<div class="vmm-metric-row">
+            <div class="vmm-metric-label">${label}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input class="act-inp" style="width:72px" type="number" placeholder="0" value="${act||''}"
+                oninput="setVmmInOut('inbound','${actKey}',+this.value)">
+              <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">/ ${tgt.toLocaleString()}</span>
+              <span style="font-size:11px;font-family:var(--mono);font-weight:600;color:${c}">${act>0?pct+'%':'—'}</span>
+            </div>
+          </div>`;}).join('')}
+      </div>
+      <div class="vmm-sec">
+        <div class="vmm-sec-title">🚚 Outbound</div>
+        ${[['EA',vmm.outbound.eaTgt,'eaAct','ea'],['Carton',vmm.outbound.ctnTgt,'ctnAct','ctn']].map(([label,tgt,actKey,k])=>{
+          const act=vmm.outbound[actKey]||0;
+          const pct=tgt>0?Math.min(Math.round(act/tgt*100),100):0;
+          const c=pct>=90?var_ok:pct>=60?var_warn:act>0?var_behind:'#D1D5DB';
+          return`<div class="vmm-metric-row">
+            <div class="vmm-metric-label">${label}</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input class="act-inp" style="width:72px" type="number" placeholder="0" value="${act||''}"
+                oninput="setVmmInOut('outbound','${actKey}',+this.value)">
+              <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">/ ${tgt.toLocaleString()}</span>
+              <span style="font-size:11px;font-family:var(--mono);font-weight:600;color:${c}">${act>0?pct+'%':'—'}</span>
+            </div>
+          </div>`;}).join('')}
+      </div>
+      <div class="vmm-sec">
+        <div class="vmm-sec-title">🗃 Materials</div>
+        <div class="vmm-metric-row">
+          <div class="vmm-metric-label">Headcount</div>
+          <div class="vmm-metric-val">${vmm.material.hc||'—'} </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function setVmmAct(proc,session,val){
+  if(!STATE)return;
+  STATE.vmm[proc][session==='am'?'amAct':'pmAct']=val;
+  LAST_UPDATE.vmm=new Date();
+  saveDaily({state:STATE});
+  updateVMM();updateLU('vmm');
+}
+function setVmmInOut(type,key,val){
+  if(!STATE)return;
+  STATE.vmm[type][key]=val;
+  LAST_UPDATE.vmm=new Date();
+  saveDaily({state:STATE});
+  updateVMM();updateLU('vmm');
+}
+
+function updateLU(co){
+  const lu=LAST_UPDATE[co];
+  const el=document.getElementById(co+'-updated');
+  if(el&&lu){const d=Math.round((new Date()-lu)/60000);el.textContent=d===0?'Updated just now':`Updated ${d}m ago`;}
+}
+
+/* ── SCHEDULE ── */
+function buildSchedule(){
+  if(!STATE){
+    document.getElementById('sched-note').textContent='Enter today\'s targets first.';
+    document.getElementById('sched-body').innerHTML='';
+    return;
+  }
+  const ist=getIST();
+  document.getElementById('sched-note').textContent=ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' · IST '+fmtIST(ist);
+  const {startMin,endMin}=STATE;
+  const nowMin=getISTMin();
+
+  function makeSlots(){
+    const slots=[];let cur=startMin;
+    while(cur<endMin){
+      const b=BREAKS.find(x=>x.s===cur);
+      if(b){slots.push({from:cur,to:b.e,isBreak:true,bl:b.label});cur=b.e;}
+      else{const ne=[...BREAKS.map(x=>x.s),endMin].filter(x=>x>cur).sort((a,b)=>a-b)[0];
+        const se=Math.min(cur+60,ne);
+        slots.push({from:cur,to:se,isBreak:false,isAM:cur<13*60,isCurrent:nowMin>=cur&&nowMin<se,isPast:nowMin>=se});cur=se;}
     }
+    return slots;
+  }
 
-    const sw=workMins(s.from,s.to);
-    const rowCls=`${s.isAM?amCls:pmCls}${s.isCurrent?' row-now':''}`;
+  function ragBg(pct,has){if(!has)return'';if(pct>=90)return'background:#F0FDF4';if(pct>=60)return'background:#FFFBEB';return'background:#FEF2F2';}
+  function ragTxt(pct,has){if(!has)return'var(--text-3)';if(pct>=90)return var_ok;if(pct>=60)return var_warn;return var_behind;}
 
-    html+=`<tr class="${rowCls}">
-      <td class="time-cell">
-        <div class="time-cell-inner">
-          <span style="font-weight:${s.isCurrent?'600':'400'};color:${s.isCurrent?'var(--text)':'var(--text-3)'}">${fmtM(s.from)}</span>
-          <span style="color:var(--text-3)">– ${fmtM(s.to)}</span>
-          ${s.isCurrent?'<span class="time-now-badge">▶ NOW</span>':''}
-        </div>
-      </td>`;
-
-    procs.forEach(p=>{
-      const cap=Math.round(p.pax*p.uph*(sw/60));
-      // per-slot actual estimate based on current rate
-      const slotAct=actRate>0&&s.isPast?Math.round(actRate*(sw/60)):
-                    actRate>0&&s.isCurrent?Math.round(actRate*(Math.min(nowMin,s.to)-s.from-
-                      (isBreak(nowMin)?0:0))/60):null;
-      const slotPct=cap>0&&slotAct!==null?Math.min(Math.round(slotAct/cap*100),999):null;
-      let ragCls='';
-      if(slotPct!==null){
-        ragCls=slotPct>=90?'cell-green':slotPct>=60?'cell-amber':'cell-red';
-      }
-      const miniBarW=slotPct!==null?Math.min(slotPct,100):0;
-      const barColor=ragCls==='cell-green'?'#1D9E75':ragCls==='cell-amber'?'#BA7517':ragCls==='cell-red'?'#E24B4A':'#ddd';
-
-      html+=`<td class="${ragCls}"><div class="cell-inner">
-        <div style="display:flex;justify-content:space-between;align-items:baseline">
-          <span class="cell-cap" style="color:${p.nc}">${cap.toLocaleString()}<span class="cell-cap-unit"> ${p.unit==='PPH'?'pcl':'u'}</span></span>
-          <span style="font-size:9px;color:var(--text-3);font-family:var(--mono)">${p.pax}p</span>
-        </div>
-        ${slotAct!==null?`
-        <div class="cell-actual-row">
-          <span class="cell-actual-val">${slotAct.toLocaleString()}</span>
-          <span class="cell-actual-pct">${slotPct}%</span>
-        </div>
-        <div class="cell-mini-bar" style="width:${miniBarW}%;background:${barColor}"></div>`
-        :'<div class="cell-setup" style="margin-top:2px">'+(s.isCurrent?'in progress':'—')+'</div>'}
-      </div></td>`;
+  function buildTable(title,color,slots,procs,getAmAct,getPmAct){
+    // procs: [{label, amTgt, pmTgt, hc, uph, unit, key}]
+    const teamUPH=procs.reduce((s,p)=>s+(p.hc||0)*(p.uph||0),0);
+    let cumT=0;
+    const wt=slots.map(s=>{
+      if(s.isBreak)return{...s};
+      const sw=workMins(s.from,s.to);
+      const t=Math.round(teamUPH*(sw/60));
+      cumT+=t;
+      return{...s,sw,st:t,ct:cumT};
     });
 
-    // Exp cumulative column
-    const cumPct=s.ct>0&&ca>0?Math.min(Math.round(ca/s.ct*100),999):null;
-    const cumRag=cumPct!==null?(cumPct>=90?'cell-green':cumPct>=60?'cell-amber':'cell-red'):'';
-    html+=`<td class="${s.isPast?cumRag:''}"><div class="cell-inner">
-      <div style="display:flex;justify-content:space-between;align-items:baseline">
-        <span class="cell-cap">${s.ct.toLocaleString()}<span class="cell-cap-unit"> cum</span></span>
-      </div>
-      ${s.isPast&&ca>0?`
-        <div class="cell-actual-row">
-          <span class="cell-actual-val">${ca.toLocaleString()}</span>
-          <span class="cell-actual-pct">${cumPct}%</span>
-        </div>`
-      :s.isCurrent&&ca>0?`<div class="cell-setup" style="color:#BA7517">${ca.toLocaleString()} so far</div>`
-      :'<div class="cell-setup">—</div>'}
-    </div></td>`;
-    html+=`</tr>`;
+    let html=`<div style="margin-bottom:1.5rem">
+      <div style="font-size:11px;font-weight:600;color:${color};margin-bottom:8px;padding:4px 10px;background:${color}18;border-radius:6px;display:inline-block">${title}</div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;min-width:400px">
+        <thead>
+          <tr style="border-bottom:1.5px solid var(--border-md)">
+            <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);width:108px">Time (IST)</th>
+            ${procs.map(p=>`<th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:${color};text-align:center">${p.label} <span style="opacity:.5;font-weight:400">${p.unit}</span></th>`).join('')}
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:right">Exp. Cum.</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    wt.forEach(s=>{
+      if(s.isBreak){
+        html+=`<tr style="background:#FAFAF8"><td style="padding:8px 10px;font-size:10px;color:var(--text-3);font-family:var(--mono)">${fmtM(s.from)}–${fmtM(s.to)}</td>
+          <td colspan="${procs.length+1}" style="padding:8px 10px;font-size:11px;color:var(--text-3);font-weight:500">${s.bl} ${s.to-s.from}min</td></tr>`;
+        return;
+      }
+      const rowBg=s.isCurrent?'background:#FFFBEB':'';
+      html+=`<tr style="border-bottom:.5px solid var(--border);${rowBg}">
+        <td style="padding:7px 10px;font-family:var(--mono);font-size:10px;color:${s.isCurrent?'var(--text)':'var(--text-3)'};font-weight:${s.isCurrent?'600':'400'};background:var(--bg);border-right:.5px solid var(--border-md)">
+          ${fmtM(s.from)}<br><span style="color:var(--text-3)">–${fmtM(s.to)}</span>
+          ${s.isCurrent?'<br><span style="font-size:9px;color:#BA7517;font-weight:600">▶ NOW</span>':''}
+        </td>`;
+
+      procs.forEach(p=>{
+        const cap=Math.round((p.hc||0)*(p.uph||0)*(s.sw/60));
+        const amV=getAmAct(p.key)||0, pmV=getPmAct(p.key)||0;
+        const total=amV+pmV;
+        const slotRate=s.isAM?(amV>0?amV/(workMins(startMin,Math.min(13*60,endMin))/60):0)
+                              :(pmV>0?pmV/(workMins(13*60+45,Math.min(nowMin,endMin))/60):0);
+        const hasData=s.isAM?amV>0:pmV>0;
+        const slotAct=hasData&&slotRate>0&&s.isPast?Math.round(slotRate*(s.sw/60)):null;
+        const slotPct=cap>0&&slotAct!==null?Math.min(Math.round(slotAct/cap*100),100):null;
+        const c=slotPct!==null?(slotPct>=90?var_ok:slotPct>=60?var_warn:var_behind):'#D1D5DB';
+        html+=`<td style="padding:5px 8px;${slotPct!==null?ragBg(slotPct,true):''}">
+          <div style="text-align:center">
+            <div style="font-size:12px;font-weight:500;font-family:var(--mono);color:${color}">${cap>0?cap.toLocaleString():'—'}<span style="font-size:9px;opacity:.5">${p.unit==='PPH'?' pcl':' u'}</span></div>
+            <div style="font-size:9px;color:var(--text-3);font-family:var(--mono)">${p.hc||0}p · ${p.uph||0}</div>
+            ${slotAct!==null?`<div style="font-size:10px;font-weight:600;font-family:var(--mono);color:${c}">${slotAct.toLocaleString()} (${slotPct}%)</div>`:''}
+            ${cap>0?`<div style="height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:3px"><div style="height:100%;width:${slotPct||0}%;background:${c};border-radius:2px"></div></div>`:''}
+          </div>
+        </td>`;
+      });
+
+      html+=`<td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11px;color:var(--text-2)">${s.ct>0?s.ct.toLocaleString():'—'}<span style="font-size:9px;color:var(--text-3)"> cum</span></td>`;
+      html+=`</tr>`;
+    });
+
+    // total
+    html+=`<tr style="border-top:1.5px solid var(--border-md);background:var(--bg)">
+      <td style="padding:7px 10px;font-size:11px;font-weight:600;color:var(--text)">Total</td>`;
+    procs.forEach(p=>{
+      const cap=Math.round((p.hc||0)*(p.uph||0)*(workMins(startMin,endMin)/60));
+      const total=(getAmAct(p.key)||0)+(getPmAct(p.key)||0);
+      const pct=cap>0?Math.min(Math.round(total/cap*100),100):0;
+      html+=`<td style="padding:7px 8px;text-align:center">
+        <div style="font-size:12px;font-weight:500;font-family:var(--mono);color:${color}">${cap.toLocaleString()}<span style="font-size:9px;opacity:.5"> cap</span></div>
+        ${total>0?`<div style="font-size:10px;font-family:var(--mono);color:${var_ok}">✓ ${total.toLocaleString()} (${pct}%)</div>`:'<div style="font-size:10px;color:var(--text-3)">—</div>'}
+      </td>`;
+    });
+    const totalCap=Math.round(teamUPH*(workMins(startMin,endMin)/60));
+    html+=`<td style="padding:7px 10px;text-align:right;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text-2)">${totalCap.toLocaleString()}<span style="font-size:9px;color:var(--text-3)"> cap</span></td>`;
+    html+=`</tr></tbody></table></div></div>`;
+    return html;
+  }
+
+  const slots=makeSlots();
+  let schedHTML='';
+
+  // NEI sellers
+  const cfg=loadSettings();
+  STATE.neiSellers.forEach(s=>{
+    const procs=[
+      {label:'Picking',unit:'UPH',key:'pick',hc:s.hc,uph:s.uph||cfg.nei_pick_uph||36},
+      {label:'Pack S/O',unit:'PPH',key:'so',hc:s.hc,uph:s.pph||cfg.nei_pack_pph||35},
+      {label:'Pack M/O',unit:'PPH',key:'mo',hc:s.hc,uph:s.pph||cfg.nei_pack_pph||35},
+    ];
+    schedHTML+=buildTable(s.name,s.color,slots,procs,k=>s.amAct?.[k]||0,k=>s.pmAct?.[k]||0);
   });
 
-  // totals row
-  const tc=Math.round(teamUPH*(workMins(startMin,endMin)/60));
-  html+=`<tr class="row-total"><td class="time-cell"><div class="time-cell-inner"><span style="font-weight:600;color:var(--text)">Total</span></div></td>`;
-  procs.forEach(p=>{
-    const cap=Math.round(p.pax*p.uph*(workMins(startMin,endMin)/60));
-    const act=vn(p.cumId);
-    const pct=cap>0?Math.min(Math.round(act/cap*100),100):0;
-    html+=`<td><div class="cell-inner">
-      <span class="cell-total-cap">${cap.toLocaleString()} <span style="font-size:10px;color:var(--text-3);font-weight:400">cap</span></span>
-      ${act>0?`<span class="cell-total-act">✓ ${act.toLocaleString()} (${pct}%)</span>`:'<span class="cell-setup">—</span>'}
-    </div></td>`;
-  });
-  html+=`<td><div class="cell-inner"><span class="cell-total-cap">${tc.toLocaleString()} <span style="font-size:10px;color:var(--text-3);font-weight:400">cap</span></span>${ca>0?`<span class="cell-total-act">✓ ${ca.toLocaleString()}</span>`:''}</div></td>`;
-  html+=`</tr></tbody></table>`;
-  return html;
+  // AMU
+  const amu=STATE.amu;
+  const amuProcs=[
+    {label:'Picking',unit:'UPH',key:'pick',hc:amu.hc,uph:amu.uph||cfg.amu_pick_uph||36},
+    {label:'Pack S/O',unit:'PPH',key:'so',hc:amu.hc,uph:amu.pph||cfg.amu_pack_pph||35},
+    {label:'Pack M/O',unit:'PPH',key:'mo',hc:amu.hc,uph:amu.pph||cfg.amu_pack_pph||35},
+  ];
+  schedHTML+=buildTable('AMU — Amazon Multi','#0891B2',slots,amuProcs,k=>amu.amAct?.[k]||0,k=>amu.pmAct?.[k]||0);
+
+  // VMM
+  const vmm=STATE.vmm;
+  const vmmProcs=[
+    {label:'Label Machine',unit:'UPH',key:'lbl',hc:vmm.lbl.hc,uph:vmm.lbl.uph||cfg.vmm_lbl_uph||30},
+    {label:'Box Machine',unit:'UPH',key:'box',hc:vmm.box.hc,uph:vmm.box.uph||cfg.vmm_box_uph||30},
+  ];
+  schedHTML+=buildTable('VMM — Multichannel','#7C3AED',slots,vmmProcs,k=>STATE.vmm[k]?.amAct||0,k=>STATE.vmm[k]?.pmAct||0);
+
+  document.getElementById('sched-body').innerHTML=schedHTML;
 }
 
-function buildSchedule(){
-  if(!STATE)return;
+function varColor(v,fallback){return fallback;}
+function initReport(){
   const ist=getIST();
-  document.getElementById('schedNote').textContent=ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' · IST '+fmtIST(ist);
-  const legend=`<div class="sched-legend">
-    <div class="sleg"><div class="sleg-sq" style="background:#DCFCE7;border:.5px solid #1D9E75"></div>≥90% on track</div>
-    <div class="sleg"><div class="sleg-sq" style="background:#FEF3C7;border:.5px solid #BA7517"></div>60–89% caution</div>
-    <div class="sleg"><div class="sleg-sq" style="background:#FEE2E2;border:.5px solid #E24B4A"></div>&lt;60% behind</div>
-    <div class="sleg"><div class="sleg-sq" style="background:#FFFBEB;border:.5px solid #FCD34D"></div>Current slot</div>
-  </div>`;
-  document.getElementById('schedBody').innerHTML=`
-    <div>
-      <div class="sched-col-title nei">NEI — B2C</div>
-      ${legend}
-      <div class="sched-wrap">${buildSchedTable(STATE.neiProcs,'nei','row-am-nei','row-pm-nei')}</div>
-    </div>
-    <div>
-      <div class="sched-col-title vmm">VMM — Multichannel</div>
-      ${legend}
-      <div class="sched-wrap">${buildSchedTable(STATE.vmmProcs,'vmm','row-am-vmm','row-pm-vmm')}</div>
-    </div>`;
+  document.getElementById('report-date').textContent=ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' · IST '+fmtIST(ist);
+  if(!STATE){document.getElementById('report-empty').style.display='block';document.getElementById('report-body').style.display='none';return;}
+  document.getElementById('report-empty').style.display='none';
 }
 
+function ragColorRep(pct){
+  if(pct>=90)return{bg:'#F0FDF4',text:'#166534',bar:var_ok};
+  if(pct>=60)return{bg:'#FFFBEB',text:'#92400E',bar:var_warn};
+  return{bg:'#FEF2F2',text:'#991B1B',bar:var_behind};
+}
+
+function generateReport(){
+  if(!STATE){alert('Enter today\'s targets first.');return;}
+  document.getElementById('report-body').style.display='block';
+  document.getElementById('report-empty').style.display='none';
+  document.getElementById('copy-btn').style.display='inline-block';
+
+  const ist=getIST();
+  const dateStr=ist.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  const timeStr=fmtIST(ist);
+  let lines=[`Shift End Report — ${dateStr} · ${timeStr} IST`,``];
+
+  // NEI sellers cards
+  const neiCards=STATE.neiSellers.map(s=>{
+    const amAct=s.amAct||{},pmAct=s.pmAct||{};
+    const dispTotal=(amAct.disp||0)+(pmAct.disp||0);
+    const dispTgt=(s.dispAM||0)+(s.dispPM||0);
+    const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
+    const c=ragColorRep(dispPct);
+    const pending=Math.max(dispTgt-dispTotal,0);
+    const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
+    const pickTgt=(s.pickAM||0)+(s.pickPM||0);
+    const soTotal=(amAct.so||0)+(pmAct.so||0);
+    const soTgt=(s.soAM||0)+(s.soPM||0);
+    const moTotal=(amAct.mo||0)+(pmAct.mo||0);
+    const moTgt=(s.moAM||0)+(s.moPM||0);
+
+    // text
+    lines.push(`[${s.name}]`);
+    lines.push(`  Dispatched: ${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()} (${dispPct}%)  AM: ${amAct.disp>0?amAct.disp.toLocaleString():'—'} / PM: ${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}`);
+    lines.push(`  Pick: ${pickTotal.toLocaleString()} / ${pickTgt.toLocaleString()}  Pack S/O: ${soTotal.toLocaleString()} / ${soTgt.toLocaleString()}  M/O: ${moTotal.toLocaleString()} / ${moTgt.toLocaleString()}`);
+    if(pending>0){const r=(document.getElementById(`rep-reason-${s.id}`)?.value||'').trim();lines.push(`  Pending: ${pending.toLocaleString()}${r?' — '+r:''}`);}
+    lines.push('');
+
+    return`<div class="rep-card">
+      <div class="rep-card-hdr" style="background:${s.bg}">
+        <span style="font-size:12px;font-weight:600;color:${s.color}">${s.name}</span>
+        <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">H/C ${s.hc||'—'}</span>
+      </div>
+      <div class="rep-kpi" style="background:${c.bg}">
+        <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${c.text};margin-bottom:6px">Dispatched ★</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
+          <span style="font-size:28px;font-weight:300;font-family:var(--mono);color:${c.text}">${dispPct}<span style="font-size:13px">%</span></span>
+          <span style="font-size:12px;font-family:var(--mono);color:${c.text}">${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()}</span>
+          <span style="font-size:14px;margin-left:auto">${dispPct>=90?'✅':'⚠️'}</span>
+        </div>
+        <div style="height:5px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden;margin-bottom:5px">
+          <div style="height:100%;width:${dispPct}%;background:${c.bar};border-radius:3px"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:4px">
+          <span style="font-size:10px;font-family:var(--mono);color:${c.text};opacity:.7">AM <b>${amAct.disp>0?amAct.disp.toLocaleString():'—'}</b></span>
+          <span style="font-size:10px;font-family:var(--mono);color:${c.text};opacity:.7">PM <b>${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}</b></span>
+        </div>
+        ${pending>0?`<div style="font-size:10px;color:${c.text};font-family:var(--mono)">⚠ ${pending.toLocaleString()} pending</div>`:'<div style="font-size:10px;color:'+var_ok+';font-family:var(--mono)">✓ No pending</div>'}
+      </div>
+      <div class="rep-procs">
+        ${[{l:'Pick',t:pickTgt,a:pickTotal},{l:'S/O',t:soTgt,a:soTotal},{l:'M/O',t:moTgt,a:moTotal}].map(p=>{
+          const pp=p.t>0?Math.min(Math.round(p.a/p.t*100),100):0;
+          const pc=pp>=90?var_ok:pp>=60?var_warn:p.a>0?var_behind:'#D1D5DB';
+          return`<div class="rep-proc-row" style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:10px;color:var(--text-2);width:40px">${p.l}</span>
+            <div style="flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pp}%;background:${pc};border-radius:2px"></div></div>
+            <span style="font-size:10px;font-family:var(--mono);color:${pc};font-weight:600;width:28px;text-align:right">${p.a>0?pp+'%':'—'}</span>
+            <span style="font-size:9px;font-family:var(--mono);color:var(--text-3);width:70px;text-align:right">${p.a.toLocaleString()}/${p.t.toLocaleString()}</span>
+          </div>`;}).join('')}
+        ${pending>0?`<div style="margin-top:8px"><textarea id="rep-reason-${s.id}" placeholder="Shortfall reason..." rows="2"
+          style="width:100%;font-size:11px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:6px;padding:6px 8px;outline:none;resize:vertical;color:var(--text)"></textarea></div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // AMU card
+  const amu=STATE.amu;
+  const amuAmAct=amu.amAct||{},amuPmAct=amu.pmAct||{};
+  const amuDisp=(amuAmAct.disp||0)+(amuPmAct.disp||0);
+  const amuDispTgt=(amu.dispAM||0)+(amu.dispPM||0);
+  const amuDispPct=amuDispTgt>0?Math.min(Math.round(amuDisp/amuDispTgt*100),100):0;
+  const amuC=ragColorRep(amuDispPct);
+  const amuPick=(amuAmAct.pick||0)+(amuPmAct.pick||0);
+  const amuPickTgt=(amu.pickAM||0)+(amu.pickPM||0);
+  const amuSo=(amuAmAct.so||0)+(amuPmAct.so||0),amuSoTgt=(amu.soAM||0)+(amu.soPM||0);
+  const amuMo=(amuAmAct.mo||0)+(amuPmAct.mo||0),amuMoTgt=(amu.moAM||0)+(amu.moPM||0);
+  const amuPending=Math.max(amuDispTgt-amuDisp,0);
+
+  lines.push(`[AMU — Amazon Multichannel]`);
+  lines.push(`  Dispatched: ${amuDisp.toLocaleString()} / ${amuDispTgt.toLocaleString()} (${amuDispPct}%)  AM: ${amuAmAct.disp>0?amuAmAct.disp.toLocaleString():'—'} / PM: ${amuPmAct.disp>0?amuPmAct.disp.toLocaleString():'—'}`);
+  lines.push(`  Pick: ${amuPick.toLocaleString()} / ${amuPickTgt.toLocaleString()}  S/O: ${amuSo.toLocaleString()} / ${amuSoTgt.toLocaleString()}  M/O: ${amuMo.toLocaleString()} / ${amuMoTgt.toLocaleString()}`);
+  if(amuPending>0)lines.push(`  Pending: ${amuPending.toLocaleString()}`);
+  lines.push('');
+
+  // VMM text
+  const vmm=STATE.vmm;
+  const lblTotal=(vmm.lbl.amAct||0)+(vmm.lbl.pmAct||0),lblTgt=(vmm.lbl.amTgt||0)+(vmm.lbl.pmTgt||0);
+  const boxTotal=(vmm.box.amAct||0)+(vmm.box.pmAct||0),boxTgt=(vmm.box.amTgt||0)+(vmm.box.pmTgt||0);
+  lines.push(`[VMM — Multichannel]`);
+  lines.push(`  Label: ${lblTotal.toLocaleString()} / ${lblTgt.toLocaleString()}  Box: ${boxTotal.toLocaleString()} / ${boxTgt.toLocaleString()}`);
+  lines.push(`  Inbound EA: ${vmm.inbound.eaAct||0} / ${vmm.inbound.eaTgt||0}  Carton: ${vmm.inbound.ctnAct||0} / ${vmm.inbound.ctnTgt||0}`);
+  lines.push(`  Outbound EA: ${vmm.outbound.eaAct||0} / ${vmm.outbound.eaTgt||0}  Carton: ${vmm.outbound.ctnAct||0} / ${vmm.outbound.ctnTgt||0}`);
+  lines.push(`  Materials Headcount: ${vmm.material.hc||0}명`);
+
+  document.getElementById('report-text').textContent=lines.join('\n');
+  document.getElementById('report-cards').innerHTML=`
+    <div style="margin-bottom:8px"><div class="sec-label">NEI — B2C</div><div class="report-co-grid">${neiCards}</div></div>
+    <div><div class="sec-label">AMU / VMM</div></div>`;
+}
+
+function copyReportText(){
+  navigator.clipboard.writeText(document.getElementById('report-text').textContent).then(()=>{
+    const b=document.getElementById('copy-btn');b.textContent='✓ Copied!';setTimeout(()=>b.textContent='Copy Text',2000);
+  });
+}
+
+/* ── REFRESH ── */
 function refresh(){
   if(!STATE)return;
   const ist=getIST();const t=fmtIST(ist);
-  ['nei','vmm'].forEach(co=>{
-    const cl=document.getElementById(co+'-dashClock');if(cl)cl.textContent=t;
-    const cs=document.getElementById(co+'-dashClockSub');
-    if(cs)cs.textContent=ist.toLocaleDateString('en-IN',{weekday:'short',year:'numeric',month:'short',day:'numeric'})+' · IST';
+  ['nei','amu','vmm'].forEach(co=>{
+    const el=document.getElementById(co+'-clock');if(el)el.textContent=t;
+    updateLU(co);
   });
-  updateDash('nei');updateDash('vmm');buildSchedule();
+  updateNEI();updateAMU();updateVMM();
+  // rebuild schedule if visible
+  const schedEl=document.getElementById('screen-schedule');
+  if(schedEl&&schedEl.classList.contains('active')) buildSchedule();
 }
 
+/* ── RESTORE DAILY ── */
+function restoreDaily(){
+  const saved=loadDaily();
+  if(!saved||!saved.state)return;
+  STATE=saved.state;
+  // restore today inputs
+  const s=STATE;
+  if(s.neiSellers){
+    s.neiSellers.forEach(sel=>{
+      sv(sel.id+'-hc',sel.hc||'');
+      ['pick','so','mo','disp'].forEach(k=>{
+        sv(sel.id+'-'+k+'-am',sel[k+'AM']||'');
+        sv(sel.id+'-'+k+'-pm',sel[k+'PM']||'');
+      });
+    });
+  }
+  if(s.amu){
+    sv('amu-hc',s.amu.hc||'');
+    ['pick','so','mo','disp'].forEach(k=>{
+      sv('amu-'+k+'-am',s.amu[k+'AM']||'');
+      sv('amu-'+k+'-pm',s.amu[k+'PM']||'');
+    });
+  }
+  refresh();
+}
+
+/* ── TICK ── */
 function tick(){
   const ist=getIST();
   document.getElementById('navIST').textContent='IST '+fmtIST(ist);
-  document.getElementById('dailyDate').textContent=ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const cfg=loadSettings();
-  document.getElementById('noSettingsWarn').style.display=cfg.nei?'none':'block';
-  // re-populate HC rows if empty (e.g. after settings save)
-  if(!document.getElementById('nei-hc-rows').children.length) populateHCRows();
+  const todayEl=document.getElementById('todayDate');
+  if(todayEl)todayEl.textContent=ist.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // ensure NEI sellers always rendered
+  const neiContainer=document.getElementById('nei-sellers-today');
+  if(neiContainer&&!neiContainer.children.length) buildNeiSellersToday();
   if(STATE)refresh();
 }
 
-/* INIT */
-window.addEventListener('DOMContentLoaded', function(){
-  buildSettingsRows();
-  populateHCRows();
+/* ── INIT ── */
+window.addEventListener('DOMContentLoaded',()=>{
+  buildNeiSellersToday();  // build seller inputs first
+  buildSettings();
   tick();
   setInterval(tick,30000);
+  setTimeout(()=>{
+    restoreDaily();
+    // Re-run buildNeiSellersToday after restore in case inputs were wiped
+    setTimeout(buildNeiSellersToday, 50);
+  },150);
 });
 </script>
 </body>
