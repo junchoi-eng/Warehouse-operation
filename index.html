@@ -543,40 +543,53 @@ function applyToday(){
   const endMin=parseTime(cfg.endTime||'18:00');
   const totalWork=workMins(startMin,endMin);
 
-  // NEI sellers (including MGS/ME)
-  const neiSellers=NEI_SELLERS.map(s=>({
-    id:s.id, name:s.name, color:s.color, bg:s.bg, border:s.border,
-    optional:s.optional||false, pmOnly:s.pmOnly||false, dispatchOnly:s.dispatchOnly||false,
-    desc:s.desc||'',
-    hc:vn(s.id+'-hc'),
-    soAM:s.dispatchOnly?0:vn(s.id+'-so-am'),
-    soPM:s.dispatchOnly?0:vn(s.id+'-so-pm'),
-    moAM:s.dispatchOnly?0:vn(s.id+'-mo-am'),
-    moPM:s.dispatchOnly?0:vn(s.id+'-mo-pm'),
-    dispAM:s.dispatchOnly?0:vn(s.id+'-disp-am'),
-    dispPM:vn(s.id+'-disp-pm'),
-    uph:cfg.nei_pick_uph||36, pph:cfg.nei_pack_pph||35,
-    amAct:{}, pmAct:{}
-  }));
+  // NEI sellers (including MGS/ME) — preserve existing actuals
+  const prevNei=STATE?.neiSellers||[];
+  const neiSellers=NEI_SELLERS.map(s=>{
+    const prev=prevNei.find(x=>x.id===s.id);
+    return {
+      id:s.id, name:s.name, color:s.color, bg:s.bg, border:s.border,
+      optional:s.optional||false, pmOnly:s.pmOnly||false, dispatchOnly:s.dispatchOnly||false,
+      desc:s.desc||'',
+      hc:vn(s.id+'-hc'),
+      soAM:s.dispatchOnly?0:vn(s.id+'-so-am'),
+      soPM:s.dispatchOnly?0:vn(s.id+'-so-pm'),
+      moAM:s.dispatchOnly?0:vn(s.id+'-mo-am'),
+      moPM:s.dispatchOnly?0:vn(s.id+'-mo-pm'),
+      dispAM:s.dispatchOnly?0:vn(s.id+'-disp-am'),
+      dispPM:vn(s.id+'-disp-pm'),
+      uph:cfg.nei_pick_uph||36, pph:cfg.nei_pack_pph||35,
+      amAct:prev?.amAct||{}, pmAct:prev?.pmAct||{}
+    };
+  });
 
-  // VMM Multichannel channels (shared crew)
+  // VMM Multichannel channels — preserve existing actuals
+  const prevMc=STATE?.amu?.mcChannels||[];
   const mcHc=vn('vmm-mc-hc');
   const mcChannels=[
     {id:'sf',  name:'Sellerflex',   color:'#4C1D95',bg:'#F5F3FF',border:'#DDD6FE', amOnly:true,
-     dispAM:vn('sf-disp-am'),  dispPM:0, amAct:{}, pmAct:{}},
+     dispAM:vn('sf-disp-am'),  dispPM:0,
+     amAct:prevMc.find(x=>x.id==='sf')?.amAct||{}, pmAct:prevMc.find(x=>x.id==='sf')?.pmAct||{}},
     {id:'amz', name:'Amazon Multi', color:'#0891B2',bg:'#ECFEFF',border:'#A5F3FC', amOnly:false,
-     dispAM:vn('amz-disp-am'), dispPM:vn('amz-disp-pm'), amAct:{}, pmAct:{}},
+     dispAM:vn('amz-disp-am'), dispPM:vn('amz-disp-pm'),
+     amAct:prevMc.find(x=>x.id==='amz')?.amAct||{}, pmAct:prevMc.find(x=>x.id==='amz')?.pmAct||{}},
     {id:'myn', name:'Myntra',       color:'#BE185D',bg:'#FDF2F8',border:'#F9A8D4', amOnly:false,
-     dispAM:vn('myn-disp-am'), dispPM:vn('myn-disp-pm'), amAct:{}, pmAct:{}},
+     dispAM:vn('myn-disp-am'), dispPM:vn('myn-disp-pm'),
+     amAct:prevMc.find(x=>x.id==='myn')?.amAct||{}, pmAct:prevMc.find(x=>x.id==='myn')?.pmAct||{}},
   ];
   const amuData={hc:mcHc, mcChannels, amAct:{}, pmAct:{}};
 
-  // VMM
+  // VMM — preserve existing actuals
+  const prevVmm=STATE?.vmm;
   const vmmData={
-    lbl:{hc:vn('vmm-lbl-hc'),uph:vn('vmm-lbl-uph')||cfg.vmm_lbl_uph||30,amTgt:vn('vmm-lbl-am'),pmTgt:vn('vmm-lbl-pm'),amAct:0,pmAct:0},
-    box:{hc:vn('vmm-box-hc'),uph:vn('vmm-box-uph')||cfg.vmm_box_uph||30,amTgt:vn('vmm-box-am'),pmTgt:vn('vmm-box-pm'),amAct:0,pmAct:0},
-    inbound:{eaTgt:vn('vmm-in-ea'),ctnTgt:vn('vmm-in-ctn'),eaAct:0,ctnAct:0},
-    outbound:{eaTgt:vn('vmm-out-ea'),ctnTgt:vn('vmm-out-ctn'),eaAct:0,ctnAct:0},
+    lbl:{hc:vn('vmm-lbl-hc'),uph:vn('vmm-lbl-uph')||cfg.vmm_lbl_uph||30,amTgt:vn('vmm-lbl-am'),pmTgt:vn('vmm-lbl-pm'),
+      amAct:prevVmm?.lbl?.amAct||0, pmAct:prevVmm?.lbl?.pmAct||0},
+    box:{hc:vn('vmm-box-hc'),uph:vn('vmm-box-uph')||cfg.vmm_box_uph||30,amTgt:vn('vmm-box-am'),pmTgt:vn('vmm-box-pm'),
+      amAct:prevVmm?.box?.amAct||0, pmAct:prevVmm?.box?.pmAct||0},
+    inbound:{eaTgt:vn('vmm-in-ea'),ctnTgt:vn('vmm-in-ctn'),
+      eaAct:prevVmm?.inbound?.eaAct||0, ctnAct:prevVmm?.inbound?.ctnAct||0},
+    outbound:{eaTgt:vn('vmm-out-ea'),ctnTgt:vn('vmm-out-ctn'),
+      eaAct:prevVmm?.outbound?.eaAct||0, ctnAct:prevVmm?.outbound?.ctnAct||0},
     material:{hc:vn('vmm-mat-hc')}
   };
 
