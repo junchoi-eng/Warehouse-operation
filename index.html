@@ -246,7 +246,6 @@ canvas.pc{width:100%;height:120px;display:block}
           <th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th>
         </tr></thead>
         <tbody>
-          <tr><td>Pick Items</td><td><input class="t-inp" id="amu-pick-am" type="number" placeholder="0" oninput="calcTotal('amu-pick')"></td><td><input class="t-inp" id="amu-pick-pm" type="number" placeholder="0" oninput="calcTotal('amu-pick')"></td><td><span class="t-total" id="amu-pick-total">—</span></td></tr>
           <tr><td>Pack S/O</td><td><input class="t-inp" id="amu-so-am" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><input class="t-inp" id="amu-so-pm" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><span class="t-total" id="amu-so-total">—</span></td></tr>
           <tr><td>Pack M/O</td><td><input class="t-inp" id="amu-mo-am" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><input class="t-inp" id="amu-mo-pm" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><span class="t-total" id="amu-mo-total">—</span></td></tr>
           <tr><td>Dispatch ★</td><td><input class="t-inp" id="amu-disp-am" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><input class="t-inp" id="amu-disp-pm" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><span class="t-total" id="amu-disp-total">—</span></td></tr>
@@ -326,23 +325,61 @@ canvas.pc{width:100%;height:120px;display:block}
 
 <!-- REPORT -->
 <div class="screen" id="screen-report">
-  <div style="max-width:1100px">
+  <div style="max-width:1280px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
-      <div><div style="font-size:18px;font-weight:500;letter-spacing:-.02em">📋 Shift End Report</div><div style="font-size:12px;color:var(--text-3);margin-top:3px" id="report-date"></div></div>
+      <div>
+        <div style="font-size:18px;font-weight:500;letter-spacing:-.02em">📋 Shift End Report</div>
+        <div style="font-size:12px;color:var(--text-3);margin-top:3px" id="report-date"></div>
+      </div>
       <div style="display:flex;gap:8px">
         <button onclick="generateReport()" class="btn-primary" style="width:auto;padding:8px 18px">Generate</button>
         <button onclick="copyReportText()" id="copy-btn" class="btn-ghost" style="display:none">Copy Text</button>
+        <button onclick="downloadPDF()" id="pdf-btn" class="btn-ghost" style="display:none">⬇ PDF</button>
       </div>
     </div>
     <div id="report-empty" style="color:var(--text-3);font-size:13px">Enter today's targets and actuals, then click Generate.</div>
     <div id="report-body" style="display:none">
-      <div id="report-reason-section" style="margin-bottom:16px;display:none">
-        <div class="sec-label" style="margin-bottom:8px">Shortfall Reasons</div>
-        <div id="report-reasons"></div>
+      <!-- Summary bar -->
+      <div id="rep-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem"></div>
+
+      <!-- NEI channels -->
+      <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        NEI Category<span style="flex:1;height:.5px;background:var(--border-md);display:block"></span>
       </div>
-      <div id="report-cards"></div>
-      <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:12px">
-        <div class="sec-label" style="margin-bottom:8px">Text Preview (Slack)</div>
+      <div id="rep-nei-cards" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:1.25rem"></div>
+
+      <!-- VMM channels -->
+      <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        VMM Category<span style="flex:1;height:.5px;background:var(--border-md);display:block"></span>
+      </div>
+      <div id="rep-vmm-cards" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1.25rem"></div>
+
+      <!-- AM/PM breakdown -->
+      <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        AM / PM Breakdown<span style="flex:1;height:.5px;background:var(--border-md);display:block"></span>
+      </div>
+      <div id="rep-ampm" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem"></div>
+
+      <!-- Issues -->
+      <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        Issues & Notes<span style="flex:1;height:.5px;background:var(--border-md);display:block"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem">
+        <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #1763B2;padding:1rem 1.25rem">
+          <div style="font-size:10px;font-weight:600;color:#1763B2;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">🌅 AM 09:00–13:00</div>
+          <textarea id="rep-issue-am" placeholder="No issues." rows="3"
+            style="width:100%;font-size:12px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);padding:8px 10px;resize:vertical;outline:none;color:var(--text);background:var(--bg)"></textarea>
+        </div>
+        <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #6B2C70;padding:1rem 1.25rem">
+          <div style="font-size:10px;font-weight:600;color:#6B2C70;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">🌆 PM 13:45–18:00</div>
+          <textarea id="rep-issue-pm" placeholder="No issues." rows="3"
+            style="width:100%;font-size:12px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);padding:8px 10px;resize:vertical;outline:none;color:var(--text);background:var(--bg)"></textarea>
+        </div>
+      </div>
+
+      <!-- Text preview -->
+      <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-top:4px">
+        <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Text Preview (Slack)</div>
         <pre id="report-text" style="font-family:var(--mono);font-size:11px;line-height:1.7;white-space:pre-wrap;color:var(--text)"></pre>
       </div>
     </div>
@@ -408,9 +445,11 @@ function workMins(a,b){let w=0;for(let m=a;m<b;m++)if(!isBreak(m))w++;return w;}
 
 /* ── SELLERS ── */
 const NEI_SELLERS=[
-  {id:'nei',name:'NEI',color:'#1E3A8A',bg:'#EFF6FF',border:'#BFDBFE'},
-  {id:'hann',name:'HANN',color:'#1D4ED8',bg:'#EFF6FF',border:'#BFDBFE'},
-  {id:'kmorbi',name:'KMORBI',color:'#2563EB',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'nei',   name:'NEI',    color:'#1E3A8A',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'hann',  name:'HANN',   color:'#1D4ED8',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'kmorbi',name:'KMORBI', color:'#2563EB',bg:'#EFF6FF',border:'#BFDBFE'},
+  {id:'mgs',   name:'MGS',    color:'#1E3A8A',bg:'#EFF6FF',border:'#BFDBFE', optional:true, pmOnly:true, dispatchOnly:true, desc:'Direct Commerce'},
+  {id:'me',    name:'ME',     color:'#1E3A8A',bg:'#EFF6FF',border:'#BFDBFE', optional:true, pmOnly:true, dispatchOnly:true, desc:'Influencer Delivery'},
 ];
 
 /* ── SETTINGS KEY ── */
@@ -430,8 +469,34 @@ let ACT_VIS={nei:true,amu:true,vmm:true};
 function buildNeiSellersToday(){
   const container=document.getElementById('nei-sellers-today');
   if(!container)return;
-  container.innerHTML=NEI_SELLERS.map(s=>`
-    <div class="seller-section" style="border-color:${s.border}">
+  container.innerHTML=NEI_SELLERS.map(s=>{
+    if(s.dispatchOnly){
+      // MGS / ME — Dispatch only, PM only, optional
+      return`<div class="seller-section" style="border-color:${s.border};opacity:.9">
+        <div class="seller-header">
+          <span class="badge" style="background:${s.bg};color:${s.color}">${s.name}</span>
+          <span class="seller-name" style="color:${s.color}">${s.name}</span>
+          <span style="font-size:9px;background:#F3F4F6;color:var(--text-3);padding:2px 8px;border-radius:8px;margin-left:6px">Optional · PM only</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+            <label style="font-size:11px;color:var(--text-2)">H/C</label>
+            <input class="hc-inp" type="number" id="${s.id}-hc" placeholder="0" min="0">
+          </div>
+        </div>
+        <table class="seller-table">
+          <thead><tr><th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Dispatch ★</td>
+              <td><input class="t-inp" style="background:#F9FAFB;color:var(--text-3)" type="number" placeholder="PM only" readonly></td>
+              <td><input class="t-inp" id="${s.id}-disp-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-disp')"></td>
+              <td><span class="t-total" id="${s.id}-disp-total">—</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`;
+    }
+    // Regular sellers — NEI / HANN / KMORBI
+    return`<div class="seller-section" style="border-color:${s.border}">
       <div class="seller-header">
         <span class="badge" style="background:${s.bg};color:${s.color}">${s.name}</span>
         <span class="seller-name" style="color:${s.color}">${s.name}</span>
@@ -443,13 +508,13 @@ function buildNeiSellersToday(){
       <table class="seller-table">
         <thead><tr><th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th></tr></thead>
         <tbody>
-          <tr><td>Pick Items</td><td><input class="t-inp" id="${s.id}-pick-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-pick')"></td><td><input class="t-inp" id="${s.id}-pick-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-pick')"></td><td><span class="t-total" id="${s.id}-pick-total">—</span></td></tr>
           <tr><td>Pack S/O</td><td><input class="t-inp" id="${s.id}-so-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-so')"></td><td><input class="t-inp" id="${s.id}-so-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-so')"></td><td><span class="t-total" id="${s.id}-so-total">—</span></td></tr>
           <tr><td>Pack M/O</td><td><input class="t-inp" id="${s.id}-mo-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-mo')"></td><td><input class="t-inp" id="${s.id}-mo-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-mo')"></td><td><span class="t-total" id="${s.id}-mo-total">—</span></td></tr>
           <tr><td>Dispatch ★</td><td><input class="t-inp" id="${s.id}-disp-am" type="number" placeholder="0" oninput="calcTotal('${s.id}-disp')"></td><td><input class="t-inp" id="${s.id}-disp-pm" type="number" placeholder="0" oninput="calcTotal('${s.id}-disp')"></td><td><span class="t-total" id="${s.id}-disp-total">—</span></td></tr>
         </tbody>
       </table>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function calcTotal(prefix){
@@ -465,14 +530,18 @@ function applyToday(){
   const endMin=parseTime(cfg.endTime||'18:00');
   const totalWork=workMins(startMin,endMin);
 
-  // NEI sellers
+  // NEI sellers (including MGS/ME)
   const neiSellers=NEI_SELLERS.map(s=>({
     id:s.id, name:s.name, color:s.color, bg:s.bg, border:s.border,
+    optional:s.optional||false, pmOnly:s.pmOnly||false, dispatchOnly:s.dispatchOnly||false,
+    desc:s.desc||'',
     hc:vn(s.id+'-hc'),
-    pickAM:vn(s.id+'-pick-am'), pickPM:vn(s.id+'-pick-pm'),
-    soAM:vn(s.id+'-so-am'), soPM:vn(s.id+'-so-pm'),
-    moAM:vn(s.id+'-mo-am'), moPM:vn(s.id+'-mo-pm'),
-    dispAM:vn(s.id+'-disp-am'), dispPM:vn(s.id+'-disp-pm'),
+    soAM:s.dispatchOnly?0:vn(s.id+'-so-am'),
+    soPM:s.dispatchOnly?0:vn(s.id+'-so-pm'),
+    moAM:s.dispatchOnly?0:vn(s.id+'-mo-am'),
+    moPM:s.dispatchOnly?0:vn(s.id+'-mo-pm'),
+    dispAM:s.dispatchOnly?0:vn(s.id+'-disp-am'),
+    dispPM:vn(s.id+'-disp-pm'),
     uph:cfg.nei_pick_uph||36, pph:cfg.nei_pack_pph||35,
     amAct:{}, pmAct:{}
   }));
@@ -480,7 +549,6 @@ function applyToday(){
   // AMU
   const amuData={
     hc:vn('amu-hc'),
-    pickAM:vn('amu-pick-am'), pickPM:vn('amu-pick-pm'),
     soAM:vn('amu-so-am'), soPM:vn('amu-so-pm'),
     moAM:vn('amu-mo-am'), moPM:vn('amu-mo-pm'),
     dispAM:vn('amu-disp-am'), dispPM:vn('amu-disp-pm'),
@@ -522,16 +590,8 @@ function buildSettings(){
 
   document.getElementById('nei-amu-settings').innerHTML=`
     <div class="proc-row-s">
-      <div class="proc-row-s-name">NEI / HANN / KMORBI — Picking <span style="font-size:9px;background:#DBEAFE;color:#1E3A8A;padding:1px 6px;border-radius:8px">UPH</span></div>
-      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-nei-pick" value="${cfg.nei_pick_uph||36}"></div>
-    </div>
-    <div class="proc-row-s">
       <div class="proc-row-s-name">NEI / HANN / KMORBI — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
       <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-nei-pack" value="${cfg.nei_pack_pph||35}"></div>
-    </div>
-    <div class="proc-row-s">
-      <div class="proc-row-s-name">AMU — Picking <span style="font-size:9px;background:#CFFAFE;color:#164E63;padding:1px 6px;border-radius:8px">UPH</span></div>
-      <div class="proc-row-s-inputs"><div class="s-inp-label">UPH/person</div><input class="s-inp" id="s-amu-pick" value="${cfg.amu_pick_uph||36}"></div>
     </div>
     <div class="proc-row-s">
       <div class="proc-row-s-name">AMU — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
@@ -553,9 +613,7 @@ function saveSettings(){
   const cfg={
     startTime:document.getElementById('s-start').value||'09:00',
     endTime:document.getElementById('s-end').value||'18:00',
-    nei_pick_uph:vn('s-nei-pick')||36,
     nei_pack_pph:vn('s-nei-pack')||35,
-    amu_pick_uph:vn('s-amu-pick')||36,
     amu_pack_pph:vn('s-amu-pack')||35,
     vmm_lbl_uph:vn('s-vmm-lbl')||30,
     vmm_box_uph:vn('s-vmm-box')||30,
@@ -637,34 +695,58 @@ function updateNEI(){
     document.getElementById('nei-dashMain').appendChild(panel);
   }
 
-  // Always render display cards (read-only)
-  const sellersHTML=neiSellers.map(s=>{
+  // Display cards — split regular vs optional
+  const regularSellers=neiSellers.filter(s=>!s.dispatchOnly);
+  const optionalSellers=neiSellers.filter(s=>s.dispatchOnly);
+
+  const makeSellerDisplayCard=(s)=>{
     const amAct=s.amAct||{}, pmAct=s.pmAct||{};
     const dispAM=amAct.disp||0, dispPM=pmAct.disp||0;
     const dispTotal=dispAM+dispPM;
     const dispTgt=(s.dispAM||0)+(s.dispPM||0);
-    const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
-    const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
-    const pickTgt=(s.pickAM||0)+(s.pickPM||0);
-    const soTotal=(amAct.so||0)+(pmAct.so||0);
-    const soTgt=(s.soAM||0)+(s.soPM||0);
-    const moTotal=(amAct.mo||0)+(pmAct.mo||0);
-    const moTgt=(s.moAM||0)+(s.moPM||0);
+    const dispPct=dispTgt>0?Math.round(dispTotal/dispTgt*100):0;
     const ew=workMins(startMin,Math.min(nowMin,endMin));
     const dispRate=ew>0&&dispTotal>0?dispTotal/(ew/60):0;
     let etaText='—',etaClass='eta-warn';
-    if(dispRate>0){
-      const r=dispTgt-dispTotal;
-      if(r<=0){etaText='Done ✓';etaClass='eta-ok';}
-      else{const em=nowMin+(r/dispRate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}
-    }
+    if(dispRate>0){const r=dispTgt-dispTotal;if(r<=0){etaText='Done ✓';etaClass='eta-ok';}else{const em=nowMin+(r/dispRate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}}
     const dc=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';
     const dbg=dispPct>=90?'#F0FDF4':dispPct>=60?'#FFFBEB':dispTotal>0?'#FEF2F2':'var(--bg)';
 
+    if(s.dispatchOnly){
+      // MGS / ME — compact card, PM only
+      if(dispTgt===0&&dispTotal===0){
+        return`<div class="seller-card" style="opacity:.5;border-style:dashed">
+          <div class="sc-header" style="background:${s.bg};border-color:${s.border}">
+            <div class="sc-name" style="color:${s.color}">${s.name}</div>
+            <div class="sc-hc" style="font-size:9px;color:var(--text-3)">Not today</div>
+          </div>
+          <div style="padding:.75rem 1rem;font-size:11px;color:var(--text-3);text-align:center">${s.desc||''} · No target set</div>
+        </div>`;
+      }
+      return`<div class="seller-card" style="border-color:${s.border}">
+        <div class="sc-header" style="background:${s.bg};border-color:${s.border}">
+          <div class="sc-name" style="color:${s.color}">${s.name}</div>
+          <div class="sc-hc">H/C ${s.hc||'—'}</div>
+        </div>
+        <div style="padding:.875rem 1rem;background:${dbg}">
+          <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${dc};margin-bottom:4px">Dispatched ★ · PM</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:5px">
+            <span style="font-size:24px;font-weight:300;font-family:var(--mono);color:${dc};line-height:1">${dispPct}<span style="font-size:11px">%</span></span>
+            <span style="font-size:11px;font-family:var(--mono);color:var(--text-2)">${dispTotal} / ${dispTgt}</span>
+            <span style="margin-left:auto;font-size:12px;font-family:var(--mono)" class="${etaClass}">${etaText}</span>
+          </div>
+          <div style="height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden">
+            <div style="height:100%;width:${Math.min(dispPct,100)}%;background:${dc};border-radius:2px"></div>
+          </div>
+          <div style="font-size:9px;color:var(--text-3);font-family:var(--mono);margin-top:4px">${s.desc||''}</div>
+        </div>
+      </div>`;
+    }
+
+    // Regular seller
     const procRows=[
-      {label:'Picking',total:pickTotal,tgt:pickTgt},
-      {label:'Pack S/O',total:soTotal,tgt:soTgt},
-      {label:'Pack M/O',total:moTotal,tgt:moTgt},
+      {label:'Pack S/O',total:(amAct.so||0)+(pmAct.so||0),tgt:(s.soAM||0)+(s.soPM||0)},
+      {label:'Pack M/O',total:(amAct.mo||0)+(pmAct.mo||0),tgt:(s.moAM||0)+(s.moPM||0)},
     ].map(p=>{
       const pp=p.tgt>0?Math.min(Math.round(p.total/p.tgt*100),100):0;
       const c=pp>=90?var_ok:pp>=60?var_warn:p.total>0?var_behind:'#D1D5DB';
@@ -672,7 +754,7 @@ function updateNEI(){
         <span style="font-size:10px;color:var(--text-2);width:70px;flex-shrink:0">${p.label}</span>
         <div style="flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pp}%;background:${c};border-radius:2px"></div></div>
         <span style="font-size:10px;font-family:var(--mono);color:${c};font-weight:600;width:30px;text-align:right">${p.total>0?pp+'%':'—'}</span>
-        <span style="font-size:10px;font-family:var(--mono);color:var(--text-3);width:80px;text-align:right">${p.total.toLocaleString()}/${p.tgt.toLocaleString()}</span>
+        <span style="font-size:10px;font-family:var(--mono);color:var(--text-3);width:80px;text-align:right">${p.total}/${p.tgt}</span>
       </div>`;
     }).join('');
 
@@ -689,74 +771,93 @@ function updateNEI(){
           <span style="margin-left:auto;font-size:12px;font-family:var(--mono)" class="${etaClass}">${etaText}</span>
         </div>
         <div style="height:5px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden;margin-bottom:5px">
-          <div style="height:100%;width:${dispPct}%;background:${dc};border-radius:3px"></div>
+          <div style="height:100%;width:${Math.min(dispPct,100)}%;background:${dc};border-radius:3px"></div>
         </div>
         <div style="display:flex;gap:12px">
-          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">AM <b style="color:var(--text-2)">${dispAM>0?dispAM.toLocaleString():'—'}</b></span>
-          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">PM <b style="color:var(--text-2)">${dispPM>0?dispPM.toLocaleString():'—'}</b></span>
+          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">AM <b style="color:var(--text-2)">${dispAM>0?dispAM:'—'}</b></span>
+          <span style="font-size:10px;font-family:var(--mono);color:var(--text-3)">PM <b style="color:var(--text-2)">${dispPM>0?dispPM:'—'}</b></span>
         </div>
       </div>
       <div style="padding:.75rem 1rem">${procRows}</div>
     </div>`;
-  }).join('');
+  };
 
   // Update display cards
   let cardsWrap=document.getElementById('nei-seller-cards');
   if(!cardsWrap){
     document.getElementById('nei-dashMain').innerHTML=`
-      <div id="nei-seller-cards" class="seller-cards"></div>
+      <div id="nei-seller-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px"></div>
+      <div id="nei-optional-cards" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px"></div>
       <div id="nei-input-panel"></div>`;
     cardsWrap=document.getElementById('nei-seller-cards');
   }
-  cardsWrap.innerHTML=sellersHTML;
+  cardsWrap.innerHTML=regularSellers.map(makeSellerDisplayCard).join('');
+  const optWrap=document.getElementById('nei-optional-cards');
+  if(optWrap) optWrap.innerHTML=optionalSellers.map(makeSellerDisplayCard).join('');
 
   // Build input panel only once — preserve focus
   const panel=document.getElementById('nei-input-panel');
   if(panel&&!panel.dataset.built){
     panel.dataset.built='1';
-    panel.style.cssText='background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-top:12px';
+    panel.style.cssText='background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-top:4px';
+
+    // Regular sellers input table
+    const regRows=regularSellers.map(s=>`
+      <tr style="border-bottom:.5px solid var(--border)">
+        <td style="padding:8px 10px;font-size:11px;font-weight:600;color:${s.color}">${s.name}</td>
+        ${['so','mo','disp'].map(k=>`
+          <td style="padding:4px 6px;border-left:.5px solid var(--border)">
+            <input id="nei-act-${s.id}-am-${k}" type="number" placeholder="0" min="0"
+              value="${(s.amAct&&s.amAct[k])||''}"
+              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+              oninput="neiActChange('${s.id}','am','${k}',this.value)">
+          </td>
+          <td style="padding:4px 6px">
+            <input id="nei-act-${s.id}-pm-${k}" type="number" placeholder="0" min="0"
+              value="${(s.pmAct&&s.pmAct[k])||''}"
+              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+              oninput="neiActChange('${s.id}','pm','${k}',this.value)">
+          </td>
+        `).join('')}
+      </tr>`).join('');
+
+    // Optional sellers (MGS/ME) — PM Dispatch only
+    const optRows=optionalSellers.map(s=>`
+      <tr style="border-bottom:.5px solid var(--border);background:#FAFAF8">
+        <td style="padding:8px 10px;font-size:11px;font-weight:600;color:${s.color}">${s.name} <span style="font-size:9px;font-weight:400;color:var(--text-3)">PM only</span></td>
+        ${'pick,so,mo'.split(',').map(()=>`
+          <td style="padding:4px 6px;border-left:.5px solid var(--border)"><span style="display:block;width:68px;text-align:center;font-size:10px;color:var(--text-3)">—</span></td>
+          <td></td>
+        `).join('')}
+        <td style="padding:4px 6px;border-left:.5px solid var(--border)"><span style="display:block;width:68px;text-align:center;font-size:10px;color:var(--text-3)">—</span></td>
+        <td style="padding:4px 6px">
+          <input id="nei-act-${s.id}-pm-disp" type="number" placeholder="0" min="0"
+            value="${(s.pmAct&&s.pmAct.disp)||''}"
+            style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+            oninput="neiActChange('${s.id}','pm','disp',this.value)">
+        </td>
+      </tr>`).join('');
+
     panel.innerHTML=`
-      <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:.875rem">
-        Actuals Input — AM / PM
-      </div>
+      <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:.875rem">Actuals Input — AM / PM</div>
       <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:11px">
         <thead>
           <tr style="border-bottom:1.5px solid var(--border-md)">
             <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);width:80px">Seller</th>
-            ${['Pick Items','Pack S/O','Pack M/O','Dispatch ★'].map(h=>`
+            ${['Pack S/O','Pack M/O','Dispatch ★'].map(h=>`
               <th colspan="2" style="padding:6px 8px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:center;border-left:.5px solid var(--border)">${h}</th>
             `).join('')}
           </tr>
           <tr style="border-bottom:.5px solid var(--border-md)">
             <th></th>
-            ${['pick','so','mo','disp'].map(()=>`
+            ${['so','mo','disp'].map(()=>`
               <th style="padding:4px 6px;font-size:9px;color:var(--text-3);text-align:center;border-left:.5px solid var(--border)">AM</th>
               <th style="padding:4px 6px;font-size:9px;color:var(--text-3);text-align:center">PM</th>
             `).join('')}
           </tr>
         </thead>
-        <tbody>
-          ${neiSellers.map(s=>`
-            <tr style="border-bottom:.5px solid var(--border)">
-              <td style="padding:8px 10px;font-size:11px;font-weight:600;color:${s.color}">${s.name}</td>
-              ${['pick','so','mo','disp'].map(k=>`
-                <td style="padding:4px 6px;border-left:.5px solid var(--border)">
-                  <input id="nei-act-${s.id}-am-${k}" type="number" placeholder="0" min="0"
-                    value="${(s.amAct&&s.amAct[k])||''}"
-                    style="width:72px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
-                    oninput="neiActChange('${s.id}','am','${k}',this.value)">
-                </td>
-                <td style="padding:4px 6px">
-                  <input id="nei-act-${s.id}-pm-${k}" type="number" placeholder="0" min="0"
-                    value="${(s.pmAct&&s.pmAct[k])||''}"
-                    style="width:72px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
-                    oninput="neiActChange('${s.id}','pm','${k}',this.value)">
-                </td>
-              `).join('')}
-            </tr>
-          `).join('')}
-        </tbody>
+        <tbody>${regRows}${optRows}</tbody>
       </table>
       </div>
       <div style="font-size:9px;color:var(--text-3);font-family:var(--mono);margin-top:6px;text-align:right">Values saved automatically · Cards update on change</div>`;
@@ -803,10 +904,7 @@ function updateAMU(){
   let etaText='—',etaClass='eta-warn';
   if(rate>0){const r=dispTgt-dispTotal;if(r<=0){etaText='Done ✓';etaClass='eta-ok';}else{const em=nowMin+(r/rate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}}
 
-  const bannerC=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';
-  const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
-  const pickTgt=(amu.pickAM||0)+(amu.pickPM||0);
-  const soTotal=(amAct.so||0)+(pmAct.so||0);
+  const bannerC=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';  const soTotal=(amAct.so||0)+(pmAct.so||0);
   const soTgt=(amu.soAM||0)+(amu.soPM||0);
   const moTotal=(amAct.mo||0)+(pmAct.mo||0);
   const moTgt=(amu.moAM||0)+(amu.moPM||0);
@@ -844,9 +942,7 @@ function updateAMU(){
       <table class="act-table">
         <thead><tr><th>Item</th><th>AM</th><th>PM</th><th>Total</th><th>Target</th><th style="width:100px">vs Target</th></tr></thead>
         <tbody>
-          ${[
-            {key:'pick',label:'Pick Items',tgt:pickTgt},
-            {key:'so',label:'Pack S/O',tgt:soTgt},
+          ${[            {key:'so',label:'Pack S/O',tgt:soTgt},
             {key:'mo',label:'Pack M/O',tgt:moTgt},
             {key:'disp',label:'Dispatch ★',tgt:dispTgt},
           ].map(r=>`<tr>
@@ -1147,9 +1243,7 @@ function buildSchedule(){
   // NEI sellers
   const cfg=loadSettings();
   STATE.neiSellers.forEach(s=>{
-    const procs=[
-      {label:'Picking',unit:'UPH',key:'pick',hc:s.hc,uph:s.uph||cfg.nei_pick_uph||36},
-      {label:'Pack S/O',unit:'PPH',key:'so',hc:s.hc,uph:s.pph||cfg.nei_pack_pph||35},
+    const procs=[      {label:'Pack S/O',unit:'PPH',key:'so',hc:s.hc,uph:s.pph||cfg.nei_pack_pph||35},
       {label:'Pack M/O',unit:'PPH',key:'mo',hc:s.hc,uph:s.pph||cfg.nei_pack_pph||35},
     ];
     schedHTML+=buildTable(s.name,s.color,slots,procs,k=>s.amAct?.[k]||0,k=>s.pmAct?.[k]||0);
@@ -1157,9 +1251,7 @@ function buildSchedule(){
 
   // AMU
   const amu=STATE.amu;
-  const amuProcs=[
-    {label:'Picking',unit:'UPH',key:'pick',hc:amu.hc,uph:amu.uph||cfg.amu_pick_uph||36},
-    {label:'Pack S/O',unit:'PPH',key:'so',hc:amu.hc,uph:amu.pph||cfg.amu_pack_pph||35},
+  const amuProcs=[    {label:'Pack S/O',unit:'PPH',key:'so',hc:amu.hc,uph:amu.pph||cfg.amu_pack_pph||35},
     {label:'Pack M/O',unit:'PPH',key:'mo',hc:amu.hc,uph:amu.pph||cfg.amu_pack_pph||35},
   ];
   schedHTML+=buildTable('AMU — Amazon Multi','#0891B2',slots,amuProcs,k=>amu.amAct?.[k]||0,k=>amu.pmAct?.[k]||0);
@@ -1183,10 +1275,44 @@ function initReport(){
   document.getElementById('report-empty').style.display='none';
 }
 
-function ragColorRep(pct){
-  if(pct>=90)return{bg:'#F0FDF4',text:'#166534',bar:var_ok};
-  if(pct>=60)return{bg:'#FFFBEB',text:'#92400E',bar:var_warn};
-  return{bg:'#FEF2F2',text:'#991B1B',bar:var_behind};
+function ragRep(pct){
+  if(pct>=90)return{kpiBg:'#F0FDF4',text:'#166534',bar:'#1D9E75'};
+  if(pct>=60)return{kpiBg:'#FFFBEB',text:'#92400E',bar:'#BA7517'};
+  return{kpiBg:'#FEF2F2',text:'#991B1B',bar:'#E24B4A'};
+}
+
+function makeSellerCard(name,color,bg,border,hc,tgt,actual,amTgt,pmTgt,amAct,pmAct,note){
+  const pct=tgt>0?Math.round(actual/tgt*100):0;
+  const r=ragRep(Math.min(pct,100));
+  const pending=Math.max(tgt-actual,0);
+  return`<div style="background:var(--surface);border:.5px solid ${border};border-radius:var(--radius-lg);overflow:hidden">
+    <div style="padding:.625rem 1rem;border-bottom:.5px solid var(--border);background:${bg};display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;font-weight:600;color:${color}">${name}</span>
+      <span style="font-size:9px;font-family:var(--mono);background:rgba(0,0,0,.06);padding:2px 6px;border-radius:8px;color:var(--text-2)">${hc}</span>
+    </div>
+    <div style="padding:.75rem 1rem;border-bottom:.5px solid var(--border);background:${r.kpiBg}">
+      <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${r.text};margin-bottom:4px">Dispatched ★</div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px">
+        <span style="font-size:28px;font-weight:300;font-family:var(--mono);color:${r.text};line-height:1">${pct}<span style="font-size:12px">%</span></span>
+        <span style="font-size:11px;font-family:var(--mono);color:var(--text-2)">${actual.toLocaleString()} / ${tgt.toLocaleString()}</span>
+        <span style="margin-left:auto;font-size:14px">${pct>=100?'✅':'⚠️'}</span>
+      </div>
+      <div style="height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-bottom:5px">
+        <div style="height:100%;width:${Math.min(pct,100)}%;background:${r.bar};border-radius:2px"></div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <span style="font-size:9px;font-family:var(--mono);color:${r.text};opacity:.8">AM <b style="opacity:1">${amAct>0?amAct.toLocaleString():'—'}</b>${amTgt?' / '+amTgt:''}</span>
+        <span style="font-size:9px;font-family:var(--mono);color:${r.text};opacity:.8">PM <b style="opacity:1">${pmAct>0?pmAct.toLocaleString():'—'}</b>${pmTgt?' / '+pmTgt:''}</span>
+      </div>
+    </div>
+    <div style="padding:.5rem 1rem;display:flex;gap:6px">
+      <div style="flex:1;padding:4px 8px;border-radius:6px;background:${pending===0?'#F0FDF4':'#FEF2F2'};border:.5px solid ${pending===0?'#1D9E75':'#E24B4A'};display:flex;justify-content:space-between">
+        <span style="font-size:9px;color:var(--text-2)">Pending</span>
+        <span style="font-size:12px;font-family:var(--mono);font-weight:600;color:${pending===0?'#166534':'#991B1B'}">${pending}</span>
+      </div>
+      ${note?`<div style="flex:1;padding:4px 8px;border-radius:6px;background:var(--bg);border:.5px solid var(--border);font-size:9px;color:var(--text-3);display:flex;align-items:center">${note}</div>`:''}
+    </div>
+  </div>`;
 }
 
 function generateReport(){
@@ -1194,110 +1320,182 @@ function generateReport(){
   document.getElementById('report-body').style.display='block';
   document.getElementById('report-empty').style.display='none';
   document.getElementById('copy-btn').style.display='inline-block';
+  document.getElementById('pdf-btn').style.display='inline-block';
 
   const ist=getIST();
-  const dateStr=ist.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
-  const timeStr=fmtIST(ist);
-  let lines=[`Shift End Report — ${dateStr} · ${timeStr} IST`,``];
+  const dateStr=ist.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('report-date').textContent=dateStr+' · IST '+fmtIST(ist);
 
-  // NEI sellers cards
-  const neiCards=STATE.neiSellers.map(s=>{
-    const amAct=s.amAct||{},pmAct=s.pmAct||{};
-    const dispTotal=(amAct.disp||0)+(pmAct.disp||0);
-    const dispTgt=(s.dispAM||0)+(s.dispPM||0);
-    const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
-    const c=ragColorRep(dispPct);
-    const pending=Math.max(dispTgt-dispTotal,0);
-    const pickTotal=(amAct.pick||0)+(pmAct.pick||0);
-    const pickTgt=(s.pickAM||0)+(s.pickPM||0);
-    const soTotal=(amAct.so||0)+(pmAct.so||0);
-    const soTgt=(s.soAM||0)+(s.soPM||0);
-    const moTotal=(amAct.mo||0)+(pmAct.mo||0);
-    const moTgt=(s.moAM||0)+(s.moPM||0);
+  // NEI channels
+  const neiChannels=STATE.neiSellers.map(s=>{
+    const am=s.amAct||{},pm=s.pmAct||{};
+    return{id:s.id,name:s.name,color:s.color,bg:s.bg,border:s.border,
+      optional:s.optional||false,dispatchOnly:s.dispatchOnly||false,desc:s.desc||'',
+      hc:`H/C ${s.hc||'—'}`,
+      tgt:(s.dispAM||0)+(s.dispPM||0),actual:(am.disp||0)+(pm.disp||0),
+      amTgt:s.dispAM||0,pmTgt:s.dispPM||0,amAct:am.disp||0,pmAct:pm.disp||0};
+  });
 
-    // text
-    lines.push(`[${s.name}]`);
-    lines.push(`  Dispatched: ${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()} (${dispPct}%)  AM: ${amAct.disp>0?amAct.disp.toLocaleString():'—'} / PM: ${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}`);
-    lines.push(`  Pick: ${pickTotal.toLocaleString()} / ${pickTgt.toLocaleString()}  Pack S/O: ${soTotal.toLocaleString()} / ${soTgt.toLocaleString()}  M/O: ${moTotal.toLocaleString()} / ${moTgt.toLocaleString()}`);
-    if(pending>0){const r=(document.getElementById(`rep-reason-${s.id}`)?.value||'').trim();lines.push(`  Pending: ${pending.toLocaleString()}${r?' — '+r:''}`);}
-    lines.push('');
+  // AMU
+  const amuAm=STATE.amu.amAct||{},amuPm=STATE.amu.pmAct||{};
+  const amuDisp=(amuAm.disp||0)+(amuPm.disp||0);
+  const amuTgt=(STATE.amu.dispAM||0)+(STATE.amu.dispPM||0);
 
-    return`<div class="rep-card">
-      <div class="rep-card-hdr" style="background:${s.bg}">
-        <span style="font-size:12px;font-weight:600;color:${s.color}">${s.name}</span>
-        <span style="font-size:10px;color:var(--text-3);font-family:var(--mono)">H/C ${s.hc||'—'}</span>
-      </div>
-      <div class="rep-kpi" style="background:${c.bg}">
-        <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${c.text};margin-bottom:6px">Dispatched ★</div>
-        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px">
-          <span style="font-size:28px;font-weight:300;font-family:var(--mono);color:${c.text}">${dispPct}<span style="font-size:13px">%</span></span>
-          <span style="font-size:12px;font-family:var(--mono);color:${c.text}">${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()}</span>
-          <span style="font-size:14px;margin-left:auto">${dispPct>=90?'✅':'⚠️'}</span>
-        </div>
-        <div style="height:5px;background:rgba(0,0,0,.08);border-radius:3px;overflow:hidden;margin-bottom:5px">
-          <div style="height:100%;width:${dispPct}%;background:${c.bar};border-radius:3px"></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-bottom:4px">
-          <span style="font-size:10px;font-family:var(--mono);color:${c.text};opacity:.7">AM <b>${amAct.disp>0?amAct.disp.toLocaleString():'—'}</b></span>
-          <span style="font-size:10px;font-family:var(--mono);color:${c.text};opacity:.7">PM <b>${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}</b></span>
-        </div>
-        ${pending>0?`<div style="font-size:10px;color:${c.text};font-family:var(--mono)">⚠ ${pending.toLocaleString()} pending</div>`:'<div style="font-size:10px;color:'+var_ok+';font-family:var(--mono)">✓ No pending</div>'}
-      </div>
-      <div class="rep-procs">
-        ${[{l:'Pick',t:pickTgt,a:pickTotal},{l:'S/O',t:soTgt,a:soTotal},{l:'M/O',t:moTgt,a:moTotal}].map(p=>{
-          const pp=p.t>0?Math.min(Math.round(p.a/p.t*100),100):0;
-          const pc=pp>=90?var_ok:pp>=60?var_warn:p.a>0?var_behind:'#D1D5DB';
-          return`<div class="rep-proc-row" style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:10px;color:var(--text-2);width:40px">${p.l}</span>
-            <div style="flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pp}%;background:${pc};border-radius:2px"></div></div>
-            <span style="font-size:10px;font-family:var(--mono);color:${pc};font-weight:600;width:28px;text-align:right">${p.a>0?pp+'%':'—'}</span>
-            <span style="font-size:9px;font-family:var(--mono);color:var(--text-3);width:70px;text-align:right">${p.a.toLocaleString()}/${p.t.toLocaleString()}</span>
-          </div>`;}).join('')}
-        ${pending>0?`<div style="margin-top:8px"><textarea id="rep-reason-${s.id}" placeholder="Shortfall reason..." rows="2"
-          style="width:100%;font-size:11px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:6px;padding:6px 8px;outline:none;resize:vertical;color:var(--text)"></textarea></div>`:''}
-      </div>
-    </div>`;
+  // VMM
+  const vmm=STATE.vmm;
+  const vmmLbl=(vmm.lbl.amAct||0)+(vmm.lbl.pmAct||0),vmmLblTgt=(vmm.lbl.amTgt||0)+(vmm.lbl.pmTgt||0);
+  const vmmBox=(vmm.box.amAct||0)+(vmm.box.pmAct||0),vmmBoxTgt=(vmm.box.amTgt||0)+(vmm.box.pmTgt||0);
+
+  // Totals
+  const totalTgt=neiChannels.reduce((s,c)=>s+c.tgt,0)+amuTgt;
+  const totalAct=neiChannels.reduce((s,c)=>s+c.actual,0)+amuDisp;
+  const totalPct=totalTgt>0?Math.round(totalAct/totalTgt*100):0;
+  const totalPending=Math.max(totalTgt-totalAct,0);
+
+  // Summary
+  document.getElementById('rep-summary').innerHTML=[
+    {label:'Total Target',val:totalTgt.toLocaleString(),sub:'All channels',ok:false},
+    {label:'Total Dispatched',val:totalAct.toLocaleString(),sub:`${totalPct}% of target`,ok:totalPct>=100},
+    {label:'Achievement',val:totalPct+'%',sub:totalAct>totalTgt?`+${(totalAct-totalTgt).toLocaleString()} over`:totalPending>0?`${totalPending.toLocaleString()} pending`:'On target',ok:totalPct>=100},
+    {label:'Pending',val:totalPending.toLocaleString(),sub:totalPending===0?'All dispatched ✓':'Carry-over',ok:totalPending===0},
+  ].map(c=>`<div style="background:${c.ok?'#F0FDF4':'var(--surface)'};border:.5px solid ${c.ok?'#1D9E75':'var(--border)'};border-radius:var(--radius-lg);padding:1rem 1.25rem">
+    <div style="font-size:9px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px">${c.label}</div>
+    <div style="font-size:26px;font-weight:300;font-family:var(--mono);line-height:1;color:${c.ok?'#166534':'var(--text)'}">${c.val}</div>
+    <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);margin-top:4px">${c.sub}</div>
+  </div>`).join('');
+
+  // NEI cards — regular + optional
+  document.getElementById('rep-nei-cards').innerHTML=neiChannels.map(c=>{
+    if(c.optional&&c.tgt===0&&c.actual===0){
+      return`<div style="background:var(--surface);border:.5px dashed var(--border-md);border-radius:var(--radius-lg);padding:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;opacity:.5">
+        <div style="font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:4px">${c.name}</div>
+        <div style="font-size:10px;color:var(--text-3)">${c.desc}</div>
+        <div style="font-size:10px;color:var(--text-3);margin-top:4px">Not operated today</div>
+      </div>`;
+    }
+    return makeSellerCard(c.name,c.color,c.bg,c.border,c.hc,c.tgt,c.actual,
+      c.dispatchOnly?null:c.amTgt, c.pmTgt, c.dispatchOnly?null:c.amAct, c.pmAct,
+      c.dispatchOnly?c.desc:null);
   }).join('');
 
-  // AMU card
-  const amu=STATE.amu;
-  const amuAmAct=amu.amAct||{},amuPmAct=amu.pmAct||{};
-  const amuDisp=(amuAmAct.disp||0)+(amuPmAct.disp||0);
-  const amuDispTgt=(amu.dispAM||0)+(amu.dispPM||0);
-  const amuDispPct=amuDispTgt>0?Math.min(Math.round(amuDisp/amuDispTgt*100),100):0;
-  const amuC=ragColorRep(amuDispPct);
-  const amuPick=(amuAmAct.pick||0)+(amuPmAct.pick||0);
-  const amuPickTgt=(amu.pickAM||0)+(amu.pickPM||0);
-  const amuSo=(amuAmAct.so||0)+(amuPmAct.so||0),amuSoTgt=(amu.soAM||0)+(amu.soPM||0);
-  const amuMo=(amuAmAct.mo||0)+(amuPmAct.mo||0),amuMoTgt=(amu.moAM||0)+(amu.moPM||0);
-  const amuPending=Math.max(amuDispTgt-amuDisp,0);
+  // VMM cards
+  document.getElementById('rep-vmm-cards').innerHTML=[
+    makeSellerCard('AMU — Amazon Multi','#0891B2','#ECFEFF','#A5F3FC',`H/C ${STATE.amu.hc||'—'}`,
+      amuTgt,amuDisp,STATE.amu.dispAM||0,STATE.amu.dispPM||0,amuAm.disp||0,amuPm.disp||0,null),
+    `<div style="background:var(--surface);border:.5px solid #DDD6FE;border-radius:var(--radius-lg);overflow:hidden">
+      <div style="padding:.625rem 1rem;border-bottom:.5px solid var(--border);background:#F5F3FF;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;font-weight:600;color:#4C1D95">VMM — Multichannel</span>
+        <span style="font-size:9px;font-family:var(--mono);background:rgba(0,0,0,.06);padding:2px 6px;border-radius:8px">H/C ${(vmm.lbl.hc||0)+(vmm.box.hc||0)}</span>
+      </div>
+      <div style="padding:.75rem 1rem">
+        ${[
+          {label:'Label Machine',act:vmmLbl,tgt:vmmLblTgt,amA:vmm.lbl.amAct||0,pmA:vmm.lbl.pmAct||0},
+          {label:'Box Machine',act:vmmBox,tgt:vmmBoxTgt,amA:vmm.box.amAct||0,pmA:vmm.box.pmAct||0},
+          {label:'Inbound EA',act:vmm.inbound.eaAct||0,tgt:vmm.inbound.eaTgt||0,amA:null,pmA:null},
+          {label:'Outbound EA',act:vmm.outbound.eaAct||0,tgt:vmm.outbound.eaTgt||0,amA:null,pmA:null},
+          {label:'Materials H/C',act:vmm.material.hc||0,tgt:0,amA:null,pmA:null},
+        ].map(p=>{
+          const pct=p.tgt>0?Math.min(Math.round(p.act/p.tgt*100),100):0;
+          const c=pct>=90?'#1D9E75':pct>=60?'#BA7517':p.act>0?'#E24B4A':'#D1D5DB';
+          return`<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:.5px solid var(--border)">
+            <span style="font-size:10px;color:var(--text-2);width:100px;flex-shrink:0">${p.label}</span>
+            ${p.tgt>0?`<div style="flex:1;height:4px;background:var(--bg);border-radius:2px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${c};border-radius:2px"></div></div>
+            <span style="font-size:10px;font-family:var(--mono);font-weight:600;color:${c};width:28px;text-align:right">${pct}%</span>`:'<span style="flex:1"></span>'}
+            <span style="font-size:10px;font-family:var(--mono);color:var(--text-2);font-weight:500;width:80px;text-align:right">${p.act}${p.tgt>0?' / '+p.tgt:''}</span>
+            ${p.amA!==null?`<span style="font-size:9px;font-family:var(--mono);color:var(--text-3);width:90px;text-align:right">AM ${p.amA} · PM ${p.pmA}</span>`:''}
+          </div>`;}).join('')}
+      </div>
+    </div>`
+  ].join('');
 
-  lines.push(`[AMU — Amazon Multichannel]`);
-  lines.push(`  Dispatched: ${amuDisp.toLocaleString()} / ${amuDispTgt.toLocaleString()} (${amuDispPct}%)  AM: ${amuAmAct.disp>0?amuAmAct.disp.toLocaleString():'—'} / PM: ${amuPmAct.disp>0?amuPmAct.disp.toLocaleString():'—'}`);
-  lines.push(`  Pick: ${amuPick.toLocaleString()} / ${amuPickTgt.toLocaleString()}  S/O: ${amuSo.toLocaleString()} / ${amuSoTgt.toLocaleString()}  M/O: ${amuMo.toLocaleString()} / ${amuMoTgt.toLocaleString()}`);
-  if(amuPending>0)lines.push(`  Pending: ${amuPending.toLocaleString()}`);
-  lines.push('');
+  // AM/PM breakdown
+  const thS='font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);padding:5px 10px;border-bottom:.5px solid var(--border-md);text-align:right';
+  const tdS='padding:6px 10px;border-bottom:.5px solid var(--border);text-align:right;font-family:var(--mono)';
+  const amTotalTgt=neiChannels.reduce((s,c)=>s+(c.amTgt||0),0);
+  const amTotalAct=neiChannels.reduce((s,c)=>s+(c.amAct||0),0);
+  const pmTotalTgt=neiChannels.reduce((s,c)=>s+(c.pmTgt||0),0);
+  const pmTotalAct=neiChannels.reduce((s,c)=>s+(c.pmAct||0),0);
 
-  // VMM text
-  const vmm=STATE.vmm;
-  const lblTotal=(vmm.lbl.amAct||0)+(vmm.lbl.pmAct||0),lblTgt=(vmm.lbl.amTgt||0)+(vmm.lbl.pmTgt||0);
-  const boxTotal=(vmm.box.amAct||0)+(vmm.box.pmAct||0),boxTgt=(vmm.box.amTgt||0)+(vmm.box.pmTgt||0);
-  lines.push(`[VMM — Multichannel]`);
-  lines.push(`  Label: ${lblTotal.toLocaleString()} / ${lblTgt.toLocaleString()}  Box: ${boxTotal.toLocaleString()} / ${boxTgt.toLocaleString()}`);
-  lines.push(`  Inbound EA: ${vmm.inbound.eaAct||0} / ${vmm.inbound.eaTgt||0}  Carton: ${vmm.inbound.ctnAct||0} / ${vmm.inbound.ctnTgt||0}`);
-  lines.push(`  Outbound EA: ${vmm.outbound.eaAct||0} / ${vmm.outbound.eaTgt||0}  Carton: ${vmm.outbound.ctnAct||0} / ${vmm.outbound.ctnTgt||0}`);
-  lines.push(`  Materials Headcount: ${vmm.material.hc||0}명`);
+  document.getElementById('rep-ampm').innerHTML=`
+    <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #1763B2;padding:1rem 1.25rem">
+      <div style="font-size:10px;font-weight:600;color:#1763B2;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">🌅 AM Session</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr><th style="${thS};text-align:left">Channel</th><th style="${thS}">Target</th><th style="${thS}">Actual</th><th style="${thS}">Achieve</th></tr></thead>
+        <tbody>
+          ${neiChannels.map(c=>`<tr>
+            <td style="${tdS};text-align:left;font-family:var(--sans);color:var(--text-2);font-weight:500">${c.name}</td>
+            <td style="${tdS}">${c.amTgt||'—'}</td><td style="${tdS}">${c.amAct||'—'}</td>
+            <td style="${tdS};color:${c.amTgt>0&&c.amAct>=c.amTgt?'#166534':'#92400E'};font-weight:600">${c.amTgt>0?Math.round(c.amAct/c.amTgt*100)+'%':'PM only'}</td>
+          </tr>`).join('')}
+          <tr><td style="${tdS};text-align:left;font-family:var(--sans);font-weight:700">Total</td>
+            <td style="${tdS};font-weight:700">${amTotalTgt}</td><td style="${tdS};font-weight:700">${amTotalAct}</td>
+            <td style="${tdS};font-weight:700;color:${amTotalAct>=amTotalTgt?'#166534':'#92400E'}">${amTotalTgt>0?Math.round(amTotalAct/amTotalTgt*100)+'%':'—'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #6B2C70;padding:1rem 1.25rem">
+      <div style="font-size:10px;font-weight:600;color:#6B2C70;letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">🌆 PM Session</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr><th style="${thS};text-align:left">Channel</th><th style="${thS}">Target</th><th style="${thS}">Actual</th><th style="${thS}">Achieve</th></tr></thead>
+        <tbody>
+          ${neiChannels.map(c=>`<tr>
+            <td style="${tdS};text-align:left;font-family:var(--sans);color:var(--text-2);font-weight:500">${c.name}</td>
+            <td style="${tdS}">${c.pmTgt||'—'}</td><td style="${tdS}">${c.pmAct||'—'}</td>
+            <td style="${tdS};color:${c.pmTgt>0&&c.pmAct>=c.pmTgt?'#166534':'#92400E'};font-weight:600">${c.pmTgt>0?Math.round(c.pmAct/c.pmTgt*100)+'%':'AM only'}</td>
+          </tr>`).join('')}
+          <tr><td style="${tdS};text-align:left;font-family:var(--sans);font-weight:700">Total</td>
+            <td style="${tdS};font-weight:700">${pmTotalTgt}</td><td style="${tdS};font-weight:700">${pmTotalAct}</td>
+            <td style="${tdS};font-weight:700;color:${pmTotalAct>=pmTotalTgt?'#166534':'#92400E'}">${pmTotalTgt>0?Math.round(pmTotalAct/pmTotalTgt*100)+'%':'—'}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>`;
 
+  // Text preview
+  const lines=[`Shift End Report — ${dateStr} · ${fmtIST(ist)} IST`,``];
+  neiChannels.forEach(c=>{
+    lines.push(`[${c.name}] ${c.actual} / ${c.tgt} (${c.tgt>0?Math.round(c.actual/c.tgt*100):0}%)  AM: ${c.amAct} / PM: ${c.pmAct}  Pending: ${Math.max(c.tgt-c.actual,0)}`);
+  });
+  lines.push(`[AMU] ${amuDisp} / ${amuTgt} (${amuTgt>0?Math.round(amuDisp/amuTgt*100):0}%)  AM: ${amuAm.disp||0} / PM: ${amuPm.disp||0}`);
+  lines.push(`[VMM] Label: ${vmmLbl}/${vmmLblTgt}  Box: ${vmmBox}/${vmmBoxTgt}`);
+  lines.push(`[VMM] Inbound: ${vmm.inbound.eaAct||0}EA / ${vmm.inbound.ctnAct||0}CTN  Outbound: ${vmm.outbound.eaAct||0}EA / ${vmm.outbound.ctnAct||0}CTN`);
+  lines.push(``);
+  lines.push(`Total: ${totalAct} / ${totalTgt} (${totalPct}%)  Pending: ${totalPending}`);
+  const amIssue=(document.getElementById('rep-issue-am')?.value||'').trim()||'No issues.';
+  const pmIssue=(document.getElementById('rep-issue-pm')?.value||'').trim()||'No issues.';
+  lines.push(``);
+  lines.push(`AM Issues: ${amIssue}`);
+  lines.push(`PM Issues: ${pmIssue}`);
   document.getElementById('report-text').textContent=lines.join('\n');
-  document.getElementById('report-cards').innerHTML=`
-    <div style="margin-bottom:8px"><div class="sec-label">NEI — B2C</div><div class="report-co-grid">${neiCards}</div></div>
-    <div><div class="sec-label">AMU / VMM</div></div>`;
 }
 
 function copyReportText(){
   navigator.clipboard.writeText(document.getElementById('report-text').textContent).then(()=>{
     const b=document.getElementById('copy-btn');b.textContent='✓ Copied!';setTimeout(()=>b.textContent='Copy Text',2000);
   });
+}
+
+function downloadPDF(){
+  const body=document.getElementById('report-body');
+  const date=getIST().toISOString().slice(0,10);
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>VMK Report ${date}</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      :root{--bg:#F5F4F0;--surface:#fff;--border:rgba(0,0,0,.09);--border-md:rgba(0,0,0,.15);--text:#1A1A18;--text-2:#5A5A56;--text-3:#9A9A94;--radius:8px;--radius-lg:14px;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;}
+      *{box-sizing:border-box;margin:0;padding:0}
+      body{font-family:var(--sans);background:#fff;color:var(--text);padding:8mm;font-size:10px}
+      @page{size:A4 landscape;margin:8mm}
+      textarea{display:none}pre{white-space:pre-wrap;font-family:var(--mono);font-size:10px}
+    </style>
+  </head><body>
+    <div style="font-size:16px;font-weight:600;margin-bottom:4px">VMK Daily Operations Report</div>
+    <div style="font-size:10px;color:#9A9A94;margin-bottom:12px">${document.getElementById('report-date').textContent}</div>
+    ${body.innerHTML}
+  </body></html>`);
+  w.document.close();
+  setTimeout(()=>{w.print();},800);
 }
 
 /* ── REFRESH ── */
@@ -1319,15 +1517,23 @@ function restoreDaily(){
   const saved=loadDaily();
   if(!saved||!saved.state)return;
   STATE=saved.state;
-  // restore today inputs
   const s=STATE;
+
+  // Restore Today tab inputs
   if(s.neiSellers){
     s.neiSellers.forEach(sel=>{
+      const def=NEI_SELLERS.find(x=>x.id===sel.id);
       sv(sel.id+'-hc',sel.hc||'');
-      ['pick','so','mo','disp'].forEach(k=>{
-        sv(sel.id+'-'+k+'-am',sel[k+'AM']||'');
-        sv(sel.id+'-'+k+'-pm',sel[k+'PM']||'');
-      });
+      if(def?.dispatchOnly){
+        sv(sel.id+'-disp-pm',sel.dispPM||'');
+        calcTotal(sel.id+'-disp');
+      } else {
+        ['pick','so','mo','disp'].forEach(k=>{
+          sv(sel.id+'-'+k+'-am',sel[k+'AM']||'');
+          sv(sel.id+'-'+k+'-pm',sel[k+'PM']||'');
+          calcTotal(sel.id+'-'+k);
+        });
+      }
     });
   }
   if(s.amu){
@@ -1335,8 +1541,35 @@ function restoreDaily(){
     ['pick','so','mo','disp'].forEach(k=>{
       sv('amu-'+k+'-am',s.amu[k+'AM']||'');
       sv('amu-'+k+'-pm',s.amu[k+'PM']||'');
+      calcTotal('amu-'+k);
     });
   }
+  if(s.vmm){
+    sv('vmm-lbl-hc',s.vmm.lbl?.hc||'');
+    sv('vmm-lbl-uph',s.vmm.lbl?.uph||'');
+    sv('vmm-lbl-am',s.vmm.lbl?.amTgt||'');
+    sv('vmm-lbl-pm',s.vmm.lbl?.pmTgt||'');
+    sv('vmm-box-hc',s.vmm.box?.hc||'');
+    sv('vmm-box-uph',s.vmm.box?.uph||'');
+    sv('vmm-box-am',s.vmm.box?.amTgt||'');
+    sv('vmm-box-pm',s.vmm.box?.pmTgt||'');
+    sv('vmm-in-ea',s.vmm.inbound?.eaTgt||'');
+    sv('vmm-in-ctn',s.vmm.inbound?.ctnTgt||'');
+    sv('vmm-out-ea',s.vmm.outbound?.eaTgt||'');
+    sv('vmm-out-ctn',s.vmm.outbound?.ctnTgt||'');
+    sv('vmm-mat-hc',s.vmm.material?.hc||'');
+  }
+
+  // Reset built flags so dashboards rebuild with restored data
+  ['nei-dashMain','amu-dashMain','vmm-dashMain'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) delete el.dataset.built;
+  });
+  const neiPanel=document.getElementById('nei-input-panel');
+  if(neiPanel) delete neiPanel.dataset.built;
+  const amuWrap=document.getElementById('amu-act-wrap');
+  if(amuWrap) delete amuWrap.dataset.built;
+
   refresh();
 }
 
