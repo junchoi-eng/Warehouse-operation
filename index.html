@@ -230,25 +230,38 @@ canvas.pc{width:100%;height:120px;display:block}
     <div class="sec-label">NEI — B2C (by Seller)</div>
     <div id="nei-sellers-today"></div>
 
-    <!-- AMU -->
-    <div class="sec-label" style="margin-top:1.25rem">AMU — Amazon Multichannel</div>
+    <!-- VMM Multichannel (Sellerflex + Amazon + Myntra) -->
+    <div class="sec-label" style="margin-top:1.25rem">VMM Multichannel — Sellerflex · Amazon · Myntra</div>
     <div class="seller-section">
       <div class="seller-header">
-        <span class="badge" style="background:var(--amu-lt);color:var(--amu-dk)">AMU</span>
-        <span class="seller-name" style="color:var(--amu)">Amazon Multichannel</span>
+        <span class="badge" style="background:var(--vmm-lt);color:var(--vmm-dk)">VMM</span>
+        <span class="seller-name" style="color:var(--vmm)">Multichannel (Shared Crew)</span>
         <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-          <label style="font-size:11px;color:var(--text-2)">H/C</label>
-          <input class="hc-inp" type="number" id="amu-hc" placeholder="0" min="0">
+          <label style="font-size:11px;color:var(--text-2)">Shared H/C</label>
+          <input class="hc-inp" type="number" id="vmm-mc-hc" placeholder="0" min="0">
         </div>
       </div>
       <table class="seller-table">
-        <thead><tr>
-          <th>Item</th><th>AM Target</th><th>PM Target</th><th>Total</th>
-        </tr></thead>
+        <thead><tr><th>Channel</th><th>AM Target</th><th>PM Target</th><th>Total</th></tr></thead>
         <tbody>
-          <tr><td>Pack S/O</td><td><input class="t-inp" id="amu-so-am" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><input class="t-inp" id="amu-so-pm" type="number" placeholder="0" oninput="calcTotal('amu-so')"></td><td><span class="t-total" id="amu-so-total">—</span></td></tr>
-          <tr><td>Pack M/O</td><td><input class="t-inp" id="amu-mo-am" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><input class="t-inp" id="amu-mo-pm" type="number" placeholder="0" oninput="calcTotal('amu-mo')"></td><td><span class="t-total" id="amu-mo-total">—</span></td></tr>
-          <tr><td>Dispatch ★</td><td><input class="t-inp" id="amu-disp-am" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><input class="t-inp" id="amu-disp-pm" type="number" placeholder="0" oninput="calcTotal('amu-disp')"></td><td><span class="t-total" id="amu-disp-total">—</span></td></tr>
+          <tr>
+            <td style="font-weight:500">Sellerflex <span style="font-size:9px;color:var(--text-3)">(AM only)</span></td>
+            <td><input class="t-inp" id="sf-disp-am" type="number" placeholder="0" oninput="calcTotal('sf-disp')"></td>
+            <td><input class="t-inp" style="background:#F9FAFB;color:var(--text-3)" type="number" placeholder="AM only" readonly></td>
+            <td><span class="t-total" id="sf-disp-total">—</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Amazon Multi</td>
+            <td><input class="t-inp" id="amz-disp-am" type="number" placeholder="0" oninput="calcTotal('amz-disp')"></td>
+            <td><input class="t-inp" id="amz-disp-pm" type="number" placeholder="0" oninput="calcTotal('amz-disp')"></td>
+            <td><span class="t-total" id="amz-disp-total">—</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:500">Myntra</td>
+            <td><input class="t-inp" id="myn-disp-am" type="number" placeholder="0" oninput="calcTotal('myn-disp')"></td>
+            <td><input class="t-inp" id="myn-disp-pm" type="number" placeholder="0" oninput="calcTotal('myn-disp')"></td>
+            <td><span class="t-total" id="myn-disp-total">—</span></td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -546,15 +559,17 @@ function applyToday(){
     amAct:{}, pmAct:{}
   }));
 
-  // AMU
-  const amuData={
-    hc:vn('amu-hc'),
-    soAM:vn('amu-so-am'), soPM:vn('amu-so-pm'),
-    moAM:vn('amu-mo-am'), moPM:vn('amu-mo-pm'),
-    dispAM:vn('amu-disp-am'), dispPM:vn('amu-disp-pm'),
-    uph:cfg.amu_pick_uph||36, pph:cfg.amu_pack_pph||35,
-    amAct:{}, pmAct:{}
-  };
+  // VMM Multichannel channels (shared crew)
+  const mcHc=vn('vmm-mc-hc');
+  const mcChannels=[
+    {id:'sf',  name:'Sellerflex',   color:'#4C1D95',bg:'#F5F3FF',border:'#DDD6FE', amOnly:true,
+     dispAM:vn('sf-disp-am'),  dispPM:0, amAct:{}, pmAct:{}},
+    {id:'amz', name:'Amazon Multi', color:'#0891B2',bg:'#ECFEFF',border:'#A5F3FC', amOnly:false,
+     dispAM:vn('amz-disp-am'), dispPM:vn('amz-disp-pm'), amAct:{}, pmAct:{}},
+    {id:'myn', name:'Myntra',       color:'#BE185D',bg:'#FDF2F8',border:'#F9A8D4', amOnly:false,
+     dispAM:vn('myn-disp-am'), dispPM:vn('myn-disp-pm'), amAct:{}, pmAct:{}},
+  ];
+  const amuData={hc:mcHc, mcChannels, amAct:{}, pmAct:{}};
 
   // VMM
   const vmmData={
@@ -885,7 +900,7 @@ function setNeiAct(sellerId,session,key,val){
   neiActChange(sellerId,session,key,val);
 }
 
-/* ── AMU DASHBOARD ── */
+/* ── VMM MULTICHANNEL DASHBOARD ── */
 function updateAMU(){
   if(!STATE)return;
   const {startMin,endMin,amu}=STATE;
@@ -895,113 +910,131 @@ function updateAMU(){
   document.getElementById('amu-sub').textContent=ist.toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})+' · IST';
   renderTimeline('amu-timeline-bar','wk-am-amu','wk-pm-amu');
 
-  const amAct=amu.amAct||{},pmAct=amu.pmAct||{};
-  const dispTotal=(amAct.disp||0)+(pmAct.disp||0);
-  const dispTgt=(amu.dispAM||0)+(amu.dispPM||0);
-  const dispPct=dispTgt>0?Math.min(Math.round(dispTotal/dispTgt*100),100):0;
+  const mcChannels=amu.mcChannels||[];
+  const totalDisp=mcChannels.reduce((s,ch)=>(ch.amAct?.disp||0)+(ch.pmAct?.disp||0)+s,0);
+  const totalTgt=mcChannels.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
+  const totalPct=totalTgt>0?Math.min(Math.round(totalDisp/totalTgt*100),100):0;
+  const bannerC=totalPct>=90?var_ok:totalPct>=60?var_warn:totalDisp>0?var_behind:'var(--text-3)';
   const ew=workMins(startMin,Math.min(nowMin,endMin));
-  const rate=ew>0&&dispTotal>0?dispTotal/(ew/60):0;
+  const rate=ew>0&&totalDisp>0?totalDisp/(ew/60):0;
   let etaText='—',etaClass='eta-warn';
-  if(rate>0){const r=dispTgt-dispTotal;if(r<=0){etaText='Done ✓';etaClass='eta-ok';}else{const em=nowMin+(r/rate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}}
-
-  const bannerC=dispPct>=90?var_ok:dispPct>=60?var_warn:dispTotal>0?var_behind:'var(--text-3)';  const soTotal=(amAct.so||0)+(pmAct.so||0);
-  const soTgt=(amu.soAM||0)+(amu.soPM||0);
-  const moTotal=(amAct.mo||0)+(pmAct.mo||0);
-  const moTgt=(amu.moAM||0)+(amu.moPM||0);
-  const packTotal=soTotal+moTotal, packTgt=soTgt+moTgt;
+  if(rate>0){const r=totalTgt-totalDisp;if(r<=0){etaText='Done ✓';etaClass='eta-ok';}else{const em=nowMin+(r/rate)*60;etaText=em<=endMin?`~${fmtM(Math.round(em))} IST`:`+${Math.round(em-endMin)}m OT`;etaClass=em<=endMin?'eta-ok':'eta-behind';}}
 
   const amuMain=document.getElementById('amu-dashMain');
-
-  // First render: build skeleton
   if(!amuMain.dataset.built){
     amuMain.dataset.built='1';
     amuMain.innerHTML=`
       <div id="amu-kpi-banner" class="kpi-banner"></div>
-      <div id="amu-act-wrap" style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem"></div>
-      <div id="amu-proc-cards" class="proc-row-cards cols3"></div>`;
+      <div id="amu-channel-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px"></div>
+      <div id="amu-act-wrap" style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem"></div>`;
   }
 
-  // Update KPI banner
+  // KPI banner — totals across all 3 channels
   document.getElementById('amu-kpi-banner').innerHTML=`
-    <div><div class="kpi-label">Dispatched (Final KPI)</div>
-      <div style="font-size:48px;font-weight:300;font-family:var(--mono);color:${bannerC};line-height:1">${dispPct}<span style="font-size:18px">%</span></div>
+    <div><div class="kpi-label">Total Dispatched (All Channels)</div>
+      <div style="font-size:48px;font-weight:300;font-family:var(--mono);color:${bannerC};line-height:1">${totalPct}<span style="font-size:18px">%</span></div>
     </div>
     <div class="kpi-mid">
-      <div class="kpi-label">Dispatched Today</div>
-      <div class="kpi-val">${dispTotal.toLocaleString()} / ${dispTgt.toLocaleString()}</div>
-      <div class="kpi-sub">AM: ${amAct.disp>0?amAct.disp.toLocaleString():'—'} · PM: ${pmAct.disp>0?pmAct.disp.toLocaleString():'—'}</div>
+      <div class="kpi-label">Sellerflex + Amazon + Myntra</div>
+      <div class="kpi-val">${totalDisp.toLocaleString()} / ${totalTgt.toLocaleString()}</div>
+      <div class="kpi-sub">Shared H/C: ${amu.hc||'—'}</div>
     </div>
     <div><div class="eta-label">Est. Completion</div><div class="eta-val ${etaClass}">${etaText}</div></div>`;
 
-  // Build input table ONCE — never redraw
+  // Channel cards — read only display
+  document.getElementById('amu-channel-cards').innerHTML=mcChannels.map(ch=>{
+    const amA=ch.amAct?.disp||0, pmA=ch.pmAct?.disp||0, disp=amA+pmA;
+    const tgt=(ch.dispAM||0)+(ch.dispPM||0);
+    const pct=tgt>0?Math.round(disp/tgt*100):0;
+    const c=pct>=90?var_ok:pct>=60?var_warn:disp>0?var_behind:'var(--text-3)';
+    const bg=pct>=90?'#F0FDF4':pct>=60?'#FFFBEB':disp>0?'#FEF2F2':'var(--bg)';
+    return`<div style="background:var(--surface);border:.5px solid ${ch.border};border-radius:var(--radius-lg);overflow:hidden">
+      <div style="padding:.625rem 1rem;background:${ch.bg};border-bottom:.5px solid ${ch.border};display:flex;justify-content:space-between">
+        <span style="font-size:12px;font-weight:600;color:${ch.color}">${ch.name}</span>
+        ${ch.amOnly?`<span style="font-size:9px;color:var(--text-3);font-family:var(--mono)">AM only</span>`:''}
+      </div>
+      <div style="padding:.75rem 1rem;background:${bg}">
+        <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${c};margin-bottom:4px">Dispatched ★</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px">
+          <span style="font-size:26px;font-weight:300;font-family:var(--mono);color:${c};line-height:1">${pct}<span style="font-size:11px">%</span></span>
+          <span style="font-size:11px;font-family:var(--mono);color:var(--text-2)">${disp} / ${tgt}</span>
+          <span style="margin-left:auto">${pct>=100?'✅':tgt>0?'⚠️':'—'}</span>
+        </div>
+        <div style="height:4px;background:rgba(0,0,0,.08);border-radius:2px;overflow:hidden;margin-bottom:4px">
+          <div style="height:100%;width:${Math.min(pct,100)}%;background:${c};border-radius:2px"></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <span style="font-size:9px;font-family:var(--mono);color:${c};opacity:.8">AM <b>${amA||'—'}</b></span>
+          <span style="font-size:9px;font-family:var(--mono);color:${c};opacity:.8">PM <b>${ch.amOnly?'—':pmA||'—'}</b></span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Input panel — build once per session
   const actWrap=document.getElementById('amu-act-wrap');
   if(actWrap&&!actWrap.dataset.built){
     actWrap.dataset.built='1';
     actWrap.innerHTML=`
       <div style="font-size:10px;color:var(--text-3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.10em;margin-bottom:.875rem">Actuals Input — AM / PM</div>
-      <table class="act-table">
-        <thead><tr><th>Item</th><th>AM</th><th>PM</th><th>Total</th><th>Target</th><th style="width:100px">vs Target</th></tr></thead>
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead>
+          <tr style="border-bottom:1.5px solid var(--border-md)">
+            <th style="padding:6px 10px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)">Channel</th>
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:center;border-left:.5px solid var(--border)">AM Dispatched</th>
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:center">PM Dispatched</th>
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:right">Total</th>
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:right">Target</th>
+            <th style="padding:6px 10px;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);text-align:right">Achieve</th>
+          </tr>
+        </thead>
         <tbody>
-          ${[            {key:'so',label:'Pack S/O',tgt:soTgt},
-            {key:'mo',label:'Pack M/O',tgt:moTgt},
-            {key:'disp',label:'Dispatch ★',tgt:dispTgt},
-          ].map(r=>`<tr>
-            <td>${r.label}</td>
-            <td><input id="amu-am-${r.key}" class="act-inp" type="number" placeholder="0" value="${amAct[r.key]||''}"
-              oninput="amuActChange('am','${r.key}',this.value)"></td>
-            <td><input id="amu-pm-${r.key}" class="act-inp" type="number" placeholder="0" value="${pmAct[r.key]||''}"
-              oninput="amuActChange('pm','${r.key}',this.value)"></td>
-            <td class="act-total" id="amu-total-${r.key}">—</td>
-            <td class="act-total" style="color:var(--text-3)">${r.tgt.toLocaleString()}</td>
-            <td class="act-bar-cell"><div style="display:flex;align-items:center;gap:5px">
-              <div class="act-bar-wrap" style="flex:1"><div id="amu-bar-${r.key}" class="act-bar-fill" style="width:0%;background:#D1D5DB"></div></div>
-              <span id="amu-pct-${r.key}" style="font-size:10px;font-family:var(--mono);font-weight:600;width:30px;text-align:right;color:var(--text-3)">—</span>
-            </div></td>
-          </tr>`).join('')}
+          ${mcChannels.map(ch=>{
+            const amA=ch.amAct?.disp||0, pmA=ch.pmAct?.disp||0;
+            const tgt=(ch.dispAM||0)+(ch.dispPM||0);
+            return`<tr style="border-bottom:.5px solid var(--border)">
+              <td style="padding:7px 10px;font-size:11px;font-weight:600;color:${ch.color}">${ch.name}</td>
+              <td style="padding:4px 8px;border-left:.5px solid var(--border)">
+                <input id="mc-am-${ch.id}" type="number" placeholder="0" min="0" value="${amA||''}"
+                  style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                  oninput="mcActChange('${ch.id}','am',this.value)">
+              </td>
+              <td style="padding:4px 8px">
+                ${ch.amOnly
+                  ?`<span style="display:block;width:80px;text-align:center;font-size:10px;color:var(--text-3)">AM only</span>`
+                  :`<input id="mc-pm-${ch.id}" type="number" placeholder="0" min="0" value="${pmA||''}"
+                    style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                    oninput="mcActChange('${ch.id}','pm',this.value)">`}
+              </td>
+              <td id="mc-total-${ch.id}" style="padding:7px 10px;text-align:right;font-family:var(--mono);font-weight:600">${(amA+pmA)||'—'}</td>
+              <td style="padding:7px 10px;text-align:right;font-family:var(--mono);color:var(--text-3)">${tgt||'—'}</td>
+              <td id="mc-pct-${ch.id}" style="padding:7px 10px;text-align:right;font-family:var(--mono);font-weight:600;color:var(--text-3)">—</td>
+            </tr>`;
+          }).join('')}
         </tbody>
       </table>`;
   }
 
-  // Update totals/bars without touching inputs
-  [{key:'pick',total:pickTotal,tgt:pickTgt},{key:'so',total:soTotal,tgt:soTgt},
-   {key:'mo',total:moTotal,tgt:moTgt},{key:'disp',total:dispTotal,tgt:dispTgt}].forEach(r=>{
-    const pct=r.tgt>0?Math.min(Math.round(r.total/r.tgt*100),100):0;
-    const c=pct>=90?var_ok:pct>=60?var_warn:r.total>0?var_behind:'#D1D5DB';
-    const tot=document.getElementById('amu-total-'+r.key);
-    const bar=document.getElementById('amu-bar-'+r.key);
-    const pctEl=document.getElementById('amu-pct-'+r.key);
-    if(tot)tot.textContent=r.total>0?r.total.toLocaleString():'—';
-    if(bar){bar.style.width=pct+'%';bar.style.background=c;}
-    if(pctEl){pctEl.textContent=r.total>0?pct+'%':'—';pctEl.style.color=c;}
+  // Update totals in input table without touching inputs
+  mcChannels.forEach(ch=>{
+    const amA=ch.amAct?.disp||0, pmA=ch.pmAct?.disp||0, disp=amA+pmA;
+    const tgt=(ch.dispAM||0)+(ch.dispPM||0);
+    const pct=tgt>0?Math.round(disp/tgt*100):0;
+    const c=pct>=90?var_ok:pct>=60?var_warn:disp>0?var_behind:'var(--text-3)';
+    const tot=document.getElementById('mc-total-'+ch.id);
+    const pctEl=document.getElementById('mc-pct-'+ch.id);
+    if(tot)tot.textContent=disp||'—';
+    if(pctEl){pctEl.textContent=disp>0?pct+'%':'—';pctEl.style.color=c;}
   });
-
-  // Update proc cards
-  document.getElementById('amu-proc-cards').innerHTML=[
-    {label:'Picking',total:pickTotal,tgt:pickTgt,unit:'UPH'},
-    {label:'Packing (S/O+M/O)',total:packTotal,tgt:packTgt,unit:'PPH'},
-    {label:'Dispatched ★',total:dispTotal,tgt:dispTgt,unit:'orders'},
-  ].map(p=>{
-    const pct=p.tgt>0?Math.min(Math.round(p.total/p.tgt*100),100):0;
-    const rc=ragClass(pct,p.total>0);
-    return`<div class="p-card ${rc}">
-      <div class="p-card-andon"></div>
-      <div class="p-card-name">${p.label}</div>
-      <div class="p-card-pct">${pct}<span style="font-size:14px;opacity:.5">%</span></div>
-      <div class="p-card-nums">
-        <div><div class="pcn-label">Actual</div><div class="pcn-val hi">${p.total.toLocaleString()}</div></div>
-        <div><div class="pcn-label">Target</div><div class="pcn-val">${p.tgt.toLocaleString()}</div></div>
-        <div><div class="pcn-label">Left</div><div class="pcn-val">${Math.max(p.tgt-p.total,0).toLocaleString()}</div></div>
-      </div>
-      <div class="p-prog-track"><div class="p-prog-bar" style="width:${pct}%"></div></div>
-    </div>`;
-  }).join('');
 }
 
 let _amuDebounce=null;
-function amuActChange(session,key,val){
-  if(!STATE)return;
-  if(session==='am'){STATE.amu.amAct=STATE.amu.amAct||{};STATE.amu.amAct[key]=parseFloat(val)||0;}
-  else{STATE.amu.pmAct=STATE.amu.pmAct||{};STATE.amu.pmAct[key]=parseFloat(val)||0;}
+function mcActChange(chId,session,val){
+  if(!STATE||!STATE.amu.mcChannels)return;
+  const ch=STATE.amu.mcChannels.find(x=>x.id===chId);
+  if(!ch)return;
+  if(session==='am'){ch.amAct=ch.amAct||{};ch.amAct.disp=parseFloat(val)||0;}
+  else{ch.pmAct=ch.pmAct||{};ch.pmAct.disp=parseFloat(val)||0;}
   LAST_UPDATE.amu=new Date();
   clearTimeout(_amuDebounce);
   _amuDebounce=setTimeout(()=>{
@@ -1010,8 +1043,7 @@ function amuActChange(session,key,val){
     updateLU('amu');
   },300);
 }
-
-function setAmuAct(session,key,val){amuActChange(session,key,val);}
+function amuActChange(session,key,val){} // legacy stub
 
 /* ── VMM DASHBOARD ── */
 function updateVMM(){
@@ -1336,10 +1368,10 @@ function generateReport(){
       amTgt:s.dispAM||0,pmTgt:s.dispPM||0,amAct:am.disp||0,pmAct:pm.disp||0};
   });
 
-  // AMU
-  const amuAm=STATE.amu.amAct||{},amuPm=STATE.amu.pmAct||{};
-  const amuDisp=(amuAm.disp||0)+(amuPm.disp||0);
-  const amuTgt=(STATE.amu.dispAM||0)+(STATE.amu.dispPM||0);
+  // AMU (mcChannels)
+  const mcChannels=STATE.amu.mcChannels||[];
+  const amuDisp=mcChannels.reduce((s,ch)=>(ch.amAct?.disp||0)+(ch.pmAct?.disp||0)+s,0);
+  const amuTgt=mcChannels.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
 
   // VMM
   const vmm=STATE.vmm;
@@ -1378,13 +1410,19 @@ function generateReport(){
       c.dispatchOnly?c.desc:null);
   }).join('');
 
-  // VMM cards
+  // VMM cards — 3 mc channels + VMM ops
+  document.getElementById('rep-vmm-cards').style.gridTemplateColumns='repeat(4,1fr)';
   document.getElementById('rep-vmm-cards').innerHTML=[
-    makeSellerCard('AMU — Amazon Multi','#0891B2','#ECFEFF','#A5F3FC',`H/C ${STATE.amu.hc||'—'}`,
-      amuTgt,amuDisp,STATE.amu.dispAM||0,STATE.amu.dispPM||0,amuAm.disp||0,amuPm.disp||0,null),
+    ...mcChannels.map(ch=>{
+      const amA=ch.amAct?.disp||0, pmA=ch.pmAct?.disp||0, disp=amA+pmA;
+      const tgt=(ch.dispAM||0)+(ch.dispPM||0);
+      return makeSellerCard(ch.name,ch.color,ch.bg,ch.border,`H/C ${STATE.amu.hc||'—'} (shared)`,
+        tgt,disp,ch.amOnly?null:ch.dispAM,ch.dispPM,ch.amOnly?null:amA,ch.amOnly?null:pmA,
+        ch.amOnly?'AM only':null);
+    }),
     `<div style="background:var(--surface);border:.5px solid #DDD6FE;border-radius:var(--radius-lg);overflow:hidden">
       <div style="padding:.625rem 1rem;border-bottom:.5px solid var(--border);background:#F5F3FF;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:12px;font-weight:600;color:#4C1D95">VMM — Multichannel</span>
+        <span style="font-size:12px;font-weight:600;color:#4C1D95">VMM — Operations</span>
         <span style="font-size:9px;font-family:var(--mono);background:rgba(0,0,0,.06);padding:2px 6px;border-radius:8px">H/C ${(vmm.lbl.hc||0)+(vmm.box.hc||0)}</span>
       </div>
       <div style="padding:.75rem 1rem">
@@ -1537,12 +1575,17 @@ function restoreDaily(){
     });
   }
   if(s.amu){
-    sv('amu-hc',s.amu.hc||'');
-    ['pick','so','mo','disp'].forEach(k=>{
-      sv('amu-'+k+'-am',s.amu[k+'AM']||'');
-      sv('amu-'+k+'-pm',s.amu[k+'PM']||'');
-      calcTotal('amu-'+k);
-    });
+    sv('vmm-mc-hc',s.amu.hc||'');
+    if(s.amu.mcChannels){
+      s.amu.mcChannels.forEach(ch=>{
+        sv('sf-disp-am', s.amu.mcChannels.find(x=>x.id==='sf')?.dispAM||'');
+        sv('amz-disp-am',s.amu.mcChannels.find(x=>x.id==='amz')?.dispAM||'');
+        sv('amz-disp-pm',s.amu.mcChannels.find(x=>x.id==='amz')?.dispPM||'');
+        sv('myn-disp-am',s.amu.mcChannels.find(x=>x.id==='myn')?.dispAM||'');
+        sv('myn-disp-pm',s.amu.mcChannels.find(x=>x.id==='myn')?.dispPM||'');
+      });
+      s.amu.mcChannels.forEach(ch=>{calcTotal(ch.id==='sf'?'sf-disp':ch.id+'-disp');});
+    }
   }
   if(s.vmm){
     sv('vmm-lbl-hc',s.vmm.lbl?.hc||'');
