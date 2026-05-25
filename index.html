@@ -245,9 +245,9 @@ canvas.pc{width:100%;height:120px;display:block}
         <thead><tr><th>Channel</th><th>AM Target</th><th>PM Target</th><th>Total</th></tr></thead>
         <tbody>
           <tr>
-            <td style="font-weight:500">Sellerflex <span style="font-size:9px;color:var(--text-3)">(AM only)</span></td>
+            <td style="font-weight:500">Sellerflex</td>
             <td><input class="t-inp" id="sf-disp-am" type="number" placeholder="0" oninput="calcTotal('sf-disp')"></td>
-            <td><input class="t-inp" style="background:#F9FAFB;color:var(--text-3)" type="number" placeholder="AM only" readonly></td>
+            <td><input class="t-inp" id="sf-disp-pm" type="number" placeholder="0" oninput="calcTotal('sf-disp')"></td>
             <td><span class="t-total" id="sf-disp-total">—</span></td>
           </tr>
           <tr>
@@ -352,6 +352,41 @@ canvas.pc{width:100%;height:120px;display:block}
     </div>
     <div id="report-empty" style="color:var(--text-3);font-size:13px">Enter today's targets and actuals, then click Generate.</div>
     <div id="report-body" style="display:none">
+
+      <!-- Headcount inputs for report -->
+      <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem">
+        <div style="font-size:10px;font-weight:500;letter-spacing:.10em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Headcount & D-1 (for report)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:11px;font-weight:500;color:var(--nei);margin-bottom:6px">NEI Warehouse</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="font-size:11px;color:var(--text-2)">On Roll</label>
+              <input id="rep-nei-onroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">Off Roll</label>
+              <input id="rep-nei-offroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-1 Pending</label>
+              <input id="rep-nei-d1" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:500;color:var(--vmm);margin-bottom:6px">VMM & Multichannel</div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label style="font-size:11px;color:var(--text-2)">On Roll</label>
+              <input id="rep-vmm-onroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">Off Roll</label>
+              <input id="rep-vmm-offroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-1 Pending</label>
+              <input id="rep-vmm-d1" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Summary bar -->
       <div id="rep-summary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem"></div>
 
@@ -380,12 +415,14 @@ canvas.pc{width:100%;height:120px;display:block}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem">
         <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #1763B2;padding:1rem 1.25rem">
           <div style="font-size:10px;font-weight:600;color:#1763B2;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">🌅 AM 09:00–13:00</div>
-          <textarea id="rep-issue-am" placeholder="No issues." rows="3"
+          <textarea id="rep-issue-am" placeholder="Enter AM issues or notes... (will appear in Note line)" rows="3"
+            oninput="updateReportText()"
             style="width:100%;font-size:12px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);padding:8px 10px;resize:vertical;outline:none;color:var(--text);background:var(--bg)"></textarea>
         </div>
         <div style="background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius-lg);border-top:3px solid #6B2C70;padding:1rem 1.25rem">
           <div style="font-size:10px;font-weight:600;color:#6B2C70;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">🌆 PM 13:45–18:00</div>
-          <textarea id="rep-issue-pm" placeholder="No issues." rows="3"
+          <textarea id="rep-issue-pm" placeholder="Enter PM issues or notes... (will appear in Note line)" rows="3"
+            oninput="updateReportText()"
             style="width:100%;font-size:12px;font-family:var(--sans);border:.5px solid var(--border-md);border-radius:var(--radius);padding:8px 10px;resize:vertical;outline:none;color:var(--text);background:var(--bg)"></textarea>
         </div>
       </div>
@@ -567,8 +604,8 @@ function applyToday(){
   const prevMc=STATE?.amu?.mcChannels||[];
   const mcHc=vn('vmm-mc-hc');
   const mcChannels=[
-    {id:'sf',  name:'Sellerflex',   color:'#4C1D95',bg:'#F5F3FF',border:'#DDD6FE', amOnly:true,
-     dispAM:vn('sf-disp-am'),  dispPM:0,
+    {id:'sf',  name:'Sellerflex',   color:'#4C1D95',bg:'#F5F3FF',border:'#DDD6FE', amOnly:false,
+     dispAM:vn('sf-disp-am'),  dispPM:vn('sf-disp-pm'),
      amAct:prevMc.find(x=>x.id==='sf')?.amAct||{}, pmAct:prevMc.find(x=>x.id==='sf')?.pmAct||{}},
     {id:'amz', name:'Amazon Multi', color:'#0891B2',bg:'#ECFEFF',border:'#A5F3FC', amOnly:false,
      dispAM:vn('amz-disp-am'), dispPM:vn('amz-disp-pm'),
@@ -837,13 +874,13 @@ function updateNEI(){
           <td style="padding:4px 6px;border-left:.5px solid var(--border)">
             <input id="nei-act-${s.id}-am-${k}" type="number" placeholder="0" min="0"
               value="${(s.amAct&&s.amAct[k])||''}"
-              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none"
               oninput="neiActChange('${s.id}','am','${k}',this.value)">
           </td>
           <td style="padding:4px 6px">
             <input id="nei-act-${s.id}-pm-${k}" type="number" placeholder="0" min="0"
               value="${(s.pmAct&&s.pmAct[k])||''}"
-              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+              style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none"
               oninput="neiActChange('${s.id}','pm','${k}',this.value)">
           </td>
         `).join('')}
@@ -861,7 +898,7 @@ function updateNEI(){
         <td style="padding:4px 6px">
           <input id="nei-act-${s.id}-pm-disp" type="number" placeholder="0" min="0"
             value="${(s.pmAct&&s.pmAct.disp)||''}"
-            style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+            style="width:68px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none"
             oninput="neiActChange('${s.id}','pm','disp',this.value)">
         </td>
       </tr>`).join('');
@@ -964,7 +1001,7 @@ function updateAMU(){
     return`<div style="background:var(--surface);border:.5px solid ${ch.border};border-radius:var(--radius-lg);overflow:hidden">
       <div style="padding:.625rem 1rem;background:${ch.bg};border-bottom:.5px solid ${ch.border};display:flex;justify-content:space-between">
         <span style="font-size:12px;font-weight:600;color:${ch.color}">${ch.name}</span>
-        ${ch.amOnly?`<span style="font-size:9px;color:var(--text-3);font-family:var(--mono)">AM only</span>`:''}
+        ${ch.amOnly?``:''}
       </div>
       <div style="padding:.75rem 1rem;background:${bg}">
         <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:${c};margin-bottom:4px">Dispatched ★</div>
@@ -1009,14 +1046,14 @@ function updateAMU(){
               <td style="padding:7px 10px;font-size:11px;font-weight:600;color:${ch.color}">${ch.name}</td>
               <td style="padding:4px 8px;border-left:.5px solid var(--border)">
                 <input id="mc-am-${ch.id}" type="number" placeholder="0" min="0" value="${amA||''}"
-                  style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                  style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none"
                   oninput="mcActChange('${ch.id}','am',this.value)">
               </td>
               <td style="padding:4px 8px">
                 ${ch.amOnly
-                  ?`<span style="display:block;width:80px;text-align:center;font-size:10px;color:var(--text-3)">AM only</span>`
+                  ?`<input id="mc-pm-${ch.id}" type="number" placeholder="0" min="0" value="${pmA||''}" style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none" oninput="mcActChange('${ch.id}','pm',this.value)">`
                   :`<input id="mc-pm-${ch.id}" type="number" placeholder="0" min="0" value="${pmA||''}"
-                    style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:right;background:var(--bg);color:var(--text);outline:none"
+                    style="width:80px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 7px;text-align:center;background:var(--bg);color:var(--text);outline:none"
                     oninput="mcActChange('${ch.id}','pm',this.value)">`}
               </td>
               <td id="mc-total-${ch.id}" style="padding:7px 10px;text-align:right;font-family:var(--mono);font-weight:600">${(amA+pmA)||'—'}</td>
@@ -1431,7 +1468,7 @@ function generateReport(){
       const tgt=(ch.dispAM||0)+(ch.dispPM||0);
       return makeSellerCard(ch.name,ch.color,ch.bg,ch.border,`H/C ${STATE.amu.hc||'—'} (shared)`,
         tgt,disp,ch.amOnly?null:ch.dispAM,ch.dispPM,ch.amOnly?null:amA,ch.amOnly?null:pmA,
-        ch.amOnly?'AM only':null);
+        ch.amOnly?'':null);
     }),
     `<div style="background:var(--surface);border:.5px solid #DDD6FE;border-radius:var(--radius-lg);overflow:hidden">
       <div style="padding:.625rem 1rem;border-bottom:.5px solid var(--border);background:#F5F3FF;display:flex;justify-content:space-between;align-items:center">
@@ -1493,7 +1530,7 @@ function generateReport(){
           ${neiChannels.map(c=>`<tr>
             <td style="${tdS};text-align:left;font-family:var(--sans);color:var(--text-2);font-weight:500">${c.name}</td>
             <td style="${tdS}">${c.pmTgt||'—'}</td><td style="${tdS}">${c.pmAct||'—'}</td>
-            <td style="${tdS};color:${c.pmTgt>0&&c.pmAct>=c.pmTgt?'#166534':'#92400E'};font-weight:600">${c.pmTgt>0?Math.round(c.pmAct/c.pmTgt*100)+'%':'AM only'}</td>
+            <td style="${tdS};color:${c.pmTgt>0&&c.pmAct>=c.pmTgt?'#166534':'#92400E'};font-weight:600">${c.pmTgt>0?Math.round(c.pmAct/c.pmTgt*100)+'%':''}</td>
           </tr>`).join('')}
           <tr><td style="${tdS};text-align:left;font-family:var(--sans);font-weight:700">Total</td>
             <td style="${tdS};font-weight:700">${pmTotalTgt}</td><td style="${tdS};font-weight:700">${pmTotalAct}</td>
@@ -1503,21 +1540,149 @@ function generateReport(){
       </table>
     </div>`;
 
-  // Text preview
-  const lines=[`Shift End Report — ${dateStr} · ${fmtIST(ist)} IST`,``];
-  neiChannels.forEach(c=>{
-    lines.push(`[${c.name}] ${c.actual} / ${c.tgt} (${c.tgt>0?Math.round(c.actual/c.tgt*100):0}%)  AM: ${c.amAct} / PM: ${c.pmAct}  Pending: ${Math.max(c.tgt-c.actual,0)}`);
+  // Text preview — formatted as actual report
+  const neiOnRoll=vn('rep-nei-onroll')||0;
+  const neiOffRoll=vn('rep-nei-offroll')||0;
+  const neiD1=vn('rep-nei-d1')||0;
+  const vmmOnRoll=vn('rep-vmm-onroll')||0;
+  const vmmOffRoll=vn('rep-vmm-offroll')||0;
+  const vmmD1=vn('rep-vmm-d1')||0;
+
+  const neiDisp=neiChannels.reduce((s,c)=>s+c.actual,0);
+  const neiTgt=neiChannels.reduce((s,c)=>s+c.tgt,0);
+  const neiPending=Math.max(neiTgt-neiDisp,0);
+  const neiProcessed=STATE.neiSellers.filter(s=>!s.dispatchOnly)
+    .reduce((s,x)=>(x.amAct?.so||0)+(x.pmAct?.so||0)+(x.amAct?.mo||0)+(x.pmAct?.mo||0)+s,0);
+  const mgsDisp=STATE.neiSellers.find(x=>x.id==='mgs')?.pmAct?.disp||0;
+  const meDisp=STATE.neiSellers.find(x=>x.id==='me')?.pmAct?.disp||0;
+  const neiAmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amTgt||0),0);
+  const neiAmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amAct||0),0);
+  const neiPmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmTgt||0),0);
+  const neiPmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmAct||0),0);
+  const neiB2cPending=Math.max((neiChannels.find(c=>c.id==='nei')?.tgt||0)-(neiChannels.find(c=>c.id==='nei')?.actual||0),0);
+
+  const mcChs=STATE.amu.mcChannels||[];
+  const vmmDispTotal=mcChs.reduce((s,ch)=>(ch.amAct?.disp||0)+(ch.pmAct?.disp||0)+s,0);
+  const vmmTgtTotal=mcChs.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
+  const vmmPendingTotal=Math.max(vmmTgtTotal-vmmDispTotal,0);
+  const vmmAmDisp=mcChs.reduce((s,ch)=>s+(ch.amAct?.disp||0),0);
+  const vmmPmDisp=mcChs.reduce((s,ch)=>s+(ch.pmAct?.disp||0),0);
+
+  const amIssue=(document.getElementById('rep-issue-am')?.value||'').trim();
+  const pmIssue=(document.getElementById('rep-issue-pm')?.value||'').trim();
+  const noteText=[amIssue,pmIssue].filter(Boolean).join(' / ');
+
+  const lines=[];
+  if(amIssue||pmIssue){
+    if(amIssue) lines.push(`Note (AM):- ${amIssue}`);
+    if(pmIssue) lines.push(`Note (PM):- ${pmIssue}`);
+  }
+  lines.push(``);
+  lines.push(`__1. NEI Warehouse:-__`);
+  lines.push(`A. Day Shift summary.`);
+  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
+  lines.push(`B. Task completed today:-`);
+  lines.push(`* Dispatched Qty: ${neiDisp.toLocaleString()}`);
+  lines.push(`* -1 day processed: ${neiD1}`);
+  lines.push(`*  Today processed: ${neiProcessed.toLocaleString()}`);
+  if(meDisp>0) lines.push(`* ${meDisp} ME orders processed.`);
+  if(mgsDisp>0) lines.push(`* ${mgsDisp} MGS orders processed.`);
+  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} target (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%)`);
+  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} target (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%)`);
+  if(amIssue) lines.push(`* AM Issue: ${amIssue}`);
+  if(pmIssue) lines.push(`* PM Issue: ${pmIssue}`);
+  lines.push(`C. Pending task for tomorrow:-`);
+  lines.push(`* ${neiB2cPending} B2C Order Pending.`);
+  lines.push(` Note:  ${neiPending} orders are pending dispatch.`);
+  lines.push(``);
+  lines.push(`__2. VMM and Amazon/Multi-Channel:-__`);
+  lines.push(`A. Day Shift summary.`);
+  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
+  lines.push(`B. Task completed today:-`);
+  lines.push(`* Dispatched Qty: ${vmmDispTotal.toLocaleString()}`);
+  lines.push(`* -1 day processed: ${vmmD1}`);
+  lines.push(`*  Today processed: ${vmmDispTotal.toLocaleString()}`);
+  mcChs.forEach(ch=>{
+    const d=(ch.amAct?.disp||0)+(ch.pmAct?.disp||0);
+    const t=(ch.dispAM||0)+(ch.dispPM||0);
+    if(d>0||t>0) lines.push(`* ${ch.name}: ${d} dispatched / ${t} target`);
   });
-  lines.push(`[AMU] ${amuDisp} / ${amuTgt} (${amuTgt>0?Math.round(amuDisp/amuTgt*100):0}%)  AM: ${amuAm.disp||0} / PM: ${amuPm.disp||0}`);
-  lines.push(`[VMM] Label: ${vmmLbl}/${vmmLblTgt}  Box: ${vmmBox}/${vmmBoxTgt}`);
-  lines.push(`[VMM] Inbound: ${vmm.inbound.eaAct||0}EA / ${vmm.inbound.ctnAct||0}CTN  Outbound: ${vmm.outbound.eaAct||0}EA / ${vmm.outbound.ctnAct||0}CTN`);
+  lines.push(`* AM: ${vmmAmDisp} dispatched  PM: ${vmmPmDisp} dispatched`);
+  lines.push(`C. Pending task for tomorrow:-`);
+  lines.push(`*  ${vmmPendingTotal} Order Pending.`);
+  lines.push(` Note: ${vmmPendingTotal} orders are pending dispatch.`);
+  document.getElementById('report-text').textContent=lines.join('\n');
+}
+
+function updateReportText(){
+  if(!STATE||document.getElementById('report-body').style.display==='none')return;
+  const neiChannels=STATE.neiSellers.map(s=>{
+    const am=s.amAct||{},pm=s.pmAct||{};
+    return{id:s.id,name:s.name,dispatchOnly:s.dispatchOnly||false,
+      tgt:(s.dispAM||0)+(s.dispPM||0),actual:(am.disp||0)+(pm.disp||0),
+      amTgt:s.dispAM||0,pmTgt:s.dispPM||0,amAct:am.disp||0,pmAct:pm.disp||0};
+  });
+  const mcChs=STATE.amu.mcChannels||[];
+  const neiOnRoll=vn('rep-nei-onroll')||0,neiOffRoll=vn('rep-nei-offroll')||0,neiD1=vn('rep-nei-d1')||0;
+  const vmmOnRoll=vn('rep-vmm-onroll')||0,vmmOffRoll=vn('rep-vmm-offroll')||0,vmmD1=vn('rep-vmm-d1')||0;
+  const neiDisp=neiChannels.reduce((s,c)=>s+c.actual,0);
+  const neiTgt=neiChannels.reduce((s,c)=>s+c.tgt,0);
+  const neiPending=Math.max(neiTgt-neiDisp,0);
+  const neiProcessed=STATE.neiSellers.filter(s=>!s.dispatchOnly)
+    .reduce((s,x)=>(x.amAct?.so||0)+(x.pmAct?.so||0)+(x.amAct?.mo||0)+(x.pmAct?.mo||0)+s,0);
+  const mgsDisp=STATE.neiSellers.find(x=>x.id==='mgs')?.pmAct?.disp||0;
+  const meDisp=STATE.neiSellers.find(x=>x.id==='me')?.pmAct?.disp||0;
+  const neiAmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amTgt||0),0);
+  const neiAmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amAct||0),0);
+  const neiPmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmTgt||0),0);
+  const neiPmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmAct||0),0);
+  const neiB2cPending=Math.max((neiChannels.find(c=>c.id==='nei')?.tgt||0)-(neiChannels.find(c=>c.id==='nei')?.actual||0),0);
+  const vmmDispTotal=mcChs.reduce((s,ch)=>(ch.amAct?.disp||0)+(ch.pmAct?.disp||0)+s,0);
+  const vmmTgtTotal=mcChs.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
+  const vmmPendingTotal=Math.max(vmmTgtTotal-vmmDispTotal,0);
+  const vmmAmDisp=mcChs.reduce((s,ch)=>s+(ch.amAct?.disp||0),0);
+  const vmmPmDisp=mcChs.reduce((s,ch)=>s+(ch.pmAct?.disp||0),0);
+  const amIssue=(document.getElementById('rep-issue-am')?.value||'').trim();
+  const pmIssue=(document.getElementById('rep-issue-pm')?.value||'').trim();
+  const noteText=[amIssue,pmIssue].filter(Boolean).join(' / ');
+
+  const lines=[];
+  if(amIssue||pmIssue){
+    if(amIssue) lines.push(`Note (AM):- ${amIssue}`);
+    if(pmIssue) lines.push(`Note (PM):- ${pmIssue}`);
+  }
   lines.push(``);
-  lines.push(`Total: ${totalAct} / ${totalTgt} (${totalPct}%)  Pending: ${totalPending}`);
-  const amIssue=(document.getElementById('rep-issue-am')?.value||'').trim()||'No issues.';
-  const pmIssue=(document.getElementById('rep-issue-pm')?.value||'').trim()||'No issues.';
+  lines.push(`__1. NEI Warehouse:-__`);
+  lines.push(`A. Day Shift summary.`);
+  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
+  lines.push(`B. Task completed today:-`);
+  lines.push(`* Dispatched Qty: ${neiDisp.toLocaleString()}`);
+  lines.push(`* -1 day processed: ${neiD1}`);
+  lines.push(`*  Today processed: ${neiProcessed.toLocaleString()}`);
+  if(meDisp>0) lines.push(`* ${meDisp} ME orders processed.`);
+  if(mgsDisp>0) lines.push(`* ${mgsDisp} MGS orders processed.`);
+  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} target (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%)`);
+  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} target (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%)`);
+  lines.push(`C. Pending task for tomorrow:-`);
+  lines.push(`* ${neiB2cPending} B2C Order Pending.`);
+  lines.push(` Note:  ${neiPending} orders are pending dispatch.`);
   lines.push(``);
-  lines.push(`AM Issues: ${amIssue}`);
-  lines.push(`PM Issues: ${pmIssue}`);
+  lines.push(`__2. VMM and Amazon/Multi-Channel:-__`);
+  lines.push(`A. Day Shift summary.`);
+  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
+  lines.push(`B. Task completed today:-`);
+  lines.push(`* Dispatched Qty: ${vmmDispTotal.toLocaleString()}`);
+  lines.push(`* -1 day processed: ${vmmD1}`);
+  lines.push(`*  Today processed: ${vmmDispTotal.toLocaleString()}`);
+  mcChs.forEach(ch=>{
+    const d=(ch.amAct?.disp||0)+(ch.pmAct?.disp||0);
+    const t=(ch.dispAM||0)+(ch.dispPM||0);
+    if(d>0||t>0) lines.push(`* ${ch.name}: ${d} dispatched / ${t} target`);
+  });
+  lines.push(`* AM: ${vmmAmDisp} dispatched  PM: ${vmmPmDisp} dispatched`);
+  lines.push(`C. Pending task for tomorrow:-`);
+  lines.push(`*  ${vmmPendingTotal} Order Pending.`);
+  lines.push(` Note: ${vmmPendingTotal} orders are pending dispatch.`);
   document.getElementById('report-text').textContent=lines.join('\n');
 }
 
@@ -1592,6 +1757,7 @@ function restoreDaily(){
     if(s.amu.mcChannels){
       s.amu.mcChannels.forEach(ch=>{
         sv('sf-disp-am', s.amu.mcChannels.find(x=>x.id==='sf')?.dispAM||'');
+        sv('sf-disp-pm', s.amu.mcChannels.find(x=>x.id==='sf')?.dispPM||'');
         sv('amz-disp-am',s.amu.mcChannels.find(x=>x.id==='amz')?.dispAM||'');
         sv('amz-disp-pm',s.amu.mcChannels.find(x=>x.id==='amz')?.dispPM||'');
         sv('myn-disp-am',s.amu.mcChannels.find(x=>x.id==='myn')?.dispAM||'');
