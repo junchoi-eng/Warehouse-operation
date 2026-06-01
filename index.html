@@ -348,6 +348,7 @@ canvas.pc{width:100%;height:120px;display:block}
         <button onclick="generateReport()" class="btn-primary" style="width:auto;padding:8px 18px">Generate</button>
         <button onclick="copyReportText()" id="copy-btn" class="btn-ghost" style="display:none">Copy Text</button>
         <button onclick="downloadPDF()" id="pdf-btn" class="btn-ghost" style="display:none">⬇ PDF</button>
+        <button onclick="saveToSheets()" id="save-btn" class="btn-ghost" style="display:none;color:#1D9E75;border-color:#1D9E75">💾 Save to Sheets</button>
       </div>
     </div>
     <div id="report-empty" style="color:var(--text-3);font-size:13px">Enter today's targets and actuals, then click Generate.</div>
@@ -366,9 +367,15 @@ canvas.pc{width:100%;height:120px;display:block}
               <label style="font-size:11px;color:var(--text-2)">Off Roll</label>
               <input id="rep-nei-offroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
                 style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
-              <label style="font-size:11px;color:var(--text-2)">D-1 Pending</label>
+              <label style="font-size:11px;color:var(--text-2)">D-1</label>
               <input id="rep-nei-d1" type="number" placeholder="0" min="0" oninput="updateReportText()"
-                style="width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-2</label>
+              <input id="rep-nei-d2" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-N(3일+)</label>
+              <input id="rep-nei-dn" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
             </div>
           </div>
           <div>
@@ -380,9 +387,15 @@ canvas.pc{width:100%;height:120px;display:block}
               <label style="font-size:11px;color:var(--text-2)">Off Roll</label>
               <input id="rep-vmm-offroll" type="number" placeholder="0" min="0" oninput="updateReportText()"
                 style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
-              <label style="font-size:11px;color:var(--text-2)">D-1 Pending</label>
+              <label style="font-size:11px;color:var(--text-2)">D-1</label>
               <input id="rep-vmm-d1" type="number" placeholder="0" min="0" oninput="updateReportText()"
-                style="width:64px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-2</label>
+              <input id="rep-vmm-d2" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
+              <label style="font-size:11px;color:var(--text-2)">D-N(3일+)</label>
+              <input id="rep-vmm-dn" type="number" placeholder="0" min="0" oninput="updateReportText()"
+                style="width:56px;font-size:13px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:5px;padding:4px 8px;text-align:center;background:var(--bg);color:var(--text);outline:none">
             </div>
           </div>
         </div>
@@ -464,7 +477,15 @@ canvas.pc{width:100%;height:120px;display:block}
       <div id="vmm-settings"></div>
     </div>
 
-    <button class="save-btn" onclick="saveSettings()">Save Settings</button>
+    <div class="settings-section">
+      <div class="settings-section-title">Google Sheets Integration</div>
+      <div class="proc-row-s">
+        <div class="proc-row-s-name">Apps Script Webhook URL</div>
+      </div>
+      <input id="s-webhook" type="text" placeholder="https://script.google.com/macros/s/..."
+        style="width:100%;font-size:12px;font-family:var(--mono);border:.5px solid var(--border-md);border-radius:var(--radius);padding:7px 10px;background:var(--bg);color:var(--text);outline:none;margin-top:6px">
+      <div style="font-size:10px;color:var(--text-3);margin-top:5px">Apps Script 배포 후 웹 앱 URL을 입력하세요.</div>
+    </div>
     <div class="save-confirm" id="save-confirm">✓ Saved</div>
   </div>
 </div>
@@ -652,11 +673,20 @@ function buildSettings(){
   const cfg=loadSettings();
   if(cfg.startTime) sv('s-start',cfg.startTime);
   if(cfg.endTime) sv('s-end',cfg.endTime);
+  if(cfg.webhookUrl) sv('s-webhook',cfg.webhookUrl);
 
   document.getElementById('nei-amu-settings').innerHTML=`
     <div class="proc-row-s">
       <div class="proc-row-s-name">NEI / HANN / KMORBI — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
       <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-nei-pack" value="${cfg.nei_pack_pph||35}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">NEI 베이스라인 — Single <span style="font-size:9px;background:#DBEAFE;color:#1E40AF;padding:1px 6px;border-radius:8px">PPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-nei-single" value="${cfg.nei_single_pph||100}"></div>
+    </div>
+    <div class="proc-row-s">
+      <div class="proc-row-s-name">NEI 베이스라인 — Multi <span style="font-size:9px;background:#FEF3C7;color:#92400E;padding:1px 6px;border-radius:8px">PPH</span></div>
+      <div class="proc-row-s-inputs"><div class="s-inp-label">PPH/person</div><input class="s-inp" id="s-nei-multi" value="${cfg.nei_multi_pph||40}"></div>
     </div>
     <div class="proc-row-s">
       <div class="proc-row-s-name">AMU — Packing <span style="font-size:9px;background:#D1FAE5;color:#065F46;padding:1px 6px;border-radius:8px">PPH</span></div>
@@ -679,9 +709,12 @@ function saveSettings(){
     startTime:document.getElementById('s-start').value||'09:00',
     endTime:document.getElementById('s-end').value||'18:00',
     nei_pack_pph:vn('s-nei-pack')||35,
+    nei_single_pph:vn('s-nei-single')||100,
+    nei_multi_pph:vn('s-nei-multi')||40,
     amu_pack_pph:vn('s-amu-pack')||35,
     vmm_lbl_uph:vn('s-vmm-lbl')||30,
     vmm_box_uph:vn('s-vmm-box')||30,
+    webhookUrl:(document.getElementById('s-webhook')?.value||'').trim(),
   };
   localStorage.setItem(SKEY,JSON.stringify(cfg));
   document.getElementById('save-confirm').style.display='block';
@@ -1403,6 +1436,7 @@ function generateReport(){
   document.getElementById('report-empty').style.display='none';
   document.getElementById('copy-btn').style.display='inline-block';
   document.getElementById('pdf-btn').style.display='inline-block';
+  document.getElementById('save-btn').style.display='inline-block';
 
   const ist=getIST();
   const dateStr=ist.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
@@ -1544,9 +1578,13 @@ function generateReport(){
   const neiOnRoll=vn('rep-nei-onroll')||0;
   const neiOffRoll=vn('rep-nei-offroll')||0;
   const neiD1=vn('rep-nei-d1')||0;
+  const neiD2=vn('rep-nei-d2')||0;
+  const neiDN=vn('rep-nei-dn')||0;
   const vmmOnRoll=vn('rep-vmm-onroll')||0;
   const vmmOffRoll=vn('rep-vmm-offroll')||0;
   const vmmD1=vn('rep-vmm-d1')||0;
+  const vmmD2=vn('rep-vmm-d2')||0;
+  const vmmDN=vn('rep-vmm-dn')||0;
 
   const neiDisp=neiChannels.reduce((s,c)=>s+c.actual,0);
   const neiTgt=neiChannels.reduce((s,c)=>s+c.tgt,0);
@@ -1559,6 +1597,11 @@ function generateReport(){
   const neiAmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amAct||0),0);
   const neiPmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmTgt||0),0);
   const neiPmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmAct||0),0);
+  // Single/Multi 합산 (NEI 셀러 - dispatchOnly 제외)
+  const neiAmSingle=STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.amAct?.so||0),0);
+  const neiAmMulti =STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.amAct?.mo||0),0);
+  const neiPmSingle=STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.pmAct?.so||0),0);
+  const neiPmMulti =STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.pmAct?.mo||0),0);
   const neiB2cPending=Math.max((neiChannels.find(c=>c.id==='nei')?.tgt||0)-(neiChannels.find(c=>c.id==='nei')?.actual||0),0);
 
   const mcChs=STATE.amu.mcChannels||[];
@@ -1578,40 +1621,85 @@ function generateReport(){
     if(pmIssue) lines.push(`Note (PM):- ${pmIssue}`);
   }
   lines.push(``);
+
+  // ===== UPH 계산 (인당생산성 / 베이스라인대비) =====
+  const neiTotalHc=(neiOnRoll||0)+(neiOffRoll||0);
+  const vmmTotalHc=(vmmOnRoll||0)+(vmmOffRoll||0);
+  const neiTodayQty=neiAmAct+neiPmAct;
+  const neiTotalTarget=neiAmTgt+neiPmTgt;
+  const vmmTodayQty=vmmAmDisp+vmmPmDisp;
+  const vmmTotalTarget=mcChs.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
+  const NEI_AM_HOURS=4, NEI_PM_HOURS=4;
+  // UPH 계산 헬퍼: HC가 0이면 null (n/a 표시), 아니면 계산
+  function calcUphV(actual, hc, hours){
+    if(!hc||hc<=0) return null;
+    return +(((actual||0)/hc/hours).toFixed(1));
+  }
+  function fmtUphV(uph){ return uph===null?'n/a (HC 미입력)':String(uph); }
+  function calcDevV(curr, avg){
+    if(curr===null||avg===null||avg<=0) return null;
+    return Math.round((curr-avg)/avg*100);
+  }
+  function fmtDevV(dev){
+    if(dev===null) return 'n/a';
+    return (dev>=0?'+':'')+dev+'%';
+  }
+  const neiAmUphR=calcUphV(neiAmAct,neiTotalHc,NEI_AM_HOURS);
+  const neiPmUphR=calcUphV(neiPmAct,neiTotalHc,NEI_PM_HOURS);
+  const vmmAmUphR=calcUphV(vmmAmDisp,vmmTotalHc,NEI_AM_HOURS);
+  const vmmPmUphR=calcUphV(vmmPmDisp,vmmTotalHc,NEI_PM_HOURS);
+  // 베이스라인 = Single 100 PPH + Multi 40 PPH (가중평균 / S·M 비중 반영)
+  // VMM은 Settings의 단일 baseline 사용
+  const cfgBase=(typeof loadSettings==='function')?loadSettings():{};
+  const BASE_S=cfgBase.nei_single_pph||100;
+  const BASE_M=cfgBase.nei_multi_pph||40;
+  // AM 가중 베이스라인 = (Single×100 + Multi×40) / Total
+  const neiAmTotal=(neiAmSingle||0)+(neiAmMulti||0);
+  const neiPmTotal=(neiPmSingle||0)+(neiPmMulti||0);
+  const neiAmBase=neiAmTotal>0?(((neiAmSingle||0)*BASE_S+(neiAmMulti||0)*BASE_M)/neiAmTotal):BASE_S;
+  const neiPmBase=neiPmTotal>0?(((neiPmSingle||0)*BASE_S+(neiPmMulti||0)*BASE_M)/neiPmTotal):BASE_S;
+  const vmmAvgR=cfgBase.vmm_lbl_uph||30;
+  const neiAmUph=fmtUphV(neiAmUphR), neiPmUph=fmtUphV(neiPmUphR);
+  const vmmAmUph=fmtUphV(vmmAmUphR), vmmPmUph=fmtUphV(vmmPmUphR);
+  const neiAmDev=fmtDevV(calcDevV(neiAmUphR,neiAmBase));
+  const neiPmDev=fmtDevV(calcDevV(neiPmUphR,neiPmBase));
+  const vmmAmDev=fmtDevV(calcDevV(vmmAmUphR,vmmAvgR));
+  const vmmPmDev=fmtDevV(calcDevV(vmmPmUphR,vmmAvgR));
+
   lines.push(`__1. NEI Warehouse:-__`);
-  lines.push(`A. Day Shift summary.`);
-  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
-  lines.push(`B. Task completed today:-`);
-  lines.push(`* Dispatched Qty: ${neiDisp.toLocaleString()}`);
-  lines.push(`* -1 day processed: ${neiD1}`);
-  lines.push(`*  Today processed: ${neiProcessed.toLocaleString()}`);
+  lines.push(`Task completed today:-`);
+  lines.push(`* Target Qty: ${neiTotalTarget.toLocaleString()}, Today Qty : ${neiTodayQty.toLocaleString()} (${neiTotalTarget>0?Math.round(neiTodayQty/neiTotalTarget*100):0}%)`);
+  lines.push(`* Today processed: ${neiProcessed.toLocaleString()}`);
   if(meDisp>0) lines.push(`* ${meDisp} ME orders processed.`);
   if(mgsDisp>0) lines.push(`* ${mgsDisp} MGS orders processed.`);
-  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} target (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%)`);
-  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} target (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%)`);
+  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%) [싱글 ${neiAmSingle} / 멀티 ${neiAmMulti}] + 인당생산성 ( ${neiAmUph} PPH )`);
+  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%) [싱글 ${neiPmSingle} / 멀티 ${neiPmMulti}] + 인당생산성 ( ${neiPmUph} PPH )`);
   if(amIssue) lines.push(`* AM Issue: ${amIssue}`);
   if(pmIssue) lines.push(`* PM Issue: ${pmIssue}`);
-  lines.push(`C. Pending task for tomorrow:-`);
-  lines.push(`* ${neiB2cPending} B2C Order Pending.`);
-  lines.push(` Note:  ${neiPending} orders are pending dispatch.`);
+  lines.push(`* B2C Order Pending: ${neiB2cPending} orders`);
+  lines.push(`  └ D-1 Pending: ${neiD1} orders`);
+  lines.push(`  └ D-2 Pending: ${neiD2} orders`);
+  lines.push(`  └ D-N Pending: ${neiDN} orders (3일 이상)`);
+  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
   lines.push(``);
   lines.push(`__2. VMM and Amazon/Multi-Channel:-__`);
-  lines.push(`A. Day Shift summary.`);
-  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
-  lines.push(`B. Task completed today:-`);
-  lines.push(`* Dispatched Qty: ${vmmDispTotal.toLocaleString()}`);
-  lines.push(`* -1 day processed: ${vmmD1}`);
-  lines.push(`*  Today processed: ${vmmDispTotal.toLocaleString()}`);
+  lines.push(`Task completed today:-`);
+  lines.push(`* Target Qty: ${vmmTotalTarget.toLocaleString()}, Today Qty : ${vmmTodayQty.toLocaleString()} (${vmmTotalTarget>0?Math.round(vmmTodayQty/vmmTotalTarget*100):0}%)`);
+  lines.push(`* Today processed: ${vmmDispTotal.toLocaleString()}`);
   mcChs.forEach(ch=>{
     const d=(ch.amAct?.disp||0)+(ch.pmAct?.disp||0);
     const t=(ch.dispAM||0)+(ch.dispPM||0);
     if(d>0||t>0) lines.push(`* ${ch.name}: ${d} dispatched / ${t} target`);
   });
-  lines.push(`* AM: ${vmmAmDisp} dispatched  PM: ${vmmPmDisp} dispatched`);
-  lines.push(`C. Pending task for tomorrow:-`);
-  lines.push(`*  ${vmmPendingTotal} Order Pending.`);
-  lines.push(` Note: ${vmmPendingTotal} orders are pending dispatch.`);
+  lines.push(`* AM: ${vmmAmDisp} / ${mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)} (${mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)>0?Math.round(vmmAmDisp/mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)*100):0}%) + 인당생산성 ( ${vmmAmUph} UPH )`);
+  lines.push(`* PM: ${vmmPmDisp} / ${mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)} (${mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)>0?Math.round(vmmPmDisp/mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)*100):0}%) + 인당생산성 ( ${vmmPmUph} UPH )`);
+  lines.push(`* Order Pending: ${vmmPendingTotal} orders`);
+  lines.push(`  └ D-1 Pending: ${vmmD1} orders`);
+  lines.push(`  └ D-2 Pending: ${vmmD2} orders`);
+  lines.push(`  └ D-N Pending: ${vmmDN} orders (3일 이상)`);
+  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
   document.getElementById('report-text').textContent=lines.join('\n');
+  updateReportText();
 }
 
 function updateReportText(){
@@ -1624,7 +1712,9 @@ function updateReportText(){
   });
   const mcChs=STATE.amu.mcChannels||[];
   const neiOnRoll=vn('rep-nei-onroll')||0,neiOffRoll=vn('rep-nei-offroll')||0,neiD1=vn('rep-nei-d1')||0;
+  const neiD2=vn('rep-nei-d2')||0, neiDN=vn('rep-nei-dn')||0;
   const vmmOnRoll=vn('rep-vmm-onroll')||0,vmmOffRoll=vn('rep-vmm-offroll')||0,vmmD1=vn('rep-vmm-d1')||0;
+  const vmmD2=vn('rep-vmm-d2')||0, vmmDN=vn('rep-vmm-dn')||0;
   const neiDisp=neiChannels.reduce((s,c)=>s+c.actual,0);
   const neiTgt=neiChannels.reduce((s,c)=>s+c.tgt,0);
   const neiPending=Math.max(neiTgt-neiDisp,0);
@@ -1636,6 +1726,11 @@ function updateReportText(){
   const neiAmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.amAct||0),0);
   const neiPmTgt=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmTgt||0),0);
   const neiPmAct=neiChannels.filter(c=>!c.dispatchOnly).reduce((s,c)=>s+(c.pmAct||0),0);
+  // Single/Multi 합산 (NEI 셀러 - dispatchOnly 제외)
+  const neiAmSingle=STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.amAct?.so||0),0);
+  const neiAmMulti =STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.amAct?.mo||0),0);
+  const neiPmSingle=STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.pmAct?.so||0),0);
+  const neiPmMulti =STATE.neiSellers.filter(s=>!s.dispatchOnly).reduce((acc,s)=>acc+(s.pmAct?.mo||0),0);
   const neiB2cPending=Math.max((neiChannels.find(c=>c.id==='nei')?.tgt||0)-(neiChannels.find(c=>c.id==='nei')?.actual||0),0);
   const vmmDispTotal=mcChs.reduce((s,ch)=>(ch.amAct?.disp||0)+(ch.pmAct?.disp||0)+s,0);
   const vmmTgtTotal=mcChs.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
@@ -1652,37 +1747,81 @@ function updateReportText(){
     if(pmIssue) lines.push(`Note (PM):- ${pmIssue}`);
   }
   lines.push(``);
+
+  // ===== UPH 계산 (인당생산성 / 베이스라인대비) =====
+  const neiTotalHc=(neiOnRoll||0)+(neiOffRoll||0);
+  const vmmTotalHc=(vmmOnRoll||0)+(vmmOffRoll||0);
+  const neiTodayQty=neiAmAct+neiPmAct;
+  const neiTotalTarget=neiAmTgt+neiPmTgt;
+  const vmmTodayQty=vmmAmDisp+vmmPmDisp;
+  const vmmTotalTarget=mcChs.reduce((s,ch)=>(ch.dispAM||0)+(ch.dispPM||0)+s,0);
+  const NEI_AM_HOURS=4, NEI_PM_HOURS=4;
+  // UPH 계산 헬퍼: HC가 0이면 null (n/a 표시), 아니면 계산
+  function calcUphU(actual, hc, hours){
+    if(!hc||hc<=0) return null;
+    return +(((actual||0)/hc/hours).toFixed(1));
+  }
+  function fmtUphU(uph){ return uph===null?'n/a (HC 미입력)':String(uph); }
+  function calcDevU(curr, avg){
+    if(curr===null||avg===null||avg<=0) return null;
+    return Math.round((curr-avg)/avg*100);
+  }
+  function fmtDevU(dev){
+    if(dev===null) return 'n/a';
+    return (dev>=0?'+':'')+dev+'%';
+  }
+  const neiAmUphR=calcUphU(neiAmAct,neiTotalHc,NEI_AM_HOURS);
+  const neiPmUphR=calcUphU(neiPmAct,neiTotalHc,NEI_PM_HOURS);
+  const vmmAmUphR=calcUphU(vmmAmDisp,vmmTotalHc,NEI_AM_HOURS);
+  const vmmPmUphR=calcUphU(vmmPmDisp,vmmTotalHc,NEI_PM_HOURS);
+  // 베이스라인 = Single 100 PPH + Multi 40 PPH (가중평균 / S·M 비중 반영)
+  // VMM은 Settings의 단일 baseline 사용
+  const cfgBase=(typeof loadSettings==='function')?loadSettings():{};
+  const BASE_S=cfgBase.nei_single_pph||100;
+  const BASE_M=cfgBase.nei_multi_pph||40;
+  // AM 가중 베이스라인 = (Single×100 + Multi×40) / Total
+  const neiAmTotal=(neiAmSingle||0)+(neiAmMulti||0);
+  const neiPmTotal=(neiPmSingle||0)+(neiPmMulti||0);
+  const neiAmBase=neiAmTotal>0?(((neiAmSingle||0)*BASE_S+(neiAmMulti||0)*BASE_M)/neiAmTotal):BASE_S;
+  const neiPmBase=neiPmTotal>0?(((neiPmSingle||0)*BASE_S+(neiPmMulti||0)*BASE_M)/neiPmTotal):BASE_S;
+  const vmmAvgR=cfgBase.vmm_lbl_uph||30;
+  const neiAmUph=fmtUphU(neiAmUphR), neiPmUph=fmtUphU(neiPmUphR);
+  const vmmAmUph=fmtUphU(vmmAmUphR), vmmPmUph=fmtUphU(vmmPmUphR);
+  const neiAmDev=fmtDevU(calcDevU(neiAmUphR,neiAmBase));
+  const neiPmDev=fmtDevU(calcDevU(neiPmUphR,neiPmBase));
+  const vmmAmDev=fmtDevU(calcDevU(vmmAmUphR,vmmAvgR));
+  const vmmPmDev=fmtDevU(calcDevU(vmmPmUphR,vmmAvgR));
+
   lines.push(`__1. NEI Warehouse:-__`);
-  lines.push(`A. Day Shift summary.`);
-  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
-  lines.push(`B. Task completed today:-`);
-  lines.push(`* Dispatched Qty: ${neiDisp.toLocaleString()}`);
-  lines.push(`* -1 day processed: ${neiD1}`);
-  lines.push(`*  Today processed: ${neiProcessed.toLocaleString()}`);
+  lines.push(`Task completed today:-`);
+  lines.push(`* Target Qty: ${neiTotalTarget.toLocaleString()}, Today Qty : ${neiTodayQty.toLocaleString()} (${neiTotalTarget>0?Math.round(neiTodayQty/neiTotalTarget*100):0}%)`);
+  lines.push(`* Today processed: ${neiProcessed.toLocaleString()}`);
   if(meDisp>0) lines.push(`* ${meDisp} ME orders processed.`);
   if(mgsDisp>0) lines.push(`* ${mgsDisp} MGS orders processed.`);
-  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} target (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%)`);
-  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} target (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%)`);
-  lines.push(`C. Pending task for tomorrow:-`);
-  lines.push(`* ${neiB2cPending} B2C Order Pending.`);
-  lines.push(` Note:  ${neiPending} orders are pending dispatch.`);
+  lines.push(`* AM: ${neiAmAct} / ${neiAmTgt} (${neiAmTgt>0?Math.round(neiAmAct/neiAmTgt*100):0}%) [싱글 ${neiAmSingle} / 멀티 ${neiAmMulti}] + 인당생산성 ( ${neiAmUph} PPH )`);
+  lines.push(`* PM: ${neiPmAct} / ${neiPmTgt} (${neiPmTgt>0?Math.round(neiPmAct/neiPmTgt*100):0}%) [싱글 ${neiPmSingle} / 멀티 ${neiPmMulti}] + 인당생산성 ( ${neiPmUph} PPH )`);
+  lines.push(`* B2C Order Pending: ${neiB2cPending} orders`);
+  lines.push(`  └ D-1 Pending: ${neiD1} orders`);
+  lines.push(`  └ D-2 Pending: ${neiD2} orders`);
+  lines.push(`  └ D-N Pending: ${neiDN} orders (3일 이상)`);
+  lines.push(`* On Roll: ${neiOnRoll}, Off Roll: ${neiOffRoll}`);
   lines.push(``);
   lines.push(`__2. VMM and Amazon/Multi-Channel:-__`);
-  lines.push(`A. Day Shift summary.`);
-  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
-  lines.push(`B. Task completed today:-`);
-  lines.push(`* Dispatched Qty: ${vmmDispTotal.toLocaleString()}`);
-  lines.push(`* -1 day processed: ${vmmD1}`);
-  lines.push(`*  Today processed: ${vmmDispTotal.toLocaleString()}`);
+  lines.push(`Task completed today:-`);
+  lines.push(`* Target Qty: ${vmmTotalTarget.toLocaleString()}, Today Qty : ${vmmTodayQty.toLocaleString()} (${vmmTotalTarget>0?Math.round(vmmTodayQty/vmmTotalTarget*100):0}%)`);
+  lines.push(`* Today processed: ${vmmDispTotal.toLocaleString()}`);
   mcChs.forEach(ch=>{
     const d=(ch.amAct?.disp||0)+(ch.pmAct?.disp||0);
     const t=(ch.dispAM||0)+(ch.dispPM||0);
     if(d>0||t>0) lines.push(`* ${ch.name}: ${d} dispatched / ${t} target`);
   });
-  lines.push(`* AM: ${vmmAmDisp} dispatched  PM: ${vmmPmDisp} dispatched`);
-  lines.push(`C. Pending task for tomorrow:-`);
-  lines.push(`*  ${vmmPendingTotal} Order Pending.`);
-  lines.push(` Note: ${vmmPendingTotal} orders are pending dispatch.`);
+  lines.push(`* AM: ${vmmAmDisp} / ${mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)} (${mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)>0?Math.round(vmmAmDisp/mcChs.reduce((s,ch)=>s+(ch.dispAM||0),0)*100):0}%) + 인당생산성 ( ${vmmAmUph} UPH )`);
+  lines.push(`* PM: ${vmmPmDisp} / ${mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)} (${mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)>0?Math.round(vmmPmDisp/mcChs.reduce((s,ch)=>s+(ch.dispPM||0),0)*100):0}%) + 인당생산성 ( ${vmmPmUph} UPH )`);
+  lines.push(`* Order Pending: ${vmmPendingTotal} orders`);
+  lines.push(`  └ D-1 Pending: ${vmmD1} orders`);
+  lines.push(`  └ D-2 Pending: ${vmmD2} orders`);
+  lines.push(`  └ D-N Pending: ${vmmDN} orders (3일 이상)`);
+  lines.push(`* On Roll: ${vmmOnRoll}, Off Roll: ${vmmOffRoll}`);
   document.getElementById('report-text').textContent=lines.join('\n');
 }
 
@@ -1690,6 +1829,64 @@ function copyReportText(){
   navigator.clipboard.writeText(document.getElementById('report-text').textContent).then(()=>{
     const b=document.getElementById('copy-btn');b.textContent='✓ Copied!';setTimeout(()=>b.textContent='Copy Text',2000);
   });
+}
+
+function saveToSheets(){
+  if(!STATE){alert('Enter today\'s targets first.');return;}
+  const cfg=loadSettings();
+  const url=cfg.webhookUrl||(document.getElementById('s-webhook')?.value||'').trim();
+  if(!url){alert('Settings 탭에 Apps Script Webhook URL을 먼저 입력해주세요.');switchTab('settings');return;}
+
+  const ist=getIST();
+  const dateStr=Utilities?Utilities.formatDate(ist,'Asia/Kolkata','yyyy-MM-dd')
+    :ist.toISOString().slice(0,10);
+
+  const neiSeller=id=>STATE.neiSellers.find(x=>x.id===id)||{};
+  const mcCh=id=>(STATE.amu.mcChannels||[]).find(x=>x.id===id)||{};
+
+  const payload={
+    date:dateStr,
+    nei:{
+      disp:(neiSeller('nei').amAct?.disp||0)+(neiSeller('nei').pmAct?.disp||0),
+      tgt:(neiSeller('nei').dispAM||0)+(neiSeller('nei').dispPM||0),
+      amAct:neiSeller('nei').amAct?.disp||0,
+      pmAct:neiSeller('nei').pmAct?.disp||0,
+      onRoll:vn('rep-nei-onroll')||0,
+      offRoll:vn('rep-nei-offroll')||0,
+    },
+    hann:{disp:(neiSeller('hann').amAct?.disp||0)+(neiSeller('hann').pmAct?.disp||0),tgt:(neiSeller('hann').dispAM||0)+(neiSeller('hann').dispPM||0)},
+    kmorbi:{disp:(neiSeller('kmorbi').amAct?.disp||0)+(neiSeller('kmorbi').pmAct?.disp||0),tgt:(neiSeller('kmorbi').dispAM||0)+(neiSeller('kmorbi').dispPM||0)},
+    mgs:{disp:neiSeller('mgs').pmAct?.disp||0},
+    me:{disp:neiSeller('me').pmAct?.disp||0},
+    sf:{disp:(mcCh('sf').amAct?.disp||0)+(mcCh('sf').pmAct?.disp||0),tgt:(mcCh('sf').dispAM||0)+(mcCh('sf').dispPM||0)},
+    amz:{disp:(mcCh('amz').amAct?.disp||0)+(mcCh('amz').pmAct?.disp||0),tgt:(mcCh('amz').dispAM||0)+(mcCh('amz').dispPM||0)},
+    myn:{disp:(mcCh('myn').amAct?.disp||0)+(mcCh('myn').pmAct?.disp||0),tgt:(mcCh('myn').dispAM||0)+(mcCh('myn').dispPM||0)},
+    vmm:{
+      lblAct:(STATE.vmm.lbl.amAct||0)+(STATE.vmm.lbl.pmAct||0),lblTgt:(STATE.vmm.lbl.amTgt||0)+(STATE.vmm.lbl.pmTgt||0),
+      boxAct:(STATE.vmm.box.amAct||0)+(STATE.vmm.box.pmAct||0),boxTgt:(STATE.vmm.box.amTgt||0)+(STATE.vmm.box.pmTgt||0),
+      onRoll:vn('rep-vmm-onroll')||0,offRoll:vn('rep-vmm-offroll')||0,
+    },
+    notes:[
+      (document.getElementById('rep-issue-am')?.value||'').trim(),
+      (document.getElementById('rep-issue-pm')?.value||'').trim()
+    ].filter(Boolean).join(' / '),
+  };
+
+  const btn=document.getElementById('save-btn');
+  btn.textContent='저장 중...';btn.disabled=true;
+
+  fetch(url,{method:'POST',body:JSON.stringify(payload)})
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status==='ok'){btn.textContent='✓ Saved!';btn.style.color='#1D9E75';}
+      else{btn.textContent='⚠ Error';console.error(res);}
+      setTimeout(()=>{btn.textContent='💾 Save to Sheets';btn.disabled=false;},3000);
+    })
+    .catch(err=>{
+      btn.textContent='⚠ Failed';btn.disabled=false;
+      console.error(err);
+      setTimeout(()=>{btn.textContent='💾 Save to Sheets';},3000);
+    });
 }
 
 function downloadPDF(){
